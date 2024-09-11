@@ -1,0 +1,56 @@
+@import "./stylesStore/variables.scss";
+
+.product-card {
+  padding: 15px;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  &:hover {
+    .product-image {
+      > img:nth-child(1) {
+        display: none;
+      }
+      > img:last-child {
+        display: block;
+      }
+    }
+    .action-bar {
+      right: 15px;
+    }
+  }
+  .wishlist-icon {
+    top: 2%;
+    right: 15px;
+  }
+
+  .product-image {
+    height: 270px;
+    img {
+      object-fit: contain;
+    }
+    > img:last-child {
+      display: none;
+    }
+  }
+
+  .product-details {
+    .brand {
+      color: $color-bf4800;
+      font-size: 13px;
+    }
+    .product-title {
+      font-size: 15px;
+      color: $color-1c1c1b;
+    }
+    .price {
+      font-size: 16px;
+      color: $color-1c1c1b;
+    }
+  }
+
+  .action-bar {
+    top: 10%;
+    right: -23px;
+    transition: 0.3s;
+  }
+}

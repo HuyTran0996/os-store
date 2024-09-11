@@ -1,0 +1,61 @@
+@import "./stylesStore/variables.scss";
+
+.header-top-strip {
+  background-color: $color-131921;
+  border-bottom: 1px solid $color-3b4149;
+}
+
+.header-upper {
+  background-color: $color-131921;
+  border-bottom: 1px solid $color-3b4149;
+  .input-group-text {
+    background-color: $color-febd69;
+  }
+  .header-upper-links {
+    img {
+      width: 35px;
+      height: 35px;
+    }
+  }
+}
+
+.header-bottom {
+  background-color: $color-232f3e;
+  .menu-links {
+    a {
+      color: white;
+      font-size: 14px;
+      line-height: 18px;
+      font-weight: 400;
+      letter-spacing: 0.3;
+      text-transform: uppercase;
+    }
+  }
+  .dropdown {
+    button {
+      color: white;
+      font-size: 14px;
+      line-height: 18px;
+      font-weight: 400;
+      letter-spacing: 0.3;
+      text-transform: uppercase;
+      &:focus {
+        box-shadow: none;
+      }
+    }
+    .dropdown-menu {
+      background-color: $color-131921;
+      width: 100%;
+      transform: translate3d(0px, 57px, 0px) !important;
+      .dropdown-item {
+        padding: 20px;
+        margin-bottom: 3px;
+        border-bottom: 1px solid $color-3b4149;
+        &:hover {
+          background-color: transparent;
+          color: $color-febd69 !important;
+        }
+      }
+    }
+  }
+}

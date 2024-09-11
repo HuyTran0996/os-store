@@ -1,0 +1,30 @@
+@import "./stylesStore/variables.scss";
+
+.blog-card {
+  background-color: white;
+  border-radius: 10px;
+  img {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  .blog-content {
+    padding: 15px;
+    .date {
+      font-size: 13px;
+      line-height: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      font-weight: 400;
+      color: $color-777777;
+    }
+    .title {
+      font-size: 18px;
+      color: $color-131921;
+    }
+    .desc {
+      font-size: 13px;
+      line-height: 22px;
+      color: $color-777777;
+    }
+  }
+}

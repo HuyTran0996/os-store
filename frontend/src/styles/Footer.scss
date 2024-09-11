@@ -1,0 +1,14 @@
+@import "./stylesStore/variables.scss";
+
+footer {
+  background-color: $color-232f3e;
+  &:not(:first-child) {
+    border-top: 1px solid rgba(225, 225, 225, 0.1);
+  }
+
+  .input-group-text {
+    background-color: $color-232f3e;
+    color: white;
+    padding: 8px 17px;
+  }
+}
