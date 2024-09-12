@@ -1,13 +1,18 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ReactStars from "react-rating-stars-component";
 
 import "../styles/ProductCard.scss";
 
-const ProductCard = () => {
+const ProductCard = (props) => {
+  const { grid } = props;
+  const location = useLocation();
+
   return (
-    <Link className="col-3">
-      <div className="product-card position-relative">
+    <div
+      className={`${location.pathname === "/store" ? `gr-${grid}` : "col-3"}`}
+    >
+      <Link className="product-card position-relative">
         <div className="wishlist-icon position-absolute">
           <Link>
             <img src="images/wish.svg" alt="wishlist" />
@@ -22,7 +27,7 @@ const ProductCard = () => {
           />
           <img
             className="img-fluid"
-            src="images/watch-1.webp"
+            src="images/watch-1.avif"
             alt="product-image"
           />
         </div>
@@ -40,6 +45,12 @@ const ProductCard = () => {
             size={24}
             activeColor="#ffd700"
           />
+          <p className={`description ${grid === 12 ? "d-block" : "d-none"}`}>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo
+            possimus commodi consequuntur nulla reprehenderit alias quas. Velit
+            neque aliquam enim iure, possimus nisi alias incidunt animi placeat
+            dolores iusto perspiciatis?
+          </p>
           <p className="price">$100.00</p>
         </div>
 
@@ -56,8 +67,8 @@ const ProductCard = () => {
             </Link>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 };
 

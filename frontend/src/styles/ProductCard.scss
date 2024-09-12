@@ -1,10 +1,44 @@
 @import "./stylesStore/variables.scss";
 
+.gr-12 {
+  width: 100%;
+  .product-card {
+    display: flex;
+    gap: 20px;
+    .product-image {
+      width: 270px;
+      height: auto;
+    }
+    .action-bar {
+      top: 17%;
+    }
+  }
+}
+.gr-6 {
+  width: 49%;
+  .product-card {
+    .product-image {
+      width: 100%;
+      img {
+        margin: auto;
+        display: block;
+      }
+    }
+  }
+}
+.gr-4 {
+  width: 32%;
+}
+.gr-3 {
+  width: 24%;
+}
+
 .product-card {
   padding: 15px;
   background-color: white;
   border-radius: 10px;
   overflow: hidden;
+  width: 100%;
   &:hover {
     .product-image {
       > img:nth-child(1) {
@@ -45,6 +79,11 @@
     .price {
       font-size: 16px;
       color: $color-1c1c1b;
+    }
+    .description {
+      font-size: 13px;
+      color: $color-777777;
+      margin-right: 20px;
     }
   }
 
