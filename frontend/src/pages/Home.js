@@ -9,7 +9,7 @@ import SpecialProduct from "../components/SpecialProduct";
 
 const Home = () => {
   return (
-    <>
+    <div className="home">
       <section className="home-wrapper-1 py-5">
         <div className="container-xxl">
           <div className="row">
@@ -390,7 +390,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 };
 
