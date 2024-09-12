@@ -1,0 +1,29 @@
+@import "./stylesStore/variables.scss";
+
+.blogPage {
+  .home-wrapper-2 {
+    background-color: $color-f5f5f7;
+
+    .filter-card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 15px 15px 25px;
+
+      .filter-title {
+        font-size: 16px;
+        line-height: 20px;
+        font-weight: 600;
+        color: $color-1c1c1b;
+        margin-bottom: 20px;
+      }
+
+      ul {
+        list-style-type: none;
+        font-size: 13px;
+        line-height: 30px;
+        color: $color-777777;
+        cursor: pointer;
+      }
+    }
+  }
+}

@@ -9,7 +9,7 @@ import SpecialProduct from "../components/SpecialProduct";
 
 const Home = () => {
   return (
-    <div className="home">
+    <div className="homePage">
       <section className="home-wrapper-1 py-5">
         <div className="container-xxl">
           <div className="row">
@@ -313,6 +313,7 @@ const Home = () => {
             <div className="col-12">
               <h3 className="section-heading">Special Products</h3>
             </div>
+
             <div className="row">
               <SpecialProduct />
               <SpecialProduct />
@@ -383,10 +384,20 @@ const Home = () => {
             <div className="col-12">
               <h3 className="section-heading">Our Latest Blogs</h3>
             </div>
-            <BlogCard />
-            <BlogCard />
-            <BlogCard />
-            <BlogCard />
+          </div>
+          <div className="row">
+            <div className="col-3">
+              <BlogCard />
+            </div>
+            <div className="col-3">
+              <BlogCard />
+            </div>
+            <div className="col-3">
+              <BlogCard />
+            </div>
+            <div className="col-3">
+              <BlogCard />
+            </div>
           </div>
         </div>
       </section>

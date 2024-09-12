@@ -11,7 +11,7 @@ const OurStore = () => {
   const [grid, setGrid] = useState(4);
 
   return (
-    <div className="ourStore">
+    <div className="ourStorePage">
       <Meta title="Our Store" />
       <BreadCrumb title="Our Store" />
 
