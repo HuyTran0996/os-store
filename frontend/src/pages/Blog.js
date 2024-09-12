@@ -10,7 +10,7 @@ const Blog = () => {
     <div className="blogPage">
       <Meta title="Blog" />
       <BreadCrumb title="Blog" />
-      <div className="blog-wrapper home-wrapper-2 py-5">
+      <div className="blog-wrapper py-5">
         <div className="container-xxl">
           <div className="row">
             <div className="col-3">

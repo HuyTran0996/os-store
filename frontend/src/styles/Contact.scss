@@ -1,0 +1,38 @@
+@import "./stylesStore/variables.scss";
+
+.contactPage {
+  background-color: $color-f5f5f7;
+
+  .contact-inner-wrapper {
+    padding: 30px 20px;
+    border-radius: 15px;
+    background-color: white;
+    gap: 15px;
+    > div {
+      width: 48%;
+    }
+    .contact-title {
+      font-size: 26px;
+      font-weight: 500;
+      line-height: 35px;
+      text-align: left;
+    }
+    form {
+      .form-control {
+        background-color: $color-f5f5f7;
+        border-radius: 10px;
+        border-color: transparent;
+        padding: 10px;
+      }
+    }
+
+    ul {
+      list-style-type: none;
+      a,
+      address,
+      p {
+        color: $color-777777;
+      }
+    }
+  }
+}
