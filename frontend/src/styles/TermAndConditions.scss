@@ -1,0 +1,10 @@
+@import "./stylesStore/variables.scss";
+
+.termAndConditionsPage {
+  background-color: $color-f5f5f7;
+
+  .policy {
+    background-color: white;
+    padding: 30px;
+  }
+}
