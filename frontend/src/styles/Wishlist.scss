@@ -1,0 +1,25 @@
+@import "./stylesStore/variables.scss";
+
+.wishlistPage {
+  background-color: $color-f5f5f7;
+  .wishlist-card {
+    .cross {
+      top: 15px;
+      right: 15px;
+      width: 25px;
+      padding: 3px;
+      cursor: pointer;
+    }
+    .title {
+      font-size: 15px;
+      line-height: 22px;
+      font-weight: 500;
+      color: $color-1c1c1b;
+    }
+    .price {
+      font-size: 15px;
+      line-height: 22px;
+      font-weight: 400;
+    }
+  }
+}
