@@ -6,6 +6,7 @@ import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 
 import ProductCard from "../components/ProductCard";
+import Color from "../components/Color";
 
 const OurStore = () => {
   const [grid, setGrid] = useState(4);
@@ -15,7 +16,7 @@ const OurStore = () => {
       <Meta title="Our Store" />
       <BreadCrumb title="Our Store" />
 
-      <div className="store-wrapper home-wrapper-2 py-5">
+      <div className="store-wrapper py-5">
         <div className="container-xxl">
           <div className="row">
             <div className="col-3">
@@ -86,18 +87,7 @@ const OurStore = () => {
 
                   <h5 className="sub-title">Color</h5>
                   <div>
-                    <ul className="color ps-0">
-                      <li></li>
-                      <li></li>
-                      <li></li>
-                      <li></li>
-                      <li></li>
-                      <li></li>
-                      <li></li>
-                      <li></li>
-                      <li></li>
-                      <li></li>
-                    </ul>
+                    <Color />
                   </div>
 
                   <h5 className="sub-title">Size</h5>
