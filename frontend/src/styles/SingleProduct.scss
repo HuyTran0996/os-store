@@ -1,0 +1,59 @@
+@import "./stylesStore/variables.scss";
+
+.singleProductPage {
+  background-color: $color-f5f5f7;
+
+  .description-wrapper {
+    h4 {
+      font-size: 26px;
+      color: $color-1c1c1b;
+    }
+    p {
+      font-size: 14px;
+      color: $color-777777;
+    }
+  }
+
+  .review-wrapper {
+    h4 {
+      font-size: 26px;
+      color: $color-1c1c1b;
+      margin-bottom: 10px;
+    }
+    .review-inner-wrapper {
+      background-color: white;
+      padding: 30px;
+      .review-head {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding-bottom: 20px;
+        h4 {
+          font-size: 14px;
+          color: $color-1c1c1b;
+        }
+        p,
+        a {
+          font-size: 14px;
+          color: $color-777777;
+        }
+      }
+
+      .review-form {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        h4 {
+          font-size: 16px;
+          color: $color-777777;
+        }
+      }
+
+      .review {
+        &:not(:last-child) {
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        p {
+          font-size: 14px;
+          color: $color-777777;
+        }
+      }
+    }
+  }
+}
