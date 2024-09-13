@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ReactStars from "react-rating-stars-component";
+import ReactImageZoom from "react-image-zoom";
 
 import "../styles/SingleProduct.scss";
 import BreadCrumb from "../components/BreadCrumb";
@@ -7,15 +8,60 @@ import Meta from "../components/Meta";
 import ProductCard from "../components/ProductCard";
 
 const SingleProduct = () => {
+  const props = {
+    // width: 400,
+    // height: 500,
+    zoomWidth: 500,
+    // zoomPosition: "original",
+    img: "https://media.wired.com/photos/61bd571ff6b645152a4dc4ad/master/pass/Evolution-Luxury-Watches-Oris.jpg",
+  };
   const [orderedProduct, setOrderedProduct] = useState(!false);
   return (
     <div className="singleProductPage">
       <Meta title="Dynamic Product Name" />
       <BreadCrumb title="Dynamic Product Name" />
+
       <div className="main-product-wrapper py-5">
         <div className="container-xxl">
           <div className="row">
-            <div className="col-6"></div>
+            <div className="col-6">
+              <div className="main-product-image">
+                <div className="imageZoom">
+                  <ReactImageZoom {...props} />
+                </div>
+              </div>
+
+              <div className="other-product-images d-flex flex-wrap gap-15">
+                <div>
+                  <img
+                    src="/images/watch.jpg"
+                    alt="watch"
+                    className="img-fluid"
+                  />
+                </div>
+                <div>
+                  <img
+                    src="/images/watch.jpg"
+                    alt="watch"
+                    className="img-fluid"
+                  />
+                </div>
+                <div>
+                  <img
+                    src="/images/watch.jpg"
+                    alt="watch"
+                    className="img-fluid"
+                  />
+                </div>
+                <div>
+                  <img
+                    src="/images/watch.jpg"
+                    alt="watch"
+                    className="img-fluid"
+                  />
+                </div>
+              </div>
+            </div>
             <div className="col-6"></div>
           </div>
         </div>
