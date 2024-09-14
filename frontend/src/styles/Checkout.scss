@@ -1,0 +1,17 @@
+@import "./stylesStore/variables.scss";
+
+.checkoutPage {
+  background-color: $color-f5f5f7;
+  .border-bottom:last-child {
+    border-bottom: none !important;
+  }
+
+  .total {
+    font-size: 14px;
+    color: $color-1c1c1b;
+  }
+  .total-price {
+    font-size: 16px;
+    color: $color-777777;
+  }
+}
