@@ -1,7 +1,31 @@
 import React from "react";
 
+import "../styles/Login.scss";
+import CustomInput from "../components/CustomInput";
+
 const Resetpassword = () => {
-  return <div>Resetpassword</div>;
+  return (
+    <div className="loginPage py-5 d-flex align-items-center">
+      <div className="my-5 w-25 bg-white rounded-3 mx-auto p-4">
+        <h3 className="text-center">Reset Password</h3>
+        <p className="text-center">Please enter your new password</p>
+        <form action="">
+          <CustomInput type="password" label="New Password" id="pass" />
+          <CustomInput
+            type="password"
+            label="Confirm Password"
+            id="confirpass"
+          />
+          <button
+            className="border-0 px-3 py-2 text-white fw-bold w-100 text-center text-decoration-none fs-5"
+            type="submit"
+          >
+            Reset Password
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default Resetpassword;

@@ -1,1 +1,10 @@
 @import "./stylesStore/variables.scss";
+
+.loginPage {
+  background-color: $color-ffd333;
+  min-height: 100vh;
+
+  button {
+    background-color: $color-ffd333;
+  }
+}
