@@ -1,249 +1,232 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate, Link, Outlet } from "react-router-dom";
-import { Button, Layout, Menu, theme } from "antd";
 
 import "../styles/MainLayout.scss";
 
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import {
-  AiOutlineDashboard,
-  AiOutlineShoppingCart,
-  AiOutlineUser,
-  AiOutlineBgColors,
-} from "react-icons/ai";
-import { SiBrandfolder } from "react-icons/si";
-import { BiCategoryAlt } from "react-icons/bi";
+import PropTypes from "prop-types";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { createTheme } from "@mui/material/styles";
+import { AppProvider } from "@toolpad/core/AppProvider";
+import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 
-import { RiCouponLine } from "react-icons/ri";
-import { ImBlog } from "react-icons/im";
-import { FaClipboardList, FaBloggerB } from "react-icons/fa";
-import { IoIosNotifications } from "react-icons/io";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
-const { Header, Sider, Content } = Layout;
+import LayersIcon from "@mui/icons-material/Layers";
+import PersonIcon from "@mui/icons-material/Person";
+import CategoryIcon from "@mui/icons-material/Category";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import FactoryIcon from "@mui/icons-material/Factory";
+import WidgetsIcon from "@mui/icons-material/Widgets";
+import FormatColorFillIcon from "@mui/icons-material/FormatColorFill";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import LocalActivityIcon from "@mui/icons-material/LocalActivity";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import SellIcon from "@mui/icons-material/Sell";
+import CreateIcon from "@mui/icons-material/Create";
+import SubjectIcon from "@mui/icons-material/Subject";
+
+const NAVIGATION = [
+  {
+    segment: "admin",
+    title: "Dashboard",
+    icon: <DashboardIcon />,
+  },
+  {
+    segment: "customers",
+    title: "Customers",
+    icon: <PersonIcon />,
+  },
+  {
+    segment: "catalog",
+    title: "Catalog",
+    icon: <CategoryIcon />,
+    children: [
+      {
+        segment: "product",
+        icon: <AddShoppingCartIcon />,
+        title: "Add Product",
+      },
+      {
+        segment: "list-product",
+        icon: <ShoppingCartIcon />,
+        title: "Product List",
+      },
+
+      {
+        segment: "brand",
+        icon: <FactoryIcon />,
+        title: "Brand",
+      },
+      {
+        segment: "list-brand",
+        icon: <FactoryIcon />,
+        title: "Brand List ",
+      },
+
+      {
+        segment: "category",
+        icon: <WidgetsIcon />,
+        title: "Category",
+      },
+      {
+        segment: "list-category",
+        icon: <WidgetsIcon />,
+        title: "Category List",
+      },
+
+      {
+        segment: "color",
+        icon: <FormatColorFillIcon />,
+        title: "Color",
+      },
+      {
+        segment: "list-color",
+        icon: <FormatColorFillIcon />,
+        title: "Color List",
+      },
+    ],
+  },
+  {
+    segment: "orders",
+    title: "Orders",
+    icon: <AssignmentIcon />,
+  },
+  {
+    segment: "marketing",
+    title: "Marketing",
+    icon: <LocalActivityIcon />,
+    children: [
+      {
+        segment: "coupon",
+        title: "Add Coupon",
+        icon: <AddCircleIcon />,
+      },
+      {
+        segment: "coupon-list",
+        title: "Coupon List",
+        icon: <SellIcon />,
+      },
+    ],
+  },
+  {
+    segment: "blogs",
+    title: "Blogs",
+    icon: <CreateIcon />,
+    children: [
+      {
+        segment: "blog",
+        icon: <AddCircleIcon />,
+        title: "Add Blog",
+      },
+      {
+        segment: "blog-list",
+        icon: <SubjectIcon />,
+        title: "Blog List",
+      },
+      {
+        segment: "blog-category",
+        icon: <AddCircleIcon />,
+        title: "Add Blog Category",
+      },
+      {
+        segment: "blog-category-list",
+        icon: <SubjectIcon />,
+        title: "Blog Category List",
+      },
+    ],
+  },
+  {
+    segment: "enquiries",
+    title: "Enquiries",
+    icon: <LayersIcon />,
+  },
+];
+const brand = { logo: false, title: "OS Store" };
+
+const demoTheme = createTheme({
+  cssVariables: {
+    colorSchemeSelector: "data-toolpad-color-scheme",
+  },
+  // colorSchemes: { light: true, dark: true },
+  colorSchemes: {
+    light: {
+      palette: {
+        background: {
+          default: "#F9F9FE",
+          paper: "#EEEEF9",
+        },
+      },
+    },
+    dark: {
+      palette: {
+        background: {
+          default: "#2A4364",
+          paper: "#112E4D",
+        },
+      },
+    },
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 600,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
+});
 
 const MainLayout = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-  const navigate = useNavigate();
+  const navigateReact = useNavigate();
+
+  const [session, setSession] = useState({
+    user: {
+      name: "Bharat Kashyap",
+      email: "bharatkashyap@outlook.com",
+      image: "https://avatars.githubusercontent.com/u/19550456",
+    },
+  });
+
+  const router = {
+    navigate: (path) => {
+      navigateReact(path);
+    },
+  };
+
+  const authentication = useMemo(() => {
+    return {
+      signIn: () => {
+        setSession({
+          user: {
+            name: "Bharat Kashyap",
+            email: "bharatkashyap@outlook.com",
+            image: "https://avatars.githubusercontent.com/u/19550456",
+          },
+        });
+      },
+      signOut: () => {
+        setSession(null);
+        navigateReact("/");
+      },
+    };
+  }, []);
+
   return (
-    <Layout>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="logo">
-          <h2 className="text-white fs-5 text-center py-3 mb-0">
-            <span className="sm-logo">OS</span>
-            <span className="lg-logo">OS Store</span>
-          </h2>
-        </div>
-        <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={[""]}
-          onClick={({ key }) => {
-            if (key !== "signout") {
-              navigate(key);
-            }
-          }}
-          items={[
-            {
-              key: "",
-              icon: <AiOutlineDashboard className="fs-4" />,
-              label: "Dashboard",
-            },
-            {
-              key: "customers",
-              icon: <AiOutlineUser className="fs-4" />,
-              label: "Customers",
-            },
-            {
-              key: "Catalog",
-              icon: <AiOutlineShoppingCart className="fs-4" />,
-              label: "Catalog",
-              children: [
-                {
-                  key: "product",
-                  icon: <AiOutlineShoppingCart className="fs-4" />,
-                  label: "Add Product",
-                },
-                {
-                  key: "list-product",
-                  icon: <AiOutlineShoppingCart className="fs-4" />,
-                  label: "Product List",
-                },
-                {
-                  key: "brand",
-                  icon: <SiBrandfolder className="fs-4" />,
-                  label: "Brand",
-                },
-                {
-                  key: "list-brand",
-                  icon: <SiBrandfolder className="fs-4" />,
-                  label: "Brand List ",
-                },
-                {
-                  key: "category",
-                  icon: <BiCategoryAlt className="fs-4" />,
-                  label: "Category",
-                },
-                {
-                  key: "list-category",
-                  icon: <BiCategoryAlt className="fs-4" />,
-                  label: "Category List",
-                },
-                {
-                  key: "color",
-                  icon: <AiOutlineBgColors className="fs-4" />,
-                  label: "Color",
-                },
-                {
-                  key: "list-color",
-                  icon: <AiOutlineBgColors className="fs-4" />,
-                  label: "Color List",
-                },
-              ],
-            },
-            {
-              key: "orders",
-              icon: <FaClipboardList className="fs-4" />,
-              label: "Orders",
-            },
-            {
-              key: "marketing",
-              icon: <RiCouponLine className="fs-4" />,
-              label: "Marketing",
-              children: [
-                {
-                  key: "coupon",
-                  icon: <ImBlog className="fs-4" />,
-                  label: "Add Coupon",
-                },
-                {
-                  key: "coupon-list",
-                  icon: <RiCouponLine className="fs-4" />,
-                  label: "Coupon List",
-                },
-              ],
-            },
-            {
-              key: "blogs",
-              icon: <FaBloggerB className="fs-4" />,
-              label: "Blogs",
-              children: [
-                {
-                  key: "blog",
-                  icon: <ImBlog className="fs-4" />,
-                  label: "Add Blog",
-                },
-                {
-                  key: "blog-list",
-                  icon: <FaBloggerB className="fs-4" />,
-                  label: "Blog List",
-                },
-                {
-                  key: "blog-category",
-                  icon: <ImBlog className="fs-4" />,
-                  label: "Add Blog Category",
-                },
-                {
-                  key: "blog-category-list",
-                  icon: <FaBloggerB className="fs-4" />,
-                  label: "Blog Category List",
-                },
-              ],
-            },
-            {
-              key: "enquiries",
-              icon: <FaClipboardList className="fs-4" />,
-              label: "Enquiries",
-            },
-          ]}
-        />
-      </Sider>
-
-      <Layout>
-        <Header
-          className="d-flex justify-content-between ps-1 pe-5"
-          style={{
-            padding: 0,
-            background: colorBgContainer,
-          }}
-        >
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: "16px",
-              width: 64,
-              height: 64,
-            }}
-          />
-
-          <div className="d-flex gap-4 align-items-center">
-            <div className="position-relative">
-              <IoIosNotifications className="fs-4" />
-              <span className="badge bg-warning rounded-circle p-1 position-absolute">
-                3
-              </span>
-            </div>
-
-            <div className="d-flex gap-3 align-items-center dropdown">
-              <div>
-                <img
-                  width={32}
-                  height={32}
-                  src="https://stroyka-admin.html.themeforest.scompiler.ru/variants/ltr/images/customers/customer-4-64x64.jpg"
-                  alt=""
-                />
-              </div>
-              <div
-                role="button"
-                id="dropdownMenuLink"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <h5 className="mb-0">Navdeep</h5>
-                <p className="mb-0">navdeepdahiya753@gmail.com</p>
-              </div>
-
-              <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <li>
-                  <Link
-                    className="dropdown-item py-1 mb-1"
-                    style={{ height: "auto", lineHeight: "20px" }}
-                    to="/"
-                  >
-                    View Profile
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className="dropdown-item py-1 mb-1"
-                    style={{ height: "auto", lineHeight: "20px" }}
-                    to="/"
-                  >
-                    Sign Out
-                  </Link>
-                </li>
-              </div>
-            </div>
-          </div>
-        </Header>
-
-        <Content
-          style={{
-            margin: "24px 16px",
-            padding: 24,
-            minHeight: 280,
-            background: colorBgContainer,
-            borderRadius: borderRadiusLG,
-          }}
-        >
-          <Outlet />
-        </Content>
-      </Layout>
-    </Layout>
+    <AppProvider
+      navigation={NAVIGATION}
+      branding={brand}
+      router={router}
+      theme={demoTheme}
+      authentication={authentication}
+      session={session}
+    >
+      <DashboardLayout>
+        <Outlet />
+      </DashboardLayout>
+    </AppProvider>
   );
 };
 
