@@ -1,30 +1,83 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Grid from "@mui/material/Grid2";
+import { Paper, Avatar, TextField, Button, IconButton } from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import "../styles/Login.scss";
-import CustomInput from "../components/CustomInput";
 
 const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
   return (
-    <div className="loginPage py-5 d-flex align-items-center">
-      <div className="my-5 w-25 bg-white rounded-3 mx-auto p-4">
-        <h3 className="text-center">Login Admin</h3>
-        <p className="text-center">Login to your account to continue</p>
-        <form action="">
-          <CustomInput type="text" label="Email Address" id="email" />
-          <CustomInput type="password" label="Password" id="pass" />
-          <div className="mb-3 text-end">
-            <Link to="/forgot-password">Forgot Password?</Link>
-          </div>
-          <button
-            className="border-0 px-3 py-2 text-white fw-bold w-100 text-center text-decoration-none fs-5"
-            type="submit"
-          >
-            Login
-          </button>
-        </form>
-      </div>
-    </div>
+    <Grid container>
+      <Grid size={12} className="loginPage">
+        <Paper elevation={10} className="paper">
+          <Grid align="center">
+            <Avatar className="avatar">
+              <h3>
+                OS <br /> Store
+              </h3>
+            </Avatar>
+            <h2>Login</h2>
+            <p>Login to your account to continue.</p>
+          </Grid>
+
+          <form onSubmit={handleSubmit}>
+            <TextField
+              className="input"
+              placeholder="Email..."
+              type="email"
+              fullWidth
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <TextField
+              className="input"
+              placeholder="Enter password"
+              type={showPassword ? "text" : "password"}
+              fullWidth
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <IconButton
+                      edge="end"
+                      onClick={() => setShowPassword((show) => !show)}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  ),
+                },
+              }}
+            />
+
+            <Link to="/forgot-password">Forgot password ?</Link>
+
+            <Button
+              className="submit"
+              type="submit"
+              color="primary"
+              variant="contained"
+              fullWidth
+              size="large"
+            >
+              Login
+            </Button>
+          </form>
+        </Paper>
+      </Grid>
+    </Grid>
   );
 };
 

@@ -3,9 +3,6 @@ import { useNavigate, Link, Outlet } from "react-router-dom";
 
 import "../styles/MainLayout.scss";
 
-import PropTypes from "prop-types";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { createTheme } from "@mui/material/styles";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";

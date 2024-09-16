@@ -1,10 +1,41 @@
 @import "./stylesStore/variables.scss";
 
 .loginPage {
-  background-color: $color-ffd333;
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $color-2a4364;
+  padding: 20px;
 
-  button {
-    background-color: $color-ffd333;
+  .paper {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    .avatar {
+      background-color: $color-47ad24;
+      width: 90px;
+      height: 90px;
+      border: 50%;
+      margin-bottom: 10px;
+    }
+    form {
+      padding: 20px;
+      max-width: 400px;
+      position: relative;
+
+      .input {
+        margin-bottom: 20px;
+        &:nth-of-type(2) {
+          margin-bottom: 10px;
+        }
+      }
+
+      .submit {
+        font-size: 20px;
+        margin-top: 20px;
+      }
+    }
   }
 }
