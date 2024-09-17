@@ -112,7 +112,7 @@ exports.updatePassword = asyncHandler(async (req, res) => {
 });
 
 exports.forgotPassword = asyncHandler(async (req, res) => {
-  const { email } = req.body;
+  const { frontEndLink, email } = req.body;
 
   const user = await User.findOne({ email });
 
@@ -121,14 +121,18 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
   const resetToken = await user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
-  const resetURL = `${req.protocol}://${req.get(
-    "host"
-  )}/api/auth/resetPassword/${resetToken}`;
+  //note: we will use this url in future (when we create ui-ux of the back-end itself)
+  // const resetURL = `${req.protocol}://${req.get(
+  //   "host"
+  // )}/api/auth/resetPassword/${resetToken}`;
+
+  const resetURL = `${frontEndLink}/${resetToken}`;
   await new Email(user, resetURL).sendPasswordReset();
 
   res.status(200).json({
     status: "success",
-    message: "check your email and follow the instruction",
+    message:
+      "check your email and follow the instruction, the email works only in 10 minutes",
     resetURL,
   });
 });

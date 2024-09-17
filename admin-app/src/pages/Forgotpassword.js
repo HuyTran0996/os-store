@@ -1,28 +1,74 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useThunk } from "../hook/use-thunk";
+import { forgotPassword } from "../store/thunks/fetchUsers";
+
+import Grid from "@mui/material/Grid2";
+import { Paper, Avatar, TextField, Button } from "@mui/material";
+import { showToast } from "../components/ToastMessage";
 
 import "../styles/Login.scss";
-import CustomInput from "../components/CustomInput";
 
 const Forgotpassword = () => {
-  return (
-    <div className="loginPage py-5 d-flex align-items-center">
-      <div className="my-5 w-25 bg-white rounded-3 mx-auto p-4">
-        <h3 className="text-center">Forgot Password</h3>
-        <p className="text-center">
-          Please enter your email to get reset password mail
-        </p>
-        <form action="">
-          <CustomInput type="text" label="Email Address" id="email" />
+  const [email, setEmail] = useState("");
 
-          <button
-            className="border-0 px-3 py-2 text-white fw-bold w-100 text-center text-decoration-none fs-5"
-            type="submit"
-          >
-            Send Link
-          </button>
-        </form>
-      </div>
-    </div>
+  const [sendEmail, isLoading] = useThunk(forgotPassword);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const data = await sendEmail({ email });
+      showToast(`${data.message}`, "success");
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    }
+  };
+
+  return (
+    <Grid container>
+      <Grid size={12} className="loginPage">
+        <Paper elevation={10} className="paper">
+          <Grid align="center">
+            <Avatar className="avatar">
+              <h3>
+                OS <br /> Store
+              </h3>
+            </Avatar>
+            <h2>Forgot Your Password?</h2>
+            <p>
+              Submit your registered email, <br /> we will send you an email to
+              guide you reset your password.
+            </p>
+          </Grid>
+
+          <form onSubmit={handleSubmit}>
+            <TextField
+              className="input"
+              placeholder="Email..."
+              type="email"
+              fullWidth
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Link to="/">Back To Login Page?</Link>
+
+            <Button
+              className="submit"
+              type="submit"
+              color="primary"
+              variant="contained"
+              fullWidth
+              size="large"
+              disabled={isLoading}
+            >
+              {isLoading ? "Sending..." : "Submit"}
+            </Button>
+          </form>
+        </Paper>
+      </Grid>
+    </Grid>
   );
 };
 
