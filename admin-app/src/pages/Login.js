@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useLoginAdminMutation } from "../store/apis/usersApi";
+import { useThunk } from "../hook/use-thunk";
+import { loginAdmin } from "../store/thunks/fetchUsers";
 
 import Grid from "@mui/material/Grid2";
 import { Paper, Avatar, TextField, Button, IconButton } from "@mui/material";
+import { showToast } from "../components/ToastMessage";
+
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
@@ -14,14 +17,19 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [loginAdmin, resutl] = useLoginAdminMutation();
+  const [login, isLoading] = useThunk(loginAdmin);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const user = { email, password };
 
-    loginAdmin(user);
+    try {
+      await login({ email, password });
+      showToast("Successfully Login", "success");
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    }
   };
+
   return (
     <Grid container>
       <Grid size={12} className="loginPage">
@@ -78,8 +86,9 @@ const Login = () => {
               variant="contained"
               fullWidth
               size="large"
+              disabled={isLoading}
             >
-              Login
+              {isLoading ? "Loading..." : "Login"}
             </Button>
           </form>
         </Paper>

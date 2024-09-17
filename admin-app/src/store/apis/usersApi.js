@@ -1,3 +1,4 @@
+//Note: THIS IS FOR FUTURE UPDATE USING RTK QUERY OF REDUX, CURRENTLY WE USE NORMAL REDUX
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { apiService, axiosBaseQuery, BASE_URL } from "../../app/apiService";
 
