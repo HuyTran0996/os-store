@@ -30,11 +30,11 @@ export const forgotPassword = createAsyncThunk(
 
 export const resetPassword = createAsyncThunk(
   "users/loginAdmin",
-  async ({ password }) => {
-    const message = await apiService.patch("/auth/resetPassword/", {
+  async ({ password, token }) => {
+    const message = await apiService.patch(`/auth/resetPassword/${token}`, {
       password,
     });
 
-    return message;
+    return message.data;
   }
 );

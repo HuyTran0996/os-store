@@ -19,7 +19,7 @@ const Forgotpassword = () => {
 
     try {
       const data = await sendEmail({ email });
-      showToast(`${data.message}`, "success");
+      showToast(`${data.message}`, "success", 3000);
     } catch (err) {
       showToast(`${err.message}`, "error");
     }

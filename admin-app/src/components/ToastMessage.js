@@ -2,7 +2,7 @@ import { toast } from "react-toastify";
 
 export const showToast = (message, type = "success", duration) => {
   const options = {
-    autoClose: duration || 1800,
+    autoClose: duration || 2000,
   };
 
   switch (type) {
