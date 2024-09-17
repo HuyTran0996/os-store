@@ -12,8 +12,7 @@ const cookieOption = {
   ),
   httpOnly: true,
   sameSite: "None",
+  secure: true,
 };
-
-if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
 
 module.exports = { generateToken, cookieOption };

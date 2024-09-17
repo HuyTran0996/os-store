@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useLoginAdminMutation } from "../store/apis/usersApi";
+
 import Grid from "@mui/material/Grid2";
 import { Paper, Avatar, TextField, Button, IconButton } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
@@ -12,8 +14,13 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [loginAdmin, resutl] = useLoginAdminMutation();
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    const user = { email, password };
+
+    loginAdmin(user);
   };
   return (
     <Grid container>

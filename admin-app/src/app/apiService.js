@@ -1,9 +1,10 @@
 import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = `${process.env.REACT_APP_BASE_URL}/api`;
 
 const apiService = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
 });
 
 apiService.interceptors.request.use(
@@ -27,4 +28,26 @@ apiService.interceptors.response.use(
     return Promise.reject(err.reject.data);
   }
 );
-export { apiService };
+
+const axiosBaseQuery =
+  () =>
+  async ({ url, method, data, params }) => {
+    try {
+      const result = await apiService({
+        url: BASE_URL + url,
+        method,
+        data,
+        params,
+      });
+      return { data: result.data };
+    } catch (axiosError) {
+      let err = axiosError;
+      return {
+        error: {
+          status: err.response?.status,
+          data: err.response?.data || err.message,
+        },
+      };
+    }
+  };
+export { apiService, axiosBaseQuery, BASE_URL };
