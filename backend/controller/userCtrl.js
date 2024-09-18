@@ -2,6 +2,8 @@ const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/userModel");
+const Product = require("../models/productModel");
+const Order = require("../models/orderModel");
 const AppError = require("../utils/appError");
 const validateMongodbId = require("../utils/validateMongodbId");
 const { generateToken, cookieOption } = require("../config/jwtToken");
@@ -112,5 +114,61 @@ exports.getWishlist = asyncHandler(async (req, res) => {
   res.status(200).json({
     status: "success",
     wishlist: findUser.wishlist,
+  });
+});
+
+exports.userProductOrderCompare = asyncHandler(async (req, res) => {
+  const now = new Date();
+
+  const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+  const usersFromThisMonth = await User.countDocuments({
+    createdAt: { $gte: startOfCurrentMonth },
+  });
+  const usersFromLastMonth = await User.countDocuments({
+    createdAt: { $gte: startOfLastMonth, $lt: startOfCurrentMonth },
+  });
+
+  const productsFromThisMonth = await Product.countDocuments({
+    createdAt: { $gte: startOfCurrentMonth },
+  });
+  const productsFromLastMonth = await Product.countDocuments({
+    createdAt: { $gte: startOfLastMonth, $lt: startOfCurrentMonth },
+  });
+
+  const ordersFromThisMonth = await Product.countDocuments({
+    createdAt: { $gte: startOfCurrentMonth },
+  });
+  const ordersFromLastMonth = await Product.countDocuments({
+    createdAt: { $gte: startOfLastMonth, $lt: startOfCurrentMonth },
+  });
+
+  const totalUser = await User.countDocuments();
+  const totalProduct = await Product.countDocuments();
+  const totalOrder = await Order.countDocuments();
+
+  res.status(200).json({
+    status: "success",
+    data: [
+      {
+        title: "User",
+        thisMonth: usersFromThisMonth,
+        lastMonth: usersFromLastMonth,
+        total: totalUser,
+      },
+      {
+        title: "Product",
+        thisMonth: productsFromThisMonth,
+        lastMonth: productsFromLastMonth,
+        total: totalProduct,
+      },
+      {
+        title: "Order",
+        thisMonth: ordersFromThisMonth,
+        lastMonth: ordersFromLastMonth,
+        total: totalOrder,
+      },
+    ],
   });
 });

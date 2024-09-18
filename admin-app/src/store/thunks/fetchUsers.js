@@ -38,3 +38,12 @@ export const resetPassword = createAsyncThunk(
     return message.data;
   }
 );
+
+export const userTotalCompare = createAsyncThunk(
+  "users/userTotalCompare",
+  async () => {
+    const res = await apiService.get(`/user/userTotalCompare`);
+
+    return res.data.data;
+  }
+);

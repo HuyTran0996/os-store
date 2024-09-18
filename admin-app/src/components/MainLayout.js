@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate, Link, Outlet } from "react-router-dom";
 
-import "../styles/MainLayout.scss";
 import { Box, Typography, createTheme } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { AppProvider } from "@toolpad/core/AppProvider";

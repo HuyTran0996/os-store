@@ -3,11 +3,12 @@ import * as React from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 
-export default function ChartBar({ dataset, unit, dataKey, label }) {
+export default function ChartBar({ dataset, unit, dataKey, label, isLoading }) {
   const valueFormatter = (value) => `${value}${unit}`;
   return (
     <div style={{ width: "100%" }}>
       <BarChart
+        loading={isLoading}
         dataset={dataset}
         xAxis={[
           {

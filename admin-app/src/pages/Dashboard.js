@@ -1,13 +1,21 @@
-import React from "react";
-import { Grid2, Typography, CssBaseline, Container, Box } from "@mui/material";
-
-import "../styles/Dashboard.scss";
+import React, { useEffect, useState } from "react";
+import {
+  Grid2,
+  Typography,
+  Container,
+  Box,
+  CircularProgress,
+} from "@mui/material";
+import { useThunk } from "../hook/use-thunk";
+import { userTotalCompare } from "../store/thunks/fetchUsers";
+import { useSelector } from "react-redux";
 
 import TotalCard from "../components/TotalCard";
 import ChartBar from "../components/ChartBar";
 
 const Dashboard = () => {
-  const items = [1, 2, 3];
+  const [isLoading, setIsLoading] = useState(true);
+
   const datasetOrder = [
     {
       orders: 21,
@@ -108,9 +116,31 @@ const Dashboard = () => {
       month: "Dec",
     },
   ];
+
+  const [doFetchUsers, isLoadingUsers, loadingUsersError] =
+    useThunk(userTotalCompare);
+
+  const { dataOfUserTotalCompare } = useSelector((state) => {
+    return state.users;
+  });
+
+  const getData = async () => {
+    setIsLoading(true);
+    try {
+      const userData = await doFetchUsers();
+      console.log("userData", userData);
+    } catch (err) {
+      console.log("error", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <>
-      <CssBaseline />
       <Container maxWidth="xl" sx={{ padding: "20px" }}>
         <Typography variant="h3">Dashboard</Typography>
 
@@ -118,26 +148,44 @@ const Dashboard = () => {
           container
           sx={{
             width: "100%",
-            justifyContent: "space-between",
+            justifyContent: "space-evenly",
           }}
         >
-          {items.map((item, index) => (
-            <Grid2
-              key={index}
-              item
-              xs={12}
-              sm={6}
-              md={4}
-              sx={{ paddingTop: "20px" }}
+          {isLoading ? (
+            <Box
+              sx={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-evenly",
+                margin: "20px 0px 20px 0",
+              }}
             >
-              <TotalCard
-                title="Total"
-                amount="1100"
-                percentage="32"
-                color="error.main"
-              />
-            </Grid2>
-          ))}
+              <CircularProgress />
+              <CircularProgress />
+              <CircularProgress />
+            </Box>
+          ) : (
+            dataOfUserTotalCompare.map((item, index) => {
+              const percentage = (item.thisMonth - item.lastMonth) * 100;
+              return (
+                <Grid2
+                  key={index}
+                  item
+                  xs={12}
+                  sm={6}
+                  md={4}
+                  sx={{ paddingTop: "20px" }}
+                >
+                  <TotalCard
+                    title={item.title}
+                    amount={item.total}
+                    percentage={percentage}
+                    color={percentage > 0 ? "#76ff03" : "#ef5350"}
+                  />
+                </Grid2>
+              );
+            })
+          )}
         </Grid2>
         <Box sx={{ marginTop: "40px" }}>
           <ChartBar
@@ -145,6 +193,7 @@ const Dashboard = () => {
             unit="order"
             dataKey="orders"
             label="OS Store's Orders"
+            isLoading={isLoading ? "loading" : ""}
           />
         </Box>
         <Box sx={{ margin: "40px 0 40px 0" }}>

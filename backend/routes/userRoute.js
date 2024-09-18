@@ -7,6 +7,12 @@ const router = express.Router();
 
 router.get("/allUsers", authMiddleware, isAdmin, userCtrl.getAllUser);
 router.get("/wishlist", authMiddleware, userCtrl.getWishlist);
+router.get(
+  "/userTotalCompare",
+  authMiddleware,
+  isAdmin,
+  userCtrl.userProductOrderCompare
+);
 router.get("/:id", authMiddleware, userCtrl.getAUser);
 
 router.put("/editUser", authMiddleware, userCtrl.updatedUser);
