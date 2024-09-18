@@ -13,6 +13,11 @@ export const loginAdmin = createAsyncThunk(
     return admin.data.user;
   }
 );
+export const logoutAdmin = createAsyncThunk("users/logout", async () => {
+  const admin = await apiService.get("/auth/logout");
+  localStorage.removeItem("adminData");
+  return admin.data.user;
+});
 
 export const forgotPassword = createAsyncThunk(
   "users/loginAdmin",

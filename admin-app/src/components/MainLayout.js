@@ -7,6 +7,10 @@ import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { showToast } from "./ToastMessage";
 
+import { useThunk } from "../hook/use-thunk";
+import { logoutAdmin } from "../store/thunks/fetchUsers";
+import Loading from "./Logout/Loading";
+
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LayersIcon from "@mui/icons-material/Layers";
@@ -200,13 +204,15 @@ const Footer = () => {
 
 const MainLayout = () => {
   const navigateReact = useNavigate();
+  const [logOut, setLogOut] = useState(false);
   const adminInfo = localStorage.getItem("adminData");
+  const [signout, isLoading] = useThunk(logoutAdmin);
 
   const [session, setSession] = useState({
     user: {
       name: "",
       email: "",
-      image: "https://avatars.githubusercontent.com/u/19550456",
+      image: "",
     },
   });
 
@@ -232,40 +238,43 @@ const MainLayout = () => {
     },
   };
 
-  const authentication = useMemo(() => {
-    return {
-      signIn: () => {
-        setSession({
-          user: {
-            name: "Bharat Kashyap",
-            email: "bharatkashyap@outlook.com",
-            image: "https://avatars.githubusercontent.com/u/19550456",
-          },
-        });
-      },
-      signOut: () => {
-        setSession(null);
-        localStorage.removeItem("adminData");
+  const authentication = {
+    signIn: () => {
+      navigateReact("/");
+    },
+    signOut: async () => {
+      setSession(null);
+      try {
+        setLogOut(true);
+        await signout();
         navigateReact("/");
-      },
-    };
-  }, []);
+      } catch (err) {
+        showToast("Sign Out Failed", "error");
+      } finally {
+        setLogOut(false);
+      }
+    },
+  };
 
-  return (
-    <AppProvider
-      navigation={NAVIGATION}
-      branding={brand}
-      router={router}
-      theme={demoTheme}
-      authentication={authentication}
-      session={session}
-    >
-      <DashboardLayout>
-        <Outlet />
-        <Footer />
-      </DashboardLayout>
-    </AppProvider>
-  );
+  if (logOut) {
+    return <Loading />;
+  } else {
+    return (
+      <AppProvider
+        navigation={NAVIGATION}
+        branding={brand}
+        router={router}
+        theme={demoTheme}
+        authentication={authentication}
+        session={session}
+      >
+        <DashboardLayout>
+          <Outlet />
+          <Footer />
+        </DashboardLayout>
+      </AppProvider>
+    );
+  }
 };
 
 export default MainLayout;
