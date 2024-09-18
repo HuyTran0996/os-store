@@ -25,8 +25,20 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      await login({ email, password });
+      const adminData = await login({ email, password });
       showToast("Successfully Login", "success");
+      console.log("admin data", adminData);
+      const dataToStore = { email: adminData.email, name: adminData.name };
+      const stringifiedAdminData = JSON.stringify(dataToStore);
+      if (!localStorage.getItem("adminData")) {
+        localStorage.setItem("adminData", stringifiedAdminData);
+      }
+      if (localStorage.getItem("adminData")) {
+        localStorage.removeItem("adminData");
+        localStorage.setItem("adminData", stringifiedAdminData);
+      }
+      setEmail("");
+      setPassword("");
       navigate("/admin");
     } catch (err) {
       showToast(`${err.message}`, "error");

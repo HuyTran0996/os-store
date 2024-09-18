@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate, Link, Outlet } from "react-router-dom";
 
 import { Box, Typography, createTheme } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
+import { showToast } from "./ToastMessage";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -199,14 +200,31 @@ const Footer = () => {
 
 const MainLayout = () => {
   const navigateReact = useNavigate();
+  const adminInfo = localStorage.getItem("adminData");
 
   const [session, setSession] = useState({
     user: {
-      name: "Bharat Kashyap",
-      email: "bharatkashyap@outlook.com",
+      name: "",
+      email: "",
       image: "https://avatars.githubusercontent.com/u/19550456",
     },
   });
+
+  useEffect(() => {
+    if (!adminInfo) {
+      showToast("Something goes wrong, please login again", "error");
+      navigateReact("/");
+    } else {
+      const parsedAdminData = JSON.parse(adminInfo);
+      setSession({
+        user: {
+          name: parsedAdminData.name,
+          email: parsedAdminData.email,
+          image: "https://avatars.githubusercontent.com/u/19550456",
+        },
+      });
+    }
+  }, []);
 
   const router = {
     navigate: (path) => {
@@ -227,6 +245,7 @@ const MainLayout = () => {
       },
       signOut: () => {
         setSession(null);
+        localStorage.removeItem("adminData");
         navigateReact("/");
       },
     };
