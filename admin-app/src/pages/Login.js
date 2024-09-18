@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useThunk } from "../hook/use-thunk";
 import { loginAdmin } from "../store/thunks/fetchUsers";
@@ -13,6 +14,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import "../styles/Login.scss";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,6 +27,7 @@ const Login = () => {
     try {
       await login({ email, password });
       showToast("Successfully Login", "success");
+      navigate("/admin");
     } catch (err) {
       showToast(`${err.message}`, "error");
     }

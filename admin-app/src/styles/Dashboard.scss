@@ -1,19 +1,1 @@
 @import "./stylesStore/variables.scss";
-
-.dashboardPage {
-  .green {
-    color: $color-47ad24;
-    font-size: 14px;
-    font-family: Roboto !important;
-  }
-  .red {
-    color: $color-e52e2e;
-    font-size: 14px;
-    font-family: Roboto !important;
-  }
-  .desc {
-    font: 14px;
-    font-family: Roboto !important;
-    color: $color-828599;
-  }
-}

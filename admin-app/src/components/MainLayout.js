@@ -2,14 +2,13 @@ import React, { useState, useMemo } from "react";
 import { useNavigate, Link, Outlet } from "react-router-dom";
 
 import "../styles/MainLayout.scss";
-
-import { createTheme } from "@mui/material/styles";
+import { Box, Typography, createTheme } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-
 import LayersIcon from "@mui/icons-material/Layers";
 import PersonIcon from "@mui/icons-material/Person";
 import CategoryIcon from "@mui/icons-material/Category";
@@ -176,6 +175,29 @@ const demoTheme = createTheme({
   },
 });
 
+const Footer = () => {
+  const theme = useTheme();
+  return (
+    <Box
+      sx={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        width: "100vw",
+        backgroundColor: theme.palette.background.paper,
+        padding: "1rem",
+        textAlign: "center",
+        zIndex: 9999,
+        borderTop: "1px solid #828599",
+      }}
+    >
+      <Typography variant="body2">
+        &copy; {new Date().getFullYear()} OS Store - Powered by: OS Store
+      </Typography>
+    </Box>
+  );
+};
+
 const MainLayout = () => {
   const navigateReact = useNavigate();
 
@@ -222,6 +244,7 @@ const MainLayout = () => {
     >
       <DashboardLayout>
         <Outlet />
+        <Footer />
       </DashboardLayout>
     </AppProvider>
   );

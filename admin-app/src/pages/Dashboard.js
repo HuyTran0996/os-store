@@ -1,140 +1,162 @@
 import React from "react";
+import { Grid2, Typography, CssBaseline, Container, Box } from "@mui/material";
 
 import "../styles/Dashboard.scss";
-import { BsArrowDownRight, BsArrowUpRight } from "react-icons/bs";
+
+import TotalCard from "../components/TotalCard";
+import ChartBar from "../components/ChartBar";
 
 const Dashboard = () => {
-  const data = [
+  const items = [1, 2, 3];
+  const datasetOrder = [
     {
-      type: "Jan",
-      sales: 38,
+      orders: 21,
+      month: "Jan",
     },
     {
-      type: "Feb",
-      sales: 52,
+      orders: 28,
+      month: "Feb",
     },
     {
-      type: "Mar",
-      sales: 61,
+      orders: 41,
+      month: "Mar",
     },
     {
-      type: "Apr",
-      sales: 145,
+      orders: 73,
+      month: "Apr",
     },
     {
-      type: "May",
-      sales: 48,
+      orders: 99,
+      month: "May",
     },
     {
-      type: "Jun",
-      sales: 38,
+      orders: 144,
+      month: "June",
     },
     {
-      type: "July",
-      sales: 38,
+      orders: 319,
+      month: "July",
     },
     {
-      type: "Aug",
-      sales: 38,
+      orders: 249,
+      month: "Aug",
     },
     {
-      type: "Sept",
-      sales: 38,
+      orders: 131,
+      month: "Sept",
     },
     {
-      type: "Oct",
-      sales: 38,
+      orders: 55,
+      month: "Oct",
     },
     {
-      type: "Nov",
-      sales: 38,
+      orders: 48,
+      month: "Nov",
     },
     {
-      type: "Dec",
-      sales: 38,
+      orders: 25,
+      month: "Dec",
     },
   ];
-
-  const config = {
-    data,
-    xField: "type",
-    yField: "sales",
-    color: ({ type }) => {
-      return "#ffd333";
+  const datasetIncome = [
+    {
+      orders: 21,
+      month: "Jan",
     },
-    label: {
-      position: "middle",
-      style: {
-        fill: "#FFFFFF",
-        opacity: 1,
-      },
+    {
+      orders: 28,
+      month: "Feb",
     },
-    xAxis: {
-      label: {
-        autoHide: true,
-        autoRotate: false,
-      },
+    {
+      orders: 41,
+      month: "Mar",
     },
-    meta: {
-      type: {
-        alias: "Month",
-      },
-      sales: {
-        alias: "Income",
-      },
+    {
+      orders: 73,
+      month: "Apr",
     },
-  };
-
+    {
+      orders: 99,
+      month: "May",
+    },
+    {
+      orders: 144,
+      month: "June",
+    },
+    {
+      orders: 319,
+      month: "July",
+    },
+    {
+      orders: 249,
+      month: "Aug",
+    },
+    {
+      orders: 131,
+      month: "Sept",
+    },
+    {
+      orders: 55,
+      month: "Oct",
+    },
+    {
+      orders: 48,
+      month: "Nov",
+    },
+    {
+      orders: 25,
+      month: "Dec",
+    },
+  ];
   return (
-    <div className="dashboardPage">
-      <h3 className="mb-4 title">Dashboard</h3>
-      <div className="d-flex justify-content-between align-items-center gap-3">
-        <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 rounded-3">
-          <div>
-            <p className="desc">Total</p>
-            <h4 className="mb-0 subtitle">$1100</h4>
-          </div>
+    <>
+      <CssBaseline />
+      <Container maxWidth="xl" sx={{ padding: "20px" }}>
+        <Typography variant="h3">Dashboard</Typography>
 
-          <div className="d-flex flex-column align-items-end">
-            <h6>
-              <BsArrowDownRight /> 32%
-            </h6>
-            <p className="mb-0  desc">Compared To April 2022</p>
-          </div>
-        </div>
-
-        <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 rounded-3">
-          <div>
-            <p className="desc">Total</p>
-            <h4 className="mb-0 sub-title">$1100</h4>
-          </div>
-          <div className="d-flex flex-column align-items-end">
-            <h6 className="red">
-              <BsArrowDownRight /> 32%
-            </h6>
-            <p className="mb-0  desc">Compared To April 2022</p>
-          </div>
-        </div>
-
-        <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 rounded-3">
-          <div>
-            <p className="desc">Total</p>
-            <h4 className="mb-0 sub-title">$1100</h4>
-          </div>
-          <div className="d-flex flex-column align-items-end">
-            <h6 className="green">
-              <BsArrowDownRight /> 32%
-            </h6>
-            <p className="mb-0 desc">Compared To April 2022</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-4">
-        <h3 className="mb-5 title">Income Statics</h3>
-        <div>{/* <Column {...config} /> */}</div>
-      </div>
-    </div>
+        <Grid2
+          container
+          sx={{
+            width: "100%",
+            justifyContent: "space-between",
+          }}
+        >
+          {items.map((item, index) => (
+            <Grid2
+              key={index}
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              sx={{ paddingTop: "20px" }}
+            >
+              <TotalCard
+                title="Total"
+                amount="1100"
+                percentage="32"
+                color="error.main"
+              />
+            </Grid2>
+          ))}
+        </Grid2>
+        <Box sx={{ marginTop: "40px" }}>
+          <ChartBar
+            dataset={datasetOrder}
+            unit="order"
+            dataKey="orders"
+            label="OS Store's Orders"
+          />
+        </Box>
+        <Box sx={{ margin: "40px 0 40px 0" }}>
+          <ChartBar
+            dataset={datasetIncome}
+            unit="Income (usd)"
+            dataKey="orders"
+            label="OS Store's Income"
+          />
+        </Box>
+      </Container>
+    </>
   );
 };
 
