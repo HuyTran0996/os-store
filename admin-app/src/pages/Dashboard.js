@@ -13,7 +13,6 @@ import { useSelector } from "react-redux";
 
 import TotalCard from "../components/TotalCard";
 import ChartBar from "../components/ChartBar";
-import { width } from "@mui/system";
 
 const monthMap = {
   Jan: 1,

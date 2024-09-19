@@ -137,10 +137,10 @@ exports.userProductOrderCompare = asyncHandler(async (req, res) => {
     createdAt: { $gte: startOfLastMonth, $lt: startOfCurrentMonth },
   });
 
-  const ordersFromThisMonth = await Product.countDocuments({
+  const ordersFromThisMonth = await Order.countDocuments({
     createdAt: { $gte: startOfCurrentMonth },
   });
-  const ordersFromLastMonth = await Product.countDocuments({
+  const ordersFromLastMonth = await Order.countDocuments({
     createdAt: { $gte: startOfLastMonth, $lt: startOfCurrentMonth },
   });
 
