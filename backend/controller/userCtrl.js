@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const Product = require("../models/productModel");
 const Order = require("../models/orderModel");
+const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const validateMongodbId = require("../utils/validateMongodbId");
 const { generateToken, cookieOption } = require("../config/jwtToken");
@@ -50,10 +51,20 @@ exports.saveAddress = asyncHandler(async (req, res) => {
 });
 
 exports.getAllUser = asyncHandler(async (req, res) => {
-  const getUsers = await User.find();
+  const features = new APIFeatures(User.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  const total = new APIFeatures(User.countDocuments(), req.query).filter();
+
+  const users = await features.query;
+  const totalUser = await total.query;
+
   res.status(200).json({
     status: "success",
-    getUsers,
+    data: { total: totalUser.length, users },
   });
 });
 

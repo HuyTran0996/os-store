@@ -1,11 +1,8 @@
-import * as React from "react";
+import { useState, useEffect } from "react";
+
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Close";
+
 import {
   GridRowModes,
   DataGrid,
@@ -22,6 +19,12 @@ import {
   randomPhoneNumber,
 } from "@mui/x-data-grid-generator";
 
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Close";
+
 const roles = ["Admin", "User"];
 const randomRole = () => {
   return randomArrayItem(roles);
@@ -34,25 +37,7 @@ const initialRows = [
     email: randomEmail(),
     phone: randomPhoneNumber(),
     role: randomRole(),
-    status: "active",
-    joinDate: randomCreatedDate(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    email: randomEmail(),
-    phone: randomPhoneNumber(),
-    role: randomRole(),
-    status: "active",
-    joinDate: randomCreatedDate(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    email: randomEmail(),
-    phone: randomPhoneNumber(),
-    role: randomRole(),
-    status: "active",
+    isBlocked: "false",
     joinDate: randomCreatedDate(),
   },
 ];
@@ -81,9 +66,21 @@ function EditToolbar(props) {
   );
 }
 
-export default function DataGridTable() {
-  const [rows, setRows] = React.useState(initialRows);
-  const [rowModesModel, setRowModesModel] = React.useState({});
+export default function DataGridTable({ data, isLoading }) {
+  const [rows, setRows] = useState("");
+  // const [rows, setRows] = React.useState(initialRows);
+  const [rowModesModel, setRowModesModel] = useState({});
+
+  useEffect(() => {
+    const dataUpdate = data?.users?.map((user) => {
+      return {
+        ...user,
+        id: user._id,
+        createdAt: new Date(user.createdAt),
+      };
+    });
+    setRows(dataUpdate);
+  }, [data]);
 
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -131,13 +128,14 @@ export default function DataGridTable() {
   };
 
   const columns = [
-    { field: "name", headerName: "Name", width: 180, editable: true },
+    { field: "id", headerName: "ID", width: 180, editable: true },
+    { field: "name", headerName: "Name", width: 200, editable: true },
     { field: "email", headerName: "Email", width: 280, editable: true },
     {
       field: "phone",
       headerName: "Phone",
-      type: "number",
-      width: 280,
+      type: "phone",
+      width: 150,
       align: "left",
       headerAlign: "left",
       editable: true,
@@ -145,25 +143,29 @@ export default function DataGridTable() {
     {
       field: "role",
       headerName: "Role",
-      width: 220,
+      width: 120,
       editable: true,
       type: "singleSelect",
       valueOptions: ["Admin", "User"],
     },
     {
-      field: "status",
+      field: "isBlocked",
       headerName: "Status",
       width: 120,
       editable: true,
       type: "singleSelect",
-      valueOptions: ["Active", "Passive"],
+      valueOptions: ["true", "false"],
     },
     {
-      field: "joinDate",
+      field: "createdAt",
       headerName: "Join date",
       type: "date",
       width: 180,
       editable: true,
+      renderCell: (params) => {
+        const date = new Date(params.value);
+        return date.toISOString().split("T")[0].replace(/-/g, "_");
+      },
     },
 
     {
@@ -217,8 +219,8 @@ export default function DataGridTable() {
   return (
     <Box
       sx={{
-        height: 500,
         width: "100%",
+
         "& .actions": {
           color: "text.secondary",
         },
@@ -228,6 +230,8 @@ export default function DataGridTable() {
       }}
     >
       <DataGrid
+        loading={isLoading}
+        autoHeight
         rows={rows}
         columns={columns}
         editMode="row"
@@ -235,6 +239,7 @@ export default function DataGridTable() {
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
+        hideFooter
         slots={{
           toolbar: EditToolbar,
         }}

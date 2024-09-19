@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginAdmin, userTotalCompare } from "../thunks/fetchUsers";
+import { loginAdmin, userTotalCompare, getAllUser } from "../thunks/fetchUsers";
 
 const initialState = {
   dataOfYou: [],
   dataOfUserTotalCompare: [],
+  dataAllUser: [],
 };
 
 const userSlice = createSlice({
@@ -15,6 +16,9 @@ const userSlice = createSlice({
     });
     builder.addCase(userTotalCompare.fulfilled, (state, action) => {
       state.dataOfUserTotalCompare = action.payload;
+    });
+    builder.addCase(getAllUser.fulfilled, (state, action) => {
+      state.dataAllUser = action.payload;
     });
   },
 });

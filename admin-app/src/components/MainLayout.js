@@ -29,7 +29,8 @@ import SubjectIcon from "@mui/icons-material/Subject";
 
 const NAVIGATION = [
   {
-    segment: "admin",
+    //Note: to navigate to "/", segment must be " ", not ""
+    segment: " ",
     title: "Dashboard",
     icon: <DashboardIcon />,
   },

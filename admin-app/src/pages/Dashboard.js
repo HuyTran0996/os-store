@@ -6,13 +6,20 @@ import {
   Box,
   CircularProgress,
 } from "@mui/material";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useThunk } from "../hook/use-thunk";
 import { userTotalCompare } from "../store/thunks/fetchUsers";
 import { getMonthlyOrders } from "../store/thunks/fetchOrders";
-import { useSelector } from "react-redux";
 
 import TotalCard from "../components/TotalCard";
 import ChartBar from "../components/ChartBar";
+import { showToast } from "../components/ToastMessage";
 
 const monthMap = {
   Jan: 1,
@@ -130,6 +137,7 @@ const datasetIncome = [
 ];
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
 
   const [doFetchUsers, isLoadingUsers, loadingUsersError] =
@@ -154,6 +162,10 @@ const Dashboard = () => {
       await doFetchMonthlyOrders();
     } catch (err) {
       console.log("error", err);
+      if (err.message === "Please log in to get access") {
+        showToast("Your Session Is Expired, Please Login Again", "error", 5000);
+        navigate("/login");
+      }
     } finally {
       setIsLoading(false);
     }

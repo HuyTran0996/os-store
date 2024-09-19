@@ -52,3 +52,11 @@ export const userTotalCompare = createAsyncThunk(
     return res.data.data;
   }
 );
+
+export const getAllUser = createAsyncThunk("users/getAllUser", async (page) => {
+  const limit = process.env.REACT_APP_LIMIT_PAGINATION;
+  const res = await apiService.get(
+    `/user/allUsers?page=${page || 1}&limit=${limit}`
+  );
+  return res.data.data;
+});
