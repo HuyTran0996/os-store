@@ -8,127 +8,151 @@ import {
 } from "@mui/material";
 import { useThunk } from "../hook/use-thunk";
 import { userTotalCompare } from "../store/thunks/fetchUsers";
+import { getMonthlyOrders } from "../store/thunks/fetchOrders";
 import { useSelector } from "react-redux";
 
 import TotalCard from "../components/TotalCard";
 import ChartBar from "../components/ChartBar";
+import { width } from "@mui/system";
+
+const monthMap = {
+  Jan: 1,
+  Feb: 2,
+  Mar: 3,
+  Apr: 4,
+  May: 5,
+  June: 6,
+  July: 7,
+  Aug: 8,
+  Sept: 9,
+  Oct: 10,
+  Nov: 11,
+  Dec: 12,
+};
+const datasetOrder = [
+  {
+    orders: 0,
+    month: "Jan",
+  },
+  {
+    orders: 0,
+    month: "Feb",
+  },
+  {
+    orders: 0,
+    month: "Mar",
+  },
+  {
+    orders: 0,
+    month: "Apr",
+  },
+  {
+    orders: 0,
+    month: "May",
+  },
+  {
+    orders: 0,
+    month: "June",
+  },
+  {
+    orders: 0,
+    month: "July",
+  },
+  {
+    orders: 0,
+    month: "Aug",
+  },
+  {
+    orders: 0,
+    month: "Sept",
+  },
+  {
+    orders: 0,
+    month: "Oct",
+  },
+  {
+    orders: 0,
+    month: "Nov",
+  },
+  {
+    orders: 0,
+    month: "Dec",
+  },
+];
+const datasetIncome = [
+  {
+    orders: 0,
+    month: "Jan",
+  },
+  {
+    orders: 0,
+    month: "Feb",
+  },
+  {
+    orders: 0,
+    month: "Mar",
+  },
+  {
+    orders: 0,
+    month: "Apr",
+  },
+  {
+    orders: 0,
+    month: "May",
+  },
+  {
+    orders: 0,
+    month: "June",
+  },
+  {
+    orders: 0,
+    month: "July",
+  },
+  {
+    orders: 0,
+    month: "Aug",
+  },
+  {
+    orders: 0,
+    month: "Sept",
+  },
+  {
+    orders: 0,
+    month: "Oct",
+  },
+  {
+    orders: 0,
+    month: "Nov",
+  },
+  {
+    orders: 0,
+    month: "Dec",
+  },
+];
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
 
-  const datasetOrder = [
-    {
-      orders: 21,
-      month: "Jan",
-    },
-    {
-      orders: 28,
-      month: "Feb",
-    },
-    {
-      orders: 41,
-      month: "Mar",
-    },
-    {
-      orders: 73,
-      month: "Apr",
-    },
-    {
-      orders: 99,
-      month: "May",
-    },
-    {
-      orders: 144,
-      month: "June",
-    },
-    {
-      orders: 319,
-      month: "July",
-    },
-    {
-      orders: 249,
-      month: "Aug",
-    },
-    {
-      orders: 131,
-      month: "Sept",
-    },
-    {
-      orders: 55,
-      month: "Oct",
-    },
-    {
-      orders: 48,
-      month: "Nov",
-    },
-    {
-      orders: 25,
-      month: "Dec",
-    },
-  ];
-  const datasetIncome = [
-    {
-      orders: 21,
-      month: "Jan",
-    },
-    {
-      orders: 28,
-      month: "Feb",
-    },
-    {
-      orders: 41,
-      month: "Mar",
-    },
-    {
-      orders: 73,
-      month: "Apr",
-    },
-    {
-      orders: 99,
-      month: "May",
-    },
-    {
-      orders: 144,
-      month: "June",
-    },
-    {
-      orders: 319,
-      month: "July",
-    },
-    {
-      orders: 249,
-      month: "Aug",
-    },
-    {
-      orders: 131,
-      month: "Sept",
-    },
-    {
-      orders: 55,
-      month: "Oct",
-    },
-    {
-      orders: 48,
-      month: "Nov",
-    },
-    {
-      orders: 25,
-      month: "Dec",
-    },
-  ];
-
   const [doFetchUsers, isLoadingUsers, loadingUsersError] =
     useThunk(userTotalCompare);
+  const [
+    doFetchMonthlyOrders,
+    isLoadingMonthlyOrders,
+    loadingMonthlyOrdersError,
+  ] = useThunk(getMonthlyOrders);
 
   const { dataOfUserTotalCompare } = useSelector((state) => {
     return state.users;
+  });
+  const { dataOrderMonthly } = useSelector((state) => {
+    return state.orders;
   });
 
   const getData = async () => {
     setIsLoading(true);
     try {
       const userData = await doFetchUsers();
-      console.log("userData", userData);
+      const orderData = await doFetchMonthlyOrders();
     } catch (err) {
       console.log("error", err);
     } finally {
@@ -139,6 +163,27 @@ const Dashboard = () => {
   useEffect(() => {
     getData();
   }, []);
+
+  dataOrderMonthly.forEach((order) => {
+    // Find the month name corresponding to the month number
+    const monthName = Object.keys(monthMap).find(
+      (key) => monthMap[key] === order._id
+    );
+
+    // Update the corresponding entry in datasetOrder1
+    const monthOrder = datasetOrder.find((entry) => entry.month === monthName);
+    if (monthOrder) {
+      monthOrder.orders = order.totalOrders;
+    }
+
+    const monthIncome = datasetIncome.find(
+      (entry) => entry.month === monthName
+    );
+    if (monthIncome) {
+      monthIncome.orders = order.totalIncomes;
+    }
+  });
+
   return (
     <>
       <Container maxWidth="xl" sx={{ padding: "20px" }}>
@@ -187,21 +232,32 @@ const Dashboard = () => {
             })
           )}
         </Grid2>
-        <Box sx={{ marginTop: "40px" }}>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            justifyContent: "space-between",
+            gap: 2,
+            marginTop: 3,
+          }}
+        >
           <ChartBar
             dataset={datasetOrder}
             unit="order"
             dataKey="orders"
-            label="OS Store's Orders"
-            isLoading={isLoading ? "loading" : ""}
+            label="OS Store's Orders (order)"
+            isLoading={isLoading}
+            color="#40c4ff"
           />
-        </Box>
-        <Box sx={{ margin: "40px 0 40px 0" }}>
+
           <ChartBar
             dataset={datasetIncome}
-            unit="Income (usd)"
+            unit="usd"
             dataKey="orders"
-            label="OS Store's Income"
+            label="OS Store's Income (usd)"
+            isLoading={isLoading}
+            color="#cddc39"
           />
         </Box>
       </Container>

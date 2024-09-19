@@ -3,12 +3,19 @@ import * as React from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 
-export default function ChartBar({ dataset, unit, dataKey, label, isLoading }) {
+export default function ChartBar({
+  dataset,
+  unit,
+  dataKey,
+  label,
+  isLoading,
+  color,
+}) {
   const valueFormatter = (value) => `${value}${unit}`;
   return (
     <div style={{ width: "100%" }}>
       <BarChart
-        loading={isLoading}
+        loading={!!isLoading}
         dataset={dataset}
         xAxis={[
           {
@@ -21,11 +28,14 @@ export default function ChartBar({ dataset, unit, dataKey, label, isLoading }) {
         ]}
         yAxis={[
           {
-            label: unit,
+            //Note: big number will cover the label, bad for ux-ui
+            // label: unit,
           },
         ]}
-        series={[{ dataKey: dataKey, label: label, valueFormatter }]}
-        height={300}
+        series={[
+          { dataKey: dataKey, label: label, valueFormatter, color: color },
+        ]}
+        height={400}
         sx={{
           [`& .${axisClasses.directionY} .${axisClasses.label}`]: {
             transform: "translateX(-10px)",

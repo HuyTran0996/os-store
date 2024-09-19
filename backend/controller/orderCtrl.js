@@ -117,7 +117,7 @@ exports.createOrder = asyncHandler(async (req, res) => {
       method: "COD",
       amount: finalAmount,
       status: "Cash on Delivery",
-      created: Date.now(),
+
       currency: "usd",
     },
     orderby: req.user._id,
@@ -214,5 +214,28 @@ exports.updateOrderStatus = asyncHandler(async (req, res) => {
   res.status(200).json({
     status: "success",
     updateOrderStatus,
+  });
+});
+
+exports.getMonthlyOrders = asyncHandler(async (req, res) => {
+  const ordersByMonth = await Order.aggregate([
+    {
+      $group: {
+        _id: { $month: "$createdAt" },
+        //get all detail of order=> use $ROOT
+        // orders: { $push: "$$ROOT" },
+        // orders: { $push: "$paymentIntent" },
+        totalIncomes: { $sum: "$paymentIntent.amount" },
+        totalOrders: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { _id: 1 },
+    },
+  ]);
+
+  res.status(200).json({
+    status: "success",
+    ordersByMonth,
   });
 });

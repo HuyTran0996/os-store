@@ -18,6 +18,12 @@ router.get(
 );
 router.get("/getAllOrder", authMiddleware, isAdmin, orderCtrl.getAllOrders);
 router.get(
+  "/getMonthlyOrders",
+  authMiddleware,
+  isAdmin,
+  orderCtrl.getMonthlyOrders
+);
+router.get(
   "/getOrderByUser/:id",
   authMiddleware,
   isAdmin,
