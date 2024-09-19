@@ -150,8 +150,8 @@ const Dashboard = () => {
   const getData = async () => {
     setIsLoading(true);
     try {
-      const userData = await doFetchUsers();
-      const orderData = await doFetchMonthlyOrders();
+      await doFetchUsers();
+      await doFetchMonthlyOrders();
     } catch (err) {
       console.log("error", err);
     } finally {

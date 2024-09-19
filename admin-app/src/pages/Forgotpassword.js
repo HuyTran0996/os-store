@@ -52,7 +52,7 @@ const Forgotpassword = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <Link to="/">Back To Login Page?</Link>
+            <Link to="/login">Back To Login Page?</Link>
 
             <Button
               className="submit"

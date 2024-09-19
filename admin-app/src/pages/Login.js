@@ -39,7 +39,7 @@ const Login = () => {
       }
       setEmail("");
       setPassword("");
-      navigate("/admin");
+      navigate("/");
     } catch (err) {
       showToast(`${err.message}`, "error");
     }

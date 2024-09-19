@@ -219,7 +219,7 @@ const MainLayout = () => {
   useEffect(() => {
     if (!adminInfo) {
       showToast("Something goes wrong, please login again", "error");
-      navigateReact("/");
+      navigateReact("/login");
     } else {
       const parsedAdminData = JSON.parse(adminInfo);
       setSession({
@@ -240,14 +240,14 @@ const MainLayout = () => {
 
   const authentication = {
     signIn: () => {
-      navigateReact("/");
+      navigateReact("/login");
     },
     signOut: async () => {
       setSession(null);
       try {
         setLogOut(true);
         await signout();
-        navigateReact("/");
+        navigateReact("/login");
       } catch (err) {
         showToast("Sign Out Failed", "error");
       } finally {

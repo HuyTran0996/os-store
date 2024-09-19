@@ -32,7 +32,7 @@ const Resetpassword = () => {
     try {
       const data = await reset({ password, token });
       showToast(`${data.message}`, "success");
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       showToast(`${err.message}`, "error", 3000);
     }
@@ -96,7 +96,7 @@ const Resetpassword = () => {
               }}
             />
 
-            <Link to="/">Back To Login Page?</Link>
+            <Link to="/login">Back To Login Page?</Link>
 
             <Button
               className="submit"
