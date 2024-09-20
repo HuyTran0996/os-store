@@ -1,7 +1,11 @@
 const express = require("express");
 
 const userCtrl = require("../controller/userCtrl");
-const { authMiddleware, isAdmin } = require("../middlewares/authMiddleware");
+const {
+  authMiddleware,
+  isAdmin,
+  isManager,
+} = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
@@ -20,6 +24,6 @@ router.put("/saveAddress", authMiddleware, userCtrl.saveAddress);
 router.put("/blockUser/:id", authMiddleware, isAdmin, userCtrl.blockUser);
 router.put("/unblockUser/:id", authMiddleware, isAdmin, userCtrl.unblockUser);
 
-router.delete("/:id", userCtrl.deleteAUser);
+router.delete("/:id", authMiddleware, isManager, userCtrl.deleteAUser);
 
 module.exports = router;

@@ -38,7 +38,11 @@ exports.login = (action) =>
     const findUser = await User.findOne({ email }).select("+password");
 
     if (findUser && (await findUser.isPasswordMatched(password))) {
-      if (action === "admin" && findUser.role !== "admin") {
+      if (
+        action === "admin" &&
+        findUser.role !== "admin" &&
+        findUser.role !== "manager"
+      ) {
         throw new AppError("Unauthorized", 401);
       }
 

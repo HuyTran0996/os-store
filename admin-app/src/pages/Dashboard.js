@@ -162,10 +162,7 @@ const Dashboard = () => {
       await doFetchMonthlyOrders();
     } catch (err) {
       console.log("error", err);
-      if (err.message === "Please log in to get access") {
-        showToast("Your Session Is Expired, Please Login Again", "error", 5000);
-        navigate("/login");
-      }
+      showToast("something goes wrong", "error", 3000);
     } finally {
       setIsLoading(false);
     }

@@ -2,6 +2,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 import { apiService } from "../../app/apiService";
 
+const limit = process.env.REACT_APP_LIMIT_PAGINATION;
+
 export const loginAdmin = createAsyncThunk(
   "users/loginAdmin",
   async ({ email, password }) => {
@@ -48,15 +50,25 @@ export const userTotalCompare = createAsyncThunk(
   "users/userTotalCompare",
   async () => {
     const res = await apiService.get(`/user/userTotalCompare`);
-
     return res.data.data;
   }
 );
 
 export const getAllUser = createAsyncThunk("users/getAllUser", async (page) => {
-  const limit = process.env.REACT_APP_LIMIT_PAGINATION;
   const res = await apiService.get(
     `/user/allUsers?page=${page || 1}&limit=${limit}`
   );
   return res.data.data;
 });
+
+export const blockUser = createAsyncThunk("users/blockUser", async (userId) => {
+  const res = await apiService.put(`/user/blockUser/${userId}`);
+  return res.data.data;
+});
+export const unblockUser = createAsyncThunk(
+  "users/unblockUser",
+  async (userId) => {
+    const res = await apiService.put(`/user/unblockUser/${userId}`);
+    return res.data.data;
+  }
+);

@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-
+import { useSearchParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-
 import {
   GridRowModes,
   DataGrid,
@@ -19,28 +18,19 @@ import {
   randomPhoneNumber,
 } from "@mui/x-data-grid-generator";
 
+import { showToast } from "./ToastMessage";
+import { useThunk } from "../hook/use-thunk";
+import { blockUser, unblockUser, getAllUser } from "../store/thunks/fetchUsers";
+
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-
-const roles = ["Admin", "User"];
-const randomRole = () => {
-  return randomArrayItem(roles);
-};
-
-const initialRows = [
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    email: randomEmail(),
-    phone: randomPhoneNumber(),
-    role: randomRole(),
-    isBlocked: "false",
-    joinDate: randomCreatedDate(),
-  },
-];
+import PersonIcon from "@mui/icons-material/Person";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import { GiSharkBite } from "react-icons/gi";
 
 function EditToolbar(props) {
   const { setRows, setRowModesModel } = props;
@@ -67,9 +57,15 @@ function EditToolbar(props) {
 }
 
 export default function DataGridTable({ data, isLoading }) {
+  const [isLoadingSelf, setIsLoadingSelf] = useState(false);
   const [rows, setRows] = useState("");
-  // const [rows, setRows] = React.useState(initialRows);
   const [rowModesModel, setRowModesModel] = useState({});
+  let [searchParams] = useSearchParams();
+  let page = parseInt(searchParams.get("page")) || 1;
+
+  const [block] = useThunk(blockUser);
+  const [unblock] = useThunk(unblockUser);
+  const [getDataAllUser] = useThunk(getAllUser);
 
   useEffect(() => {
     const dataUpdate = data?.users?.map((user) => {
@@ -93,14 +89,37 @@ export default function DataGridTable({ data, isLoading }) {
     console.log("email handleEditClick", email);
   };
 
-  const handleSaveClick = (id, email) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  const handleSaveClick = (id, email, name) => () => {
     console.log("email handleSaveClick", email);
+    console.log("name handleSaveClick", name);
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
   };
 
-  const handleDeleteClick = (id, email) => () => {
-    setRows(rows.filter((row) => row.id !== id));
-    console.log("email handleDeleteClick", email);
+  const handleBlockUser = (id) => async () => {
+    // setRows(rows.filter((row) => row.id !== id));
+    console.log("handleBlockUser", id);
+    try {
+      setIsLoadingSelf(true);
+      await block(id);
+      await getDataAllUser(page);
+    } catch (err) {
+      showToast(`${err.message}`, "error", 3000);
+    } finally {
+      setIsLoadingSelf(false);
+    }
+  };
+  const handleUnBlockUser = (id) => async () => {
+    // setRows(rows.filter((row) => row.id !== id));
+    console.log("handleBlockUser", id);
+    try {
+      setIsLoadingSelf(true);
+      await unblock(id);
+      await getDataAllUser(page);
+    } catch (err) {
+      showToast(`${err.message}`, "error", 3000);
+    } finally {
+      setIsLoadingSelf(false);
+    }
   };
 
   const handleCancelClick = (id, email) => () => {
@@ -130,38 +149,73 @@ export default function DataGridTable({ data, isLoading }) {
   const columns = [
     { field: "id", headerName: "ID", width: 180, editable: true },
     { field: "name", headerName: "Name", width: 200, editable: true },
-    { field: "email", headerName: "Email", width: 280, editable: true },
+    { field: "email", headerName: "Email", width: 280 },
     {
       field: "phone",
       headerName: "Phone",
       type: "phone",
       width: 150,
-      align: "left",
-      headerAlign: "left",
       editable: true,
     },
     {
       field: "role",
       headerName: "Role",
-      width: 120,
-      editable: true,
-      type: "singleSelect",
-      valueOptions: ["Admin", "User"],
+      width: 150,
+      type: "actions",
+
+      getActions: ({ id, row }) => {
+        return [
+          <GridActionsCellItem
+            icon={<PersonIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={handleEditClick(id, row.email)}
+            sx={row.role === "user" ? { backgroundColor: "#4caf50" } : ""}
+          />,
+
+          <GridActionsCellItem
+            icon={<SupportAgentIcon />}
+            label="Delete"
+            // onClick={handleDeleteClick(id, row.email)}
+            sx={row.role === "admin" ? { backgroundColor: "#4caf50" } : ""}
+          />,
+          <GridActionsCellItem
+            icon={<GiSharkBite style={{ fontSize: "22px" }} />}
+            label="Delete"
+            // onClick={handleDeleteClick(id, row.email)}
+            sx={row.role === "manager" ? { backgroundColor: "#afb42b" } : ""}
+          />,
+        ];
+      },
     },
     {
       field: "isBlocked",
       headerName: "Status",
+      type: "actions",
       width: 120,
-      editable: true,
-      type: "singleSelect",
-      valueOptions: ["true", "false"],
+      getActions: ({ id, row }) => {
+        return [
+          <GridActionsCellItem
+            icon={<PersonIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={row.isBlocked && handleUnBlockUser(id)}
+            sx={row.isBlocked ? "" : { backgroundColor: "#4caf50" }}
+          />,
+          <GridActionsCellItem
+            icon={<PersonOffIcon />}
+            label="Delete"
+            onClick={row.isBlocked === false && handleBlockUser(id)}
+            sx={row.isBlocked ? { backgroundColor: "#f44336" } : ""}
+          />,
+        ];
+      },
     },
     {
       field: "createdAt",
       headerName: "Join date",
       type: "date",
       width: 180,
-      editable: true,
       renderCell: (params) => {
         const date = new Date(params.value);
         return date.toISOString().split("T")[0].replace(/-/g, "_");
@@ -185,7 +239,7 @@ export default function DataGridTable({ data, isLoading }) {
               sx={{
                 color: "primary.main",
               }}
-              onClick={handleSaveClick(id, row.email)}
+              onClick={handleSaveClick(id, row.email, row.name)}
             />,
             <GridActionsCellItem
               icon={<CancelIcon />}
@@ -208,7 +262,7 @@ export default function DataGridTable({ data, isLoading }) {
           <GridActionsCellItem
             icon={<DeleteIcon />}
             label="Delete"
-            onClick={handleDeleteClick(id, row.email)}
+            // onClick={handleBlockUser(id)}
             color="inherit"
           />,
         ];
@@ -230,7 +284,7 @@ export default function DataGridTable({ data, isLoading }) {
       }}
     >
       <DataGrid
-        loading={isLoading}
+        loading={isLoading || isLoadingSelf}
         autoHeight
         rows={rows}
         columns={columns}

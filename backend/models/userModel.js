@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["user", "admin", "manager"],
       default: "user",
     },
     isBlocked: {
@@ -60,10 +60,10 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.pre(/^find/, function (next) {
-  this.find({ isBlocked: false });
-  next();
-});
+// userSchema.pre(/^find/, function (next) {
+//   this.find({ isBlocked: false });
+//   next();
+// });
 
 userSchema.methods.isPasswordMatched = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);

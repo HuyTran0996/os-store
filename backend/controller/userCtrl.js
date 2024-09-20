@@ -93,6 +93,10 @@ exports.blockUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongodbId(id);
 
+  const roleUser = await User.findById(id);
+  if (req.user.role === "admin" && roleUser.role === "manager")
+    throw new AppError("Admins cannot block managers.", 403);
+
   const blockUser = await User.findByIdAndUpdate(
     id,
     { isBlocked: true },
@@ -107,6 +111,10 @@ exports.blockUser = asyncHandler(async (req, res) => {
 exports.unblockUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongodbId(id);
+
+  const roleUser = await User.findById(id);
+  if (req.user.role === "admin" && roleUser.role === "manager")
+    throw new AppError("Admins cannot unblock managers.", 403);
 
   const unblockUser = await User.findByIdAndUpdate(
     id,
