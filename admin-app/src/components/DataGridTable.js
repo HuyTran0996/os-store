@@ -20,7 +20,13 @@ import {
 
 import { showToast } from "./ToastMessage";
 import { useThunk } from "../hook/use-thunk";
-import { blockUser, unblockUser, getAllUser } from "../store/thunks/fetchUsers";
+import {
+  blockUser,
+  unblockUser,
+  getAllUser,
+  updateNameEmail,
+  deleteUser,
+} from "../store/thunks/fetchUsers";
 
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -65,7 +71,21 @@ export default function DataGridTable({ data, isLoading }) {
 
   const [block] = useThunk(blockUser);
   const [unblock] = useThunk(unblockUser);
+  const [updateUserNameEmail] = useThunk(updateNameEmail);
+  const [deleteAUser] = useThunk(deleteUser);
   const [getDataAllUser] = useThunk(getAllUser);
+
+  const action = async (functionA) => {
+    try {
+      setIsLoadingSelf(true);
+      await functionA;
+      await getDataAllUser(page);
+    } catch (err) {
+      showToast(`${err.message}`, "error", 3000);
+    } finally {
+      setIsLoadingSelf(false);
+    }
+  };
 
   useEffect(() => {
     const dataUpdate = data?.users?.map((user) => {
@@ -78,51 +98,22 @@ export default function DataGridTable({ data, isLoading }) {
     setRows(dataUpdate);
   }, [data]);
 
+  //////////////MUI DATA GRID functions, no need to care this//////////
+  const handleEditClick = (id) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  };
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
       event.defaultMuiPrevented = true;
     }
   };
-
-  const handleEditClick = (id, email) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-    console.log("email handleEditClick", email);
+  const handleSaveClick = (id) => () => {
+    setRowModesModel({
+      ...rowModesModel,
+      [id]: { mode: GridRowModes.View },
+    });
   };
-
-  const handleSaveClick = (id, email, name) => () => {
-    console.log("email handleSaveClick", email);
-    console.log("name handleSaveClick", name);
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-
-  const handleBlockUser = (id) => async () => {
-    // setRows(rows.filter((row) => row.id !== id));
-    console.log("handleBlockUser", id);
-    try {
-      setIsLoadingSelf(true);
-      await block(id);
-      await getDataAllUser(page);
-    } catch (err) {
-      showToast(`${err.message}`, "error", 3000);
-    } finally {
-      setIsLoadingSelf(false);
-    }
-  };
-  const handleUnBlockUser = (id) => async () => {
-    // setRows(rows.filter((row) => row.id !== id));
-    console.log("handleBlockUser", id);
-    try {
-      setIsLoadingSelf(true);
-      await unblock(id);
-      await getDataAllUser(page);
-    } catch (err) {
-      showToast(`${err.message}`, "error", 3000);
-    } finally {
-      setIsLoadingSelf(false);
-    }
-  };
-
-  const handleCancelClick = (id, email) => () => {
+  const handleCancelClick = (id) => () => {
     setRowModesModel({
       ...rowModesModel,
       [id]: { mode: GridRowModes.View, ignoreModifications: true },
@@ -132,13 +123,31 @@ export default function DataGridTable({ data, isLoading }) {
     if (editedRow.isNew) {
       setRows(rows.filter((row) => row.id !== id));
     }
+  };
+  ///////////////////////////
 
-    console.log("email handleCancelClick", email);
+  const handleBlockUser = (id) => async () => {
+    action(block(id));
+  };
+  const handleUnBlockUser = (id) => async () => {
+    action(unblock(id));
+  };
+  const handleDeleteAUser = (id) => async () => {
+    action(deleteAUser(id));
   };
 
+  //Note: the only way to get input value to update name and phone in back-end is to use newRow value of MUI in this function
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+
+    console.log("line là", newRow);
+    const id = newRow.id;
+    const name = newRow.name;
+    const phone = newRow.phone;
+
+    action(updateUserNameEmail({ id, name, phone }));
+
     return updatedRow;
   };
 
@@ -169,7 +178,7 @@ export default function DataGridTable({ data, isLoading }) {
             icon={<PersonIcon />}
             label="Edit"
             className="textPrimary"
-            onClick={handleEditClick(id, row.email)}
+            // onClick={handleEditClick(id)}
             sx={row.role === "user" ? { backgroundColor: "#4caf50" } : ""}
           />,
 
@@ -239,13 +248,13 @@ export default function DataGridTable({ data, isLoading }) {
               sx={{
                 color: "primary.main",
               }}
-              onClick={handleSaveClick(id, row.email, row.name)}
+              onClick={handleSaveClick(id)}
             />,
             <GridActionsCellItem
               icon={<CancelIcon />}
               label="Cancel"
               className="textPrimary"
-              onClick={handleCancelClick(id, row.email)}
+              onClick={handleCancelClick(id)}
               color="inherit"
             />,
           ];
@@ -256,13 +265,13 @@ export default function DataGridTable({ data, isLoading }) {
             icon={<EditIcon />}
             label="Edit"
             className="textPrimary"
-            onClick={handleEditClick(id, row.email)}
+            onClick={handleEditClick(id)}
             color="inherit"
           />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
             label="Delete"
-            // onClick={handleBlockUser(id)}
+            onClick={handleDeleteAUser(id)}
             color="inherit"
           />,
         ];

@@ -60,15 +60,30 @@ export const getAllUser = createAsyncThunk("users/getAllUser", async (page) => {
   );
   return res.data.data;
 });
+export const updateNameEmail = createAsyncThunk(
+  "users/updateNameEmail",
+  async ({ id, name, phone }) => {
+    const res = await apiService.put(`/user/editUser`, { id, name, phone });
+    return res.data.data;
+  }
+);
 
 export const blockUser = createAsyncThunk("users/blockUser", async (userId) => {
   const res = await apiService.put(`/user/blockUser/${userId}`);
   return res.data.data;
 });
+
 export const unblockUser = createAsyncThunk(
   "users/unblockUser",
   async (userId) => {
     const res = await apiService.put(`/user/unblockUser/${userId}`);
+    return res.data.data;
+  }
+);
+export const deleteUser = createAsyncThunk(
+  "users/deleteUser",
+  async (userId) => {
+    const res = await apiService.delete(`/user/${userId}`);
     return res.data.data;
   }
 );

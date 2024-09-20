@@ -19,9 +19,16 @@ router.get(
 );
 router.get("/:id", authMiddleware, userCtrl.getAUser);
 
-router.put("/editUser", authMiddleware, userCtrl.updatedUser);
+router.put("/editUser", authMiddleware, isAdmin, userCtrl.updatedUser("admin"));
+router.put("/editUserSelf", authMiddleware, userCtrl.updatedUser("self"));
 router.put("/saveAddress", authMiddleware, userCtrl.saveAddress);
-router.put("/blockUser/:id", authMiddleware, isAdmin, userCtrl.blockUser);
+router.put(
+  "/blockUser/:id",
+  authMiddleware,
+  isAdmin,
+  userCtrl.blockUser("admin")
+);
+router.put("/blockUserSelf/:id", authMiddleware, userCtrl.blockUser("self"));
 router.put("/unblockUser/:id", authMiddleware, isAdmin, userCtrl.unblockUser);
 
 router.delete("/:id", authMiddleware, isManager, userCtrl.deleteAUser);

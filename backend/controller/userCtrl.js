@@ -9,24 +9,47 @@ const AppError = require("../utils/appError");
 const validateMongodbId = require("../utils/validateMongodbId");
 const { generateToken, cookieOption } = require("../config/jwtToken");
 
-exports.updatedUser = asyncHandler(async (req, res) => {
-  const { _id } = req.user;
-  const { name, phone } = req.body;
+exports.updatedUser = (action) =>
+  asyncHandler(async (req, res) => {
+    if (action === "self") {
+      const { _id } = req.user;
+      const { name, phone } = req.body;
 
-  if (!name && !phone)
-    throw new AppError("Please provide all information", 400);
+      if (!name && !phone)
+        throw new AppError("Please provide all information", 400);
 
-  const updateUser = await User.findByIdAndUpdate(
-    _id,
-    { name, phone },
-    { new: true }
-  );
+      const updateUser = await User.findByIdAndUpdate(
+        _id,
+        { name, phone },
+        { new: true }
+      );
+      res.status(200).json({
+        status: "success",
+        updateUser,
+      });
+    } else if (action === "admin") {
+      const { _id } = req.user;
+      const { id, name, phone } = req.body;
 
-  res.status(200).json({
-    status: "success",
-    updateUser,
+      validateMongodbId(id);
+      if (!id && !name && !phone)
+        throw new AppError("Please provide all information", 400);
+
+      const roleUser = await User.findById(id);
+      if (req.user.role === "admin" && roleUser.role === "manager")
+        throw new AppError("Admins change managers.", 403);
+
+      const updateUser = await User.findByIdAndUpdate(
+        _id,
+        { name, phone },
+        { new: true }
+      );
+      res.status(200).json({
+        status: "success",
+        updateUser,
+      });
+    }
   });
-});
 
 exports.saveAddress = asyncHandler(async (req, res) => {
   const { _id } = req.user;
@@ -89,24 +112,25 @@ exports.deleteAUser = asyncHandler(async (req, res) => {
   });
 });
 
-exports.blockUser = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  validateMongodbId(id);
-
-  const roleUser = await User.findById(id);
-  if (req.user.role === "admin" && roleUser.role === "manager")
-    throw new AppError("Admins cannot block managers.", 403);
-
-  const blockUser = await User.findByIdAndUpdate(
-    id,
-    { isBlocked: true },
-    { new: true }
-  );
-  res.status(204).json({
-    status: "success",
-    blockUser,
+exports.blockUser = (action) =>
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    validateMongodbId(id);
+    if (action === "admin") {
+      const roleUser = await User.findById(id);
+      if (req.user.role === "admin" && roleUser.role === "manager")
+        throw new AppError("Admins cannot block managers.", 403);
+    }
+    const blockUser = await User.findByIdAndUpdate(
+      id,
+      { isBlocked: true },
+      { new: true }
+    );
+    res.status(204).json({
+      status: "success",
+      blockUser,
+    });
   });
-});
 
 exports.unblockUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
