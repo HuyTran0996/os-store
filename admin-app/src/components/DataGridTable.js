@@ -133,7 +133,13 @@ export default function DataGridTable({ data, isLoading }) {
     action(unblock(id));
   };
   const handleDeleteAUser = (id) => async () => {
-    action(deleteAUser(id));
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+
+    if (confirmed) {
+      await action(deleteAUser(id));
+    }
   };
 
   //Note: the only way to get input value to update name and phone in back-end is to use newRow value of MUI in this function
