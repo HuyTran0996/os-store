@@ -58,7 +58,7 @@ function EditToolbar(props) {
 
 export default function DataGridTable({ data, isLoading }) {
   const [isLoadingSelf, setIsLoadingSelf] = useState(false);
-  const [rows, setRows] = useState("");
+  const [rows, setRows] = useState([]);
   const [rowModesModel, setRowModesModel] = useState({});
   let [searchParams] = useSearchParams();
   let page = parseInt(searchParams.get("page")) || 1;

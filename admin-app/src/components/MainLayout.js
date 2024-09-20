@@ -237,6 +237,8 @@ const MainLayout = () => {
     navigate: (path) => {
       navigateReact(path);
     },
+    //Note: remove  pathname: "", browser will show a warning
+    pathname: "",
   };
 
   const authentication = {
