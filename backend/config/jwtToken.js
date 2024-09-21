@@ -8,7 +8,7 @@ const generateToken = (id) => {
 
 const cookieOption = {
   expires: new Date(
-    Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000 //1d
   ),
   httpOnly: true,
   sameSite: "None",

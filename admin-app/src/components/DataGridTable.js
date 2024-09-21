@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { Box, TextField, IconButton } from "@mui/material";
 import {
   GridRowModes,
   DataGrid,
@@ -9,14 +8,6 @@ import {
   GridActionsCellItem,
   GridRowEditStopReasons,
 } from "@mui/x-data-grid";
-import {
-  randomCreatedDate,
-  randomTraderName,
-  randomId,
-  randomArrayItem,
-  randomEmail,
-  randomPhoneNumber,
-} from "@mui/x-data-grid-generator";
 
 import { showToast } from "./ToastMessage";
 import { useThunk } from "../hook/use-thunk";
@@ -27,9 +18,9 @@ import {
   updateNameEmail,
   deleteUser,
   changeRole,
+  smartUserSearch,
 } from "../store/thunks/fetchUsers";
 
-import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
@@ -37,28 +28,65 @@ import CancelIcon from "@mui/icons-material/Close";
 import PersonIcon from "@mui/icons-material/Person";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import SearchIcon from "@mui/icons-material/Search";
 import { GiSharkBite } from "react-icons/gi";
 
 function EditToolbar(props) {
-  const { setRows, setRowModesModel } = props;
+  const navigate = useNavigate();
+  const [searchValue, setSearchValue] = useState("");
+  const { isLoadingSelf, setIsLoadingSelf, smartUserSearching, action, page } =
+    props;
 
-  const handleClick = () => {
-    const id = randomId();
-    setRows((oldRows) => [
-      ...oldRows,
-      { id, name: "", age: "", role: "", isNew: true },
-    ]);
-    setRowModesModel((oldModel) => ({
-      ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
-    }));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (searchValue.trim() === "") {
+      await action();
+    } else {
+      try {
+        navigate("/customers");
+        setIsLoadingSelf(true);
+        await smartUserSearching({ page, searchField: searchValue.trim() });
+      } catch (err) {
+        showToast(`${err.message}`, "error", 3000);
+      } finally {
+        setIsLoadingSelf(false);
+      }
+    }
   };
 
   return (
-    <GridToolbarContainer>
-      <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-        Add record
-      </Button>
+    <GridToolbarContainer sx={{ width: "100%" }}>
+      <form onSubmit={handleSubmit} style={{ width: "100%", margin: "7px" }}>
+        <Box
+          sx={{
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <TextField
+            className="input"
+            placeholder="Search User..."
+            type="text"
+            fullWidth
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+          />
+
+          <IconButton
+            type="submit"
+            color="primary"
+            variant="contained"
+            fullWidth
+            size="large"
+            disabled={isLoadingSelf}
+            sx={{ position: "absolute", right: "7px" }}
+          >
+            <SearchIcon />
+          </IconButton>
+        </Box>
+      </form>
     </GridToolbarContainer>
   );
 }
@@ -75,6 +103,7 @@ export default function DataGridTable({ data, isLoading }) {
   const [updateUserNameEmail] = useThunk(updateNameEmail);
   const [changeRoleUser] = useThunk(changeRole);
   const [deleteAUser] = useThunk(deleteUser);
+  const [smartUserSearching] = useThunk(smartUserSearch);
   const [getDataAllUser] = useThunk(getAllUser);
 
   const action = async (functionA) => {
@@ -94,6 +123,7 @@ export default function DataGridTable({ data, isLoading }) {
       return {
         ...user,
         id: user._id,
+        phone: user.phone.replace(/"/g, ""),
         createdAt: new Date(user.createdAt),
       };
     });
@@ -156,7 +186,7 @@ export default function DataGridTable({ data, isLoading }) {
       updateUserNameEmail({
         id: newRow.id,
         name: newRow.name,
-        phone: newRow.phone,
+        phone: newRow.phone.toString(),
       })
     );
 
@@ -319,7 +349,13 @@ export default function DataGridTable({ data, isLoading }) {
           toolbar: EditToolbar,
         }}
         slotProps={{
-          toolbar: { setRows, setRowModesModel },
+          toolbar: {
+            isLoadingSelf,
+            setIsLoadingSelf,
+            smartUserSearching,
+            action,
+            page,
+          },
 
           loadingOverlay: {
             variant: "linear-progress",

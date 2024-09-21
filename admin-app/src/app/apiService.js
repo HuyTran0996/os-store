@@ -1,6 +1,4 @@
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { showToast } from "../components/ToastMessage";
 
 const BASE_URL = `${process.env.REACT_APP_BASE_URL}/api`;
 
@@ -28,9 +26,8 @@ apiService.interceptors.response.use(
   (err) => {
     console.log("Response Error", err);
     if (err.response?.data?.message === "Please log in to get access") {
-      const navigate = useNavigate();
-      showToast("Your Session Is Expired, Please Login Again", "error", 5000);
-      navigate("/login");
+      alert("Your Section Is Expired, Please Login Again");
+      window.location.href = "/login";
     }
     return Promise.reject(err.response.data);
   }

@@ -56,6 +56,8 @@ exports.changeRole = asyncHandler(async (req, res) => {
   if (!userId || !role) throw new AppError("Please provide id and role", 400);
   if (role !== "user" && role !== "admin" && role !== "manager")
     throw new AppError("Invalid role", 400);
+  if (req.user.role === "admin" && role === "manager")
+    throw new AppError("Admins can't change users to managers.", 403);
 
   validateMongodbId(userId);
 
@@ -239,3 +241,53 @@ exports.userProductOrderCompare = asyncHandler(async (req, res) => {
     ],
   });
 });
+
+exports.smartUserSearch = (action) =>
+  asyncHandler(async (req, res) => {
+    const { searchField } = req.body;
+    if (!searchField) throw new AppError("Please provide search text", 400);
+    let model;
+    let searchArea = [];
+    let filedToShow = {};
+    let field;
+    if (action === "user") {
+      model = User;
+      field = "users";
+      searchArea = ["phone", "name", "email", "role"];
+      filedToShow = {
+        _id: 1,
+        name: 1,
+        email: 1,
+        phone: 1,
+        role: 1,
+        isBlocked: 1,
+        createdAt: 1,
+        score: { $meta: "searchScore" },
+      };
+    }
+
+    const transformedMatch = searchArea.map((field) => ({
+      [field]: { $regex: searchField, $options: "i" },
+    }));
+
+    const aggregate = model.aggregate([
+      {
+        $match: {
+          $or: [...transformedMatch],
+        },
+      },
+      {
+        $project: filedToShow,
+      },
+    ]);
+    const total = await aggregate;
+
+    const features = new APIFeatures(aggregate, req.query).paginate();
+
+    const data = await features.query;
+
+    res.status(200).json({
+      status: "success",
+      data: { total: total.length, [field]: data },
+    });
+  });

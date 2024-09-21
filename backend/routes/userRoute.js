@@ -32,6 +32,13 @@ router.put(
 router.put("/blockUserSelf/:id", authMiddleware, userCtrl.blockUser("self"));
 router.put("/unblockUser/:id", authMiddleware, isAdmin, userCtrl.unblockUser);
 
+router.post(
+  "/smartUserSearch",
+  authMiddleware,
+  isAdmin,
+  userCtrl.smartUserSearch("user")
+);
+
 router.delete("/:id", authMiddleware, isManager, userCtrl.deleteAUser);
 
 module.exports = router;
