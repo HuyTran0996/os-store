@@ -67,6 +67,13 @@ export const updateNameEmail = createAsyncThunk(
     return res.data.data;
   }
 );
+export const changeRole = createAsyncThunk(
+  "users/changeRole",
+  async ({ userId, role }) => {
+    const res = await apiService.put(`/user/changeRole`, { userId, role });
+    return res.data.data;
+  }
+);
 
 export const blockUser = createAsyncThunk("users/blockUser", async (userId) => {
   const res = await apiService.put(`/user/blockUser/${userId}`);

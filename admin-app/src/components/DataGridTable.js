@@ -26,6 +26,7 @@ import {
   getAllUser,
   updateNameEmail,
   deleteUser,
+  changeRole,
 } from "../store/thunks/fetchUsers";
 
 import AddIcon from "@mui/icons-material/Add";
@@ -72,6 +73,7 @@ export default function DataGridTable({ data, isLoading }) {
   const [block] = useThunk(blockUser);
   const [unblock] = useThunk(unblockUser);
   const [updateUserNameEmail] = useThunk(updateNameEmail);
+  const [changeRoleUser] = useThunk(changeRole);
   const [deleteAUser] = useThunk(deleteUser);
   const [getDataAllUser] = useThunk(getAllUser);
 
@@ -132,6 +134,9 @@ export default function DataGridTable({ data, isLoading }) {
   const handleUnBlockUser = (id) => async () => {
     action(unblock(id));
   };
+  const handleChangeRoleUser = (id, role) => async () => {
+    action(changeRoleUser({ userId: id, role }));
+  };
   const handleDeleteAUser = (id) => async () => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this user?"
@@ -184,20 +189,20 @@ export default function DataGridTable({ data, isLoading }) {
             icon={<PersonIcon />}
             label="Edit"
             className="textPrimary"
-            // onClick={handleEditClick(id)}
+            onClick={handleChangeRoleUser(id, "user")}
             sx={row.role === "user" ? { backgroundColor: "#4caf50" } : ""}
           />,
 
           <GridActionsCellItem
             icon={<SupportAgentIcon />}
             label="Delete"
-            // onClick={handleDeleteClick(id, row.email)}
+            onClick={handleChangeRoleUser(id, "admin")}
             sx={row.role === "admin" ? { backgroundColor: "#4caf50" } : ""}
           />,
           <GridActionsCellItem
             icon={<GiSharkBite style={{ fontSize: "22px" }} />}
             label="Delete"
-            // onClick={handleDeleteClick(id, row.email)}
+            onClick={handleChangeRoleUser(id, "manager")}
             sx={row.role === "manager" ? { backgroundColor: "#afb42b" } : ""}
           />,
         ];

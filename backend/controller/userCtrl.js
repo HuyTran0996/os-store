@@ -36,8 +36,9 @@ exports.updatedUser = (action) =>
         throw new AppError("Please provide all information", 400);
 
       const roleUser = await User.findById(id);
+      if (!roleUser) throw new AppError("User not found", 404);
       if (req.user.role === "admin" && roleUser.role === "manager")
-        throw new AppError("Admins change managers.", 403);
+        throw new AppError("Admins can't change managers.", 403);
 
       const updateUser = await User.findByIdAndUpdate(
         _id,
@@ -50,6 +51,30 @@ exports.updatedUser = (action) =>
       });
     }
   });
+
+exports.changeRole = asyncHandler(async (req, res) => {
+  const { userId, role } = req.body;
+  if (!userId || !role) throw new AppError("Please provide id and role", 400);
+  if (role !== "user" && role !== "admin" && role !== "manager")
+    throw new AppError("Invalid role", 400);
+
+  validateMongodbId(userId);
+
+  const userRole = await User.findById(userId);
+  if (!userRole) throw new AppError("User not found", 404);
+  if (req.user.role === "admin" && userRole.role === "manager")
+    throw new AppError("Admins can't change managers.", 403);
+
+  const updateUser = await User.findByIdAndUpdate(
+    userId,
+    { role },
+    { new: true }
+  );
+  res.status(200).json({
+    status: "success",
+    updateUser,
+  });
+});
 
 exports.saveAddress = asyncHandler(async (req, res) => {
   const { _id } = req.user;

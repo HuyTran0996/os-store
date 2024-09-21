@@ -21,6 +21,7 @@ router.get("/:id", authMiddleware, userCtrl.getAUser);
 
 router.put("/editUser", authMiddleware, isAdmin, userCtrl.updatedUser("admin"));
 router.put("/editUserSelf", authMiddleware, userCtrl.updatedUser("self"));
+router.put("/changeRole", authMiddleware, isAdmin, userCtrl.changeRole);
 router.put("/saveAddress", authMiddleware, userCtrl.saveAddress);
 router.put(
   "/blockUser/:id",
