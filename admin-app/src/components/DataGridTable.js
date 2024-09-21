@@ -320,6 +320,11 @@ export default function DataGridTable({ data, isLoading }) {
         }}
         slotProps={{
           toolbar: { setRows, setRowModesModel },
+
+          loadingOverlay: {
+            variant: "linear-progress",
+            noRowsVariant: "linear-progress",
+          },
         }}
       />
     </Box>
