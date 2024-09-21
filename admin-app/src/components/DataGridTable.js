@@ -152,12 +152,13 @@ export default function DataGridTable({ data, isLoading }) {
     const updatedRow = { ...newRow, isNew: false };
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
 
-    console.log("line là", newRow);
-    const id = newRow.id;
-    const name = newRow.name;
-    const phone = newRow.phone;
-
-    action(updateUserNameEmail({ id, name, phone }));
+    action(
+      updateUserNameEmail({
+        id: newRow.id,
+        name: newRow.name,
+        phone: newRow.phone,
+      })
+    );
 
     return updatedRow;
   };

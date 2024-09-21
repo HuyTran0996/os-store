@@ -28,7 +28,6 @@ exports.updatedUser = (action) =>
         updateUser,
       });
     } else if (action === "admin") {
-      const { _id } = req.user;
       const { id, name, phone } = req.body;
 
       validateMongodbId(id);
@@ -41,7 +40,7 @@ exports.updatedUser = (action) =>
         throw new AppError("Admins can't change managers.", 403);
 
       const updateUser = await User.findByIdAndUpdate(
-        _id,
+        id,
         { name, phone },
         { new: true }
       );
