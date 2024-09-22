@@ -8,10 +8,11 @@ const Paginate = (data) => {
   const navigate = useNavigate();
   let [searchParams] = useSearchParams();
   let page = parseInt(searchParams.get("page")) || 1;
+  let search = String(searchParams.get("search"));
   const basePath = location.pathname.split("?")[0];
 
   const handleChangeFilter = (e, p) => {
-    navigate(`${basePath}?page=${p}`);
+    navigate(`${basePath}?search=${search}&page=${p}`);
   };
   const limit = process.env.REACT_APP_LIMIT_PAGINATION;
   return (

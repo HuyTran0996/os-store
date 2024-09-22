@@ -97,11 +97,8 @@ export const deleteUser = createAsyncThunk(
 export const smartUserSearch = createAsyncThunk(
   "users/smartUserSearch",
   async ({ page, searchField }) => {
-    //Note: This page and limit is just temporary, will improve in future
-    const temporaryLimit = 10000;
-    const temporaryPage = 1;
     const res = await apiService.post(
-      `/user/smartUserSearch?page=${temporaryPage}&limit=${temporaryLimit}`,
+      `/user/smartUserSearch?page=${page}&limit=${limit}`,
       { searchField }
     );
     return res.data.data;

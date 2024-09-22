@@ -18,7 +18,6 @@ import {
   updateNameEmail,
   deleteUser,
   changeRole,
-  smartUserSearch,
 } from "../store/thunks/fetchUsers";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -34,24 +33,11 @@ import { GiSharkBite } from "react-icons/gi";
 function EditToolbar(props) {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
-  const { isLoadingSelf, setIsLoadingSelf, smartUserSearching, action, page } =
-    props;
+  const { isLoadingSelf } = props;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (searchValue.trim() === "") {
-      await action();
-    } else {
-      try {
-        navigate("/customers");
-        setIsLoadingSelf(true);
-        await smartUserSearching({ page, searchField: searchValue.trim() });
-      } catch (err) {
-        showToast(`${err.message}`, "error", 3000);
-      } finally {
-        setIsLoadingSelf(false);
-      }
-    }
+    navigate(`/customers?search=${searchValue.trim()}&page=${1}`);
   };
 
   return (
@@ -103,7 +89,6 @@ export default function DataGridTable({ data, isLoading }) {
   const [updateUserNameEmail] = useThunk(updateNameEmail);
   const [changeRoleUser] = useThunk(changeRole);
   const [deleteAUser] = useThunk(deleteUser);
-  const [smartUserSearching] = useThunk(smartUserSearch);
   const [getDataAllUser] = useThunk(getAllUser);
 
   const action = async (functionA) => {
@@ -351,10 +336,6 @@ export default function DataGridTable({ data, isLoading }) {
         slotProps={{
           toolbar: {
             isLoadingSelf,
-            setIsLoadingSelf,
-            smartUserSearching,
-            action,
-            page,
           },
 
           loadingOverlay: {

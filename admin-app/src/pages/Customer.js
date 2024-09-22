@@ -14,7 +14,7 @@ import {
 } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useThunk } from "../hook/use-thunk";
-import { getAllUser } from "../store/thunks/fetchUsers";
+import { getAllUser, smartUserSearch } from "../store/thunks/fetchUsers";
 
 import DataGridTable from "../components/DataGridTable";
 import Paginate from "../components/Pagination";
@@ -25,20 +25,24 @@ const Customer = () => {
   const [isLoading, setIsLoading] = useState(false);
   let [searchParams] = useSearchParams();
   let page = parseInt(searchParams.get("page")) || 1;
+  let search = String(searchParams.get("search"));
   const [getDataAllUser] = useThunk(getAllUser);
+  const [smartUserSearching] = useThunk(smartUserSearch);
   const { dataAllUser } = useSelector((state) => {
     return state.users;
   });
   const getData = async () => {
     try {
       setIsLoading(true);
-      await getDataAllUser(page);
-    } catch (err) {
-      console.log("err is", err.message);
-      if (err.message === "Please log in to get access") {
-        showToast("Your Session Is Expired, Please Login Again", "error", 5000);
-        navigate("/login");
+      if (search.trim() === "" || search === "null") {
+        console.log("empty search");
+        await getDataAllUser(page);
+      } else {
+        console.log("search is", search);
+        smartUserSearching({ page, searchField: search.trim() });
       }
+    } catch (err) {
+      showToast(`err.message`, "error");
     } finally {
       setIsLoading(false);
     }
@@ -46,7 +50,7 @@ const Customer = () => {
 
   useEffect(() => {
     getData(page);
-  }, [page]);
+  }, [page, search]);
 
   return (
     <>
