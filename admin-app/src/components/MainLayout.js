@@ -5,8 +5,8 @@ import { Box, Typography, createTheme } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import { showToast } from "./ToastMessage";
 
+import { showToast } from "./ToastMessage";
 import { useThunk } from "../hook/use-thunk";
 import { logoutAdmin } from "../store/thunks/fetchUsers";
 import Loading from "./Logout/Loading";
@@ -144,7 +144,18 @@ const NAVIGATION = [
     icon: <LayersIcon />,
   },
 ];
-const brand = { logo: false, title: "OS Store" };
+const brand = {
+  logo: (
+    <img
+      src="./images/logo.png"
+      alt="logo"
+      style={{
+        paddingLeft: "10px",
+      }}
+    />
+  ),
+  title: "OS Store",
+};
 
 const demoTheme = createTheme({
   cssVariables: {
@@ -271,7 +282,7 @@ const MainLayout = () => {
         authentication={authentication}
         session={session}
       >
-        <DashboardLayout>
+        <DashboardLayout disableCollapsibleSidebar>
           <Outlet />
           <Footer />
         </DashboardLayout>

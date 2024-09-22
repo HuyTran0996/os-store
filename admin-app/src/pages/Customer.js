@@ -1,17 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  Grid2,
-  Typography,
-  Container,
-  Box,
-  CircularProgress,
-} from "@mui/material";
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Typography, Container, Box } from "@mui/material";
+import { useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useThunk } from "../hook/use-thunk";
 import { getAllUser, smartUserSearch } from "../store/thunks/fetchUsers";
@@ -21,7 +10,6 @@ import Paginate from "../components/Pagination";
 import { showToast } from "../components/ToastMessage";
 
 const Customer = () => {
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   let [searchParams] = useSearchParams();
   let page = parseInt(searchParams.get("page")) || 1;
@@ -35,10 +23,8 @@ const Customer = () => {
     try {
       setIsLoading(true);
       if (search.trim() === "" || search === "null") {
-        console.log("empty search");
         await getDataAllUser(page);
       } else {
-        console.log("search is", search);
         smartUserSearching({ page, searchField: search.trim() });
       }
     } catch (err) {

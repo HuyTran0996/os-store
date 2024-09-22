@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useThunk } from "../hook/use-thunk";
 import { loginAdmin } from "../store/thunks/fetchUsers";
 
 import Grid from "@mui/material/Grid2";
-import { Paper, Avatar, TextField, Button, IconButton } from "@mui/material";
+import { Paper, TextField, Button, IconButton } from "@mui/material";
 import { showToast } from "../components/ToastMessage";
 
 import Visibility from "@mui/icons-material/Visibility";
@@ -50,11 +50,7 @@ const Login = () => {
       <Grid size={12} className="loginPage">
         <Paper elevation={10} className="paper">
           <Grid align="center">
-            <Avatar className="avatar">
-              <h3>
-                OS <br /> Store
-              </h3>
-            </Avatar>
+            <img src="./images/logo.png" alt="logo" />
             <h2>Login</h2>
             <p>Login to your account to continue.</p>
           </Grid>
