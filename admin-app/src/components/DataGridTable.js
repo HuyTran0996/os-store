@@ -183,9 +183,9 @@ export default function DataGridTable({ data, isLoading }) {
   };
 
   const columns = [
-    { field: "id", headerName: "ID", width: 180, editable: true },
+    { field: "id", headerName: "ID", width: 100, editable: true },
     { field: "name", headerName: "Name", width: 200, editable: true },
-    { field: "email", headerName: "Email", width: 280 },
+    { field: "email", headerName: "Email", width: 200 },
     {
       field: "phone",
       headerName: "Phone",
@@ -251,7 +251,7 @@ export default function DataGridTable({ data, isLoading }) {
       field: "createdAt",
       headerName: "Join date",
       type: "date",
-      width: 180,
+      width: 150,
       renderCell: (params) => {
         const date = new Date(params.value);
         return date.toISOString().split("T")[0].replace(/-/g, "_");

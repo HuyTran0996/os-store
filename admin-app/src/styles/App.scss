@@ -6,8 +6,10 @@
 body {
   font-family: Roboto, sans-serif;
 }
-main {
-  overflow-y: scroll;
-  // height: 85vh;
-  background-color: transparent !important;
+
+.css-1asjls9-MuiDrawer-docked {
+  width: 250px !important;
+  .MuiDrawer-paper {
+    width: 250px !important;
+  }
 }

@@ -11,17 +11,22 @@ export default function ChartBar({
   isLoading,
   color,
 }) {
-  const valueFormatter = (value) => `${value}${unit}`;
+  const valueFormatter = (value) => {
+    if (!value) {
+      return `${value}${unit}`;
+    } else {
+      return `${value.toLocaleString()}${unit}`;
+    }
+  };
   return (
     <div style={{ width: "100%" }}>
       <BarChart
-        loading={!!isLoading}
+        loading={isLoading}
         dataset={dataset}
         xAxis={[
           {
             scaleType: "band",
             dataKey: "month",
-
             tickPlacement: "middle",
             tickLabelPlacement: "middle",
           },

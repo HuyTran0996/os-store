@@ -194,14 +194,14 @@ const Dashboard = () => {
 
   return (
     <>
-      <Container maxWidth="xl" sx={{ padding: "20px" }}>
+      <Container maxWidth="xl" sx={{ padding: "20px 0 20px 0" }}>
         <Typography variant="h3">Dashboard</Typography>
 
         <Grid2
           container
           sx={{
             width: "100%",
-            justifyContent: "space-evenly",
+            justifyContent: "space-between",
           }}
         >
           {isLoading ? (
@@ -243,11 +243,11 @@ const Dashboard = () => {
 
         <Box
           sx={{
+            width: "100%",
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             justifyContent: "space-between",
-            gap: 2,
-            marginTop: 3,
+            marginTop: "40px",
           }}
         >
           <ChartBar

@@ -40,7 +40,7 @@ const Customer = () => {
 
   return (
     <>
-      <Container maxWidth="xl" sx={{ padding: "20px" }}>
+      <Container maxWidth="xl" sx={{ padding: "20px 0 20px 0" }}>
         <Typography variant="h3" sx={{ marginBottom: "20px" }}>
           Customers
         </Typography>
