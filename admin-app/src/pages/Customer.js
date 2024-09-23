@@ -8,6 +8,7 @@ import { getAllUser, smartUserSearch } from "../store/thunks/fetchUsers";
 import DataGridTable from "../components/DataGridTable";
 import Paginate from "../components/Pagination";
 import { showToast } from "../components/ToastMessage";
+import ContainerLayout from "../components/ContainerLayout";
 
 const Customer = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -39,8 +40,8 @@ const Customer = () => {
   }, [page, search]);
 
   return (
-    <>
-      <Container maxWidth="xl" sx={{ padding: "20px 0 20px 0" }}>
+    <ContainerLayout>
+      <Box sx={{ margin: "20px" }}>
         <Typography variant="h3" sx={{ marginBottom: "20px" }}>
           Customers
         </Typography>
@@ -56,8 +57,8 @@ const Customer = () => {
         >
           <Paginate data={dataAllUser} />
         </Box>
-      </Container>
-    </>
+      </Box>
+    </ContainerLayout>
   );
 };
 

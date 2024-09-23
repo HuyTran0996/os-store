@@ -11,6 +11,7 @@ const { resizeImg } = require("../middlewares/uploadImage");
 const { cloudinaryDeleteImg } = require("../utils/cloudinary");
 
 exports.createProduct = asyncHandler(async (req, res) => {
+  console.log("req is", req);
   const { title } = req.body;
   const files = req.files;
   const imgUrl = [];
@@ -28,18 +29,6 @@ exports.createProduct = asyncHandler(async (req, res) => {
     images: imgUrl,
   });
 
-  res.status(201).json({
-    status: "success",
-    newProduct,
-  });
-});
-
-exports.createProduct1 = asyncHandler(async (req, res) => {
-  const { title } = req.body;
-  if (!title) throw new AppError("A product must has a title", 400);
-
-  req.body.slug = slugify(title);
-  const newProduct = await Product.create(req.body);
   res.status(201).json({
     status: "success",
     newProduct,

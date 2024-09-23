@@ -6,7 +6,7 @@ import { forgotPassword } from "../store/thunks/fetchUsers";
 import Grid from "@mui/material/Grid2";
 import { Paper, TextField, Button } from "@mui/material";
 import { showToast } from "../components/ToastMessage";
-
+import logo from "../images/logo.png";
 import "../styles/Login.scss";
 
 const Forgotpassword = () => {
@@ -30,7 +30,7 @@ const Forgotpassword = () => {
       <Grid size={12} className="loginPage">
         <Paper elevation={10} className="paper">
           <Grid align="center">
-            <img src="./images/logo.png" alt="logo" />
+            <img src={logo} alt="logo" />
             <h2>Forgot Your Password?</h2>
             <p>
               Submit your registered email, <br /> we will send you an email to

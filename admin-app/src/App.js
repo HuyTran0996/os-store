@@ -9,6 +9,8 @@ import Resetpassword from "./pages/Resetpassword";
 import Forgotpassword from "./pages/Forgotpassword";
 import Dashboard from "./pages/Dashboard";
 import Customer from "./pages/Customer";
+import ProductList from "./pages/ProductList";
+import AddProduct from "./pages/AddProduct";
 
 function App() {
   return (
@@ -18,9 +20,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password/:token" element={<Resetpassword />} />
         <Route path="/forgot-password" element={<Forgotpassword />} />
+
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="customers" element={<Customer />} />
+          <Route path="product/list" element={<ProductList />} />
+          <Route path="product/addProduct" element={<AddProduct />} />
         </Route>
       </Routes>
     </BrowserRouter>

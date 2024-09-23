@@ -9,6 +9,7 @@ import { showToast } from "../components/ToastMessage";
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import logo from "../images/logo.png";
 
 import "../styles/Login.scss";
 
@@ -43,7 +44,7 @@ const Resetpassword = () => {
       <Grid size={12} className="loginPage">
         <Paper elevation={10} className="paper">
           <Grid align="center">
-            <img src="./images/logo.png" alt="logo" />
+            <img src={logo} alt="logo" />
             <h2>Reset Password</h2>
             <p>Enter your new password.</p>
           </Grid>

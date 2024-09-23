@@ -38,7 +38,7 @@ const multerFilter = (req, file, cb) => {
 const uploadPhoto = multer({
   storage: storage,
   fileFilter: multerFilter,
-  limits: { fileSize: 2000000 },
+  limits: { fileSize: 5000000 },
 });
 
 //NOTE: the whole process of an array of image from resizeImg is very tricky, do not change anything in this function

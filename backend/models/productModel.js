@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const AppError = require("../utils/appError");
 
 const productSchema = new mongoose.Schema(
   {
@@ -21,6 +22,10 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    quantity: {
+      type: Number,
+      required: true,
+    },
     category: {
       type: String,
       required: true,
@@ -29,16 +34,41 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    quantity: {
-      type: Number,
-      required: true,
-    },
     sold: {
       type: Number,
       default: 0,
     },
-    images: [],
-    color: [],
+    images: [{ url: String, asset_id: String, public_id: String }],
+    color: [
+      {
+        name: { type: String, lowercase: true },
+        colorCode: String,
+        image: [{ url: String, asset_id: String, public_id: String }],
+      },
+    ],
+    size: [
+      {
+        name: { type: String, lowercase: true },
+        image: [{ url: String, asset_id: String, public_id: String }],
+      },
+    ],
+    variant: [
+      {
+        name: { type: String, lowercase: true },
+        image: [{ url: String, asset_id: String, public_id: String }],
+      },
+    ],
+    // variant: [
+    //   {
+    //     tag: {
+    //       type: String,
+    //       enum: ["color", "size", "version"],
+    //     },
+    //     name: { type: String, lowercase: true },
+    //     colorCode: String,
+    //     image: String,
+    //   },
+    // ],
     tags: String,
     ratings: [
       {

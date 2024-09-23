@@ -6,17 +6,30 @@ const { uploadPhoto } = require("../middlewares/uploadImage");
 
 const router = express.Router();
 
-router.post("/", authMiddleware, isAdmin, productCtrl.createProduct);
+router.post(
+  "/",
+  authMiddleware,
+  isAdmin,
+  uploadPhoto.array("images", 10),
+  productCtrl.createProduct
+);
 
 router.get("/", authMiddleware, isAdmin, productCtrl.getAllProduct);
 router.get("/:id", productCtrl.getAProduct);
 
 router.put("/wishlist", authMiddleware, productCtrl.toggleWishlist);
 router.put("/rating", authMiddleware, productCtrl.rating);
+router.put("/addVariant", authMiddleware, productCtrl.addVariant);
+// router.put(
+//   "/upload/:id",
+//   authMiddleware,
+//   isAdmin,
+//   uploadPhoto.array("images", 10),
+//   productCtrl.uploadImages
+// );
 router.put(
   "/upload/:id",
-  authMiddleware,
-  isAdmin,
+
   uploadPhoto.array("images", 10),
   productCtrl.uploadImages
 );

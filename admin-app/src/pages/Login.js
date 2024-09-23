@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useThunk } from "../hook/use-thunk";
@@ -10,6 +10,7 @@ import { showToast } from "../components/ToastMessage";
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import logo from "../images/logo.png";
 
 import "../styles/Login.scss";
 
@@ -20,6 +21,14 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const [login, isLoading] = useThunk(loginAdmin);
+  const adminInfo = localStorage.getItem("adminData");
+  const parsedAdminData = JSON.parse(adminInfo);
+
+  useEffect(() => {
+    if (!parsedAdminData?.note) return;
+    if (parsedAdminData.note === "Your Section Is Expired")
+      showToast("Your Section Is Expired", "error");
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +43,6 @@ const Login = () => {
         localStorage.setItem("adminData", stringifiedAdminData);
       }
       if (localStorage.getItem("adminData")) {
-        localStorage.removeItem("adminData");
         localStorage.setItem("adminData", stringifiedAdminData);
       }
       setEmail("");
@@ -50,7 +58,7 @@ const Login = () => {
       <Grid size={12} className="loginPage">
         <Paper elevation={10} className="paper">
           <Grid align="center">
-            <img src="./images/logo.png" alt="logo" />
+            <img src={logo} alt="logo" />
             <h2>Login</h2>
             <p>Login to your account to continue.</p>
           </Grid>

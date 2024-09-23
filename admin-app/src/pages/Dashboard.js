@@ -6,12 +6,7 @@ import {
   Box,
   CircularProgress,
 } from "@mui/material";
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+
 import { useSelector } from "react-redux";
 import { useThunk } from "../hook/use-thunk";
 import { userTotalCompare } from "../store/thunks/fetchUsers";
@@ -20,6 +15,7 @@ import { getMonthlyOrders } from "../store/thunks/fetchOrders";
 import TotalCard from "../components/TotalCard";
 import ChartBar from "../components/ChartBar";
 import { showToast } from "../components/ToastMessage";
+import ContainerLayout from "../components/ContainerLayout";
 
 const monthMap = {
   Jan: 1,
@@ -137,16 +133,10 @@ const datasetIncome = [
 ];
 
 const Dashboard = () => {
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
 
-  const [doFetchUsers, isLoadingUsers, loadingUsersError] =
-    useThunk(userTotalCompare);
-  const [
-    doFetchMonthlyOrders,
-    isLoadingMonthlyOrders,
-    loadingMonthlyOrdersError,
-  ] = useThunk(getMonthlyOrders);
+  const [doFetchUsers] = useThunk(userTotalCompare);
+  const [doFetchMonthlyOrders] = useThunk(getMonthlyOrders);
 
   const { dataOfUserTotalCompare } = useSelector((state) => {
     return state.users;
@@ -193,8 +183,8 @@ const Dashboard = () => {
   });
 
   return (
-    <>
-      <Container maxWidth="xl" sx={{ padding: "20px 0 20px 0" }}>
+    <ContainerLayout>
+      <Box sx={{ margin: "20px" }}>
         <Typography variant="h3">Dashboard</Typography>
 
         <Grid2
@@ -268,8 +258,8 @@ const Dashboard = () => {
             color="#cddc39"
           />
         </Box>
-      </Container>
-    </>
+      </Box>
+    </ContainerLayout>
   );
 };
 

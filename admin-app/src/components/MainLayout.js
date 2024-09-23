@@ -10,6 +10,7 @@ import { showToast } from "./ToastMessage";
 import { useThunk } from "../hook/use-thunk";
 import { logoutAdmin } from "../store/thunks/fetchUsers";
 import Loading from "./Logout/Loading";
+// import Footer from "./Footer";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -26,6 +27,8 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import SellIcon from "@mui/icons-material/Sell";
 import CreateIcon from "@mui/icons-material/Create";
 import SubjectIcon from "@mui/icons-material/Subject";
+import logo from "../images/logo.png";
+import { margin, padding } from "@mui/system";
 
 const NAVIGATION = [
   {
@@ -40,17 +43,17 @@ const NAVIGATION = [
     icon: <PersonIcon />,
   },
   {
-    segment: "catalog",
+    segment: "product",
     title: "Catalog",
     icon: <CategoryIcon />,
     children: [
       {
-        segment: "product",
+        segment: "addProduct",
         icon: <AddShoppingCartIcon />,
         title: "Add Product",
       },
       {
-        segment: "list-product",
+        segment: "list",
         icon: <ShoppingCartIcon />,
         title: "Product List",
       },
@@ -147,7 +150,7 @@ const NAVIGATION = [
 const brand = {
   logo: (
     <img
-      src="./images/logo.png"
+      src={logo}
       alt="logo"
       style={{
         paddingLeft: "10px",
@@ -158,6 +161,15 @@ const brand = {
 };
 
 const demoTheme = createTheme({
+  components: {
+    MuiToolbar: {
+      styleOverrides: {
+        root: {
+          height: "10vh",
+        },
+      },
+    },
+  },
   cssVariables: {
     colorSchemeSelector: "data-toolpad-color-scheme",
   },
@@ -190,29 +202,6 @@ const demoTheme = createTheme({
     },
   },
 });
-
-const Footer = () => {
-  const theme = useTheme();
-  return (
-    <Box
-      sx={{
-        position: "fixed",
-        bottom: 0,
-        left: 0,
-        width: "100vw",
-        backgroundColor: theme.palette.background.paper,
-        padding: "1rem",
-        textAlign: "center",
-        zIndex: 9999,
-        borderTop: "1px solid #828599",
-      }}
-    >
-      <Typography variant="body2">
-        &copy; {new Date().getFullYear()} OS Store - Powered by: OS Store
-      </Typography>
-    </Box>
-  );
-};
 
 const MainLayout = () => {
   const navigateReact = useNavigate();
@@ -284,7 +273,6 @@ const MainLayout = () => {
       >
         <DashboardLayout disableCollapsibleSidebar>
           <Outlet />
-          <Footer />
         </DashboardLayout>
       </AppProvider>
     );
