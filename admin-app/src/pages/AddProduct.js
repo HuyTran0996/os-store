@@ -90,6 +90,7 @@ const AddProduct = () => {
   return (
     <ContainerLayout>
       <Box sx={{ margin: "20px" }}>
+        {/* Page Title */}
         <Box
           sx={{
             display: "flex",
@@ -100,7 +101,7 @@ const AddProduct = () => {
           <Typography variant="h4" sx={{ margin: "20px" }}>
             Add New Product
           </Typography>
-          <Grid2 container justifyContent="space-between">
+          <Grid2 container>
             <Grid2 item xs={12}>
               <Button
                 variant="contained"
