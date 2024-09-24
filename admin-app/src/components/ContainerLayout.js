@@ -1,8 +1,6 @@
 import React from "react";
 import { Box } from "@mui/material";
 
-import Footer from "../components/Footer";
-
 const ContainerLayout = ({ children }) => {
   return (
     <Box
@@ -16,7 +14,6 @@ const ContainerLayout = ({ children }) => {
       }}
     >
       {children}
-      <Footer />
     </Box>
   );
 };

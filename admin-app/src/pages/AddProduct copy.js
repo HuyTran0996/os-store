@@ -136,28 +136,25 @@ const AddProduct = () => {
         </Box>
 
         {/* Form */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-          }}
-        >
+        <Grid2 container justifyContent="space-between" spacing={2}>
           {/* INFO */}
-          <Box
+          <Grid2
+            item
+            xs={12}
+            sm={6}
+            md={6}
             sx={{
-              position: "relative",
               backgroundColor: "red",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              // width: { xs: "20px", sm: "50px", md: "450px" },
+              flexBasis: { xs: "100%", md: "29%" }, // 30% on larger screens, 100% on mobile
+              // maxWidth: { xs: "100%", md: "29%" }, // Max width for larger screens
             }}
           >
             <Paper
               elevation={10}
               sx={{
-                position: "relative",
                 padding: "10px",
               }}
             >
@@ -165,11 +162,7 @@ const AddProduct = () => {
                 General Information
               </Typography>
 
-              <Box
-                sx={{
-                  marginTop: "10px",
-                }}
-              >
+              <Box sx={{ marginTop: "10px" }}>
                 <Typography variant="h6">Product Name</Typography>
 
                 <TextField
@@ -244,16 +237,21 @@ const AddProduct = () => {
                 </Box>
               </Box>
             </Paper>
-          </Box>
+          </Grid2>
 
           {/* IMAGE */}
-          <Box
+          <Grid2
+            item
+            xs={12}
+            sm={6}
+            md={6}
             sx={{
               backgroundColor: "green",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              // width: { xs: "20px", sm: "50px", md: "650px" },
+              flexBasis: { xs: "100%", md: "69%" }, // 70% on larger screens, 100% on mobile
+              // maxWidth: { xs: "100%", md: "69%" }, // Max width for larger screens
             }}
           >
             <Paper elevation={10} sx={{ padding: "10px" }}>
@@ -343,8 +341,8 @@ const AddProduct = () => {
                 </Box>
               </Box>
             </Paper>
-          </Box>
-        </Box>
+          </Grid2>
+        </Grid2>
       </Box>
     </ContainerLayout>
   );

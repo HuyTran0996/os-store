@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import "./styles/App.scss";
 import MainLayout from "./components/MainLayout";
+import Header from "./components/Header";
 import Login from "./pages/Login";
 import Resetpassword from "./pages/Resetpassword";
 import Forgotpassword from "./pages/Forgotpassword";
@@ -24,8 +25,8 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="customers" element={<Customer />} />
-          <Route path="product/list" element={<ProductList />} />
-          <Route path="product/addProduct" element={<AddProduct />} />
+          <Route path="productList" element={<ProductList />} />
+          <Route path="addProduct" element={<AddProduct />} />
         </Route>
       </Routes>
     </BrowserRouter>
