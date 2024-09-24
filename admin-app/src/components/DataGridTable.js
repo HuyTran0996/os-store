@@ -183,7 +183,7 @@ export default function DataGridTable({ data, isLoading }) {
   };
 
   const columns = [
-    { field: "id", headerName: "ID", width: 100, editable: true },
+    { field: "id", headerName: "ID", width: 220 },
     { field: "name", headerName: "Name", width: 200, editable: true },
     { field: "email", headerName: "Email", width: 200 },
     {

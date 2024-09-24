@@ -1,33 +1,49 @@
-import * as React from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
+import FormControlLabel from "@mui/material/FormControlLabel";
+
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MenuList from "./MenuList";
+import logo from "../images/logo.png";
+import { MaterialUISwitch } from "../data/data";
 
-export default function Header() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+import { showToast } from "./ToastMessage";
+import { useThunk } from "../hook/use-thunk";
+import { logoutAdmin } from "../store/thunks/fetchUsers";
 
+export default function Header({ themeMode, toggleTheme, setLogOut }) {
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
+
+  const [signOut] = useThunk(logoutAdmin);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-
   const handleMenuClose = () => {
     setAnchorEl(null);
-    handleMobileMenuClose();
+  };
+
+  const handleLogout = async () => {
+    setAnchorEl(null);
+    try {
+      setLogOut(true);
+      await signOut();
+      navigate("/login");
+    } catch (err) {
+      showToast("Sign Out Failed", "error");
+    } finally {
+      setLogOut(false);
+    }
   };
 
   const menuId = "primary-search-account-menu";
@@ -48,26 +64,44 @@ export default function Header() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ height: "10vh" }}>
         <Toolbar>
           <MenuList />
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
+          <Box
+            sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+            onClick={() => navigate("/")}
           >
-            MUI
-          </Typography>
+            <img
+              src={logo}
+              alt="logo"
+              style={{
+                width: "40px",
+                marginRight: "5px",
+              }}
+            />
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ display: { xs: "none", sm: "block" } }}
+            >
+              OS Store
+            </Typography>
+          </Box>
 
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: "flex" }}>
+            <FormControlLabel
+              control={<MaterialUISwitch defaultChecked />}
+              checked={themeMode === "dark"}
+              onChange={toggleTheme}
+            />
             <IconButton
               size="large"
               edge="end"

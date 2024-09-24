@@ -12,138 +12,8 @@ import Collapse from "@mui/material/Collapse";
 import MenuIcon from "@mui/icons-material/Menu";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import LayersIcon from "@mui/icons-material/Layers";
-import PersonIcon from "@mui/icons-material/Person";
-import CategoryIcon from "@mui/icons-material/Category";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import FactoryIcon from "@mui/icons-material/Factory";
-import WidgetsIcon from "@mui/icons-material/Widgets";
-import FormatColorFillIcon from "@mui/icons-material/FormatColorFill";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import LocalActivityIcon from "@mui/icons-material/LocalActivity";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import SellIcon from "@mui/icons-material/Sell";
-import CreateIcon from "@mui/icons-material/Create";
-import SubjectIcon from "@mui/icons-material/Subject";
 
-const NAVIGATION = [
-  {
-    segment: "",
-    title: "Dashboard",
-    icon: <DashboardIcon />,
-  },
-  {
-    segment: "customers",
-    title: "Customers",
-    icon: <PersonIcon />,
-  },
-  {
-    segment: "product",
-    title: "Catalog",
-    icon: <CategoryIcon />,
-    children: [
-      {
-        segment: "addProduct",
-        icon: <AddShoppingCartIcon />,
-        title: "Add Product",
-      },
-      {
-        segment: "productList",
-        icon: <ShoppingCartIcon />,
-        title: "Product List",
-      },
-
-      {
-        segment: "brand",
-        icon: <FactoryIcon />,
-        title: "Brand",
-      },
-      {
-        segment: "list-brand",
-        icon: <FactoryIcon />,
-        title: "Brand List ",
-      },
-
-      {
-        segment: "category",
-        icon: <WidgetsIcon />,
-        title: "Category",
-      },
-      {
-        segment: "list-category",
-        icon: <WidgetsIcon />,
-        title: "Category List",
-      },
-
-      {
-        segment: "color",
-        icon: <FormatColorFillIcon />,
-        title: "Color",
-      },
-      {
-        segment: "list-color",
-        icon: <FormatColorFillIcon />,
-        title: "Color List",
-      },
-    ],
-  },
-  {
-    segment: "orders",
-    title: "Orders",
-    icon: <AssignmentIcon />,
-  },
-  {
-    segment: "marketing",
-    title: "Marketing",
-    icon: <LocalActivityIcon />,
-    children: [
-      {
-        segment: "coupon",
-        title: "Add Coupon",
-        icon: <AddCircleIcon />,
-      },
-      {
-        segment: "coupon-list",
-        title: "Coupon List",
-        icon: <SellIcon />,
-      },
-    ],
-  },
-  {
-    segment: "blogs",
-    title: "Blogs",
-    icon: <CreateIcon />,
-    children: [
-      {
-        segment: "blog",
-        icon: <AddCircleIcon />,
-        title: "Add Blog",
-      },
-      {
-        segment: "blog-list",
-        icon: <SubjectIcon />,
-        title: "Blog List",
-      },
-      {
-        segment: "blog-category",
-        icon: <AddCircleIcon />,
-        title: "Add Blog Category",
-      },
-      {
-        segment: "blog-category-list",
-        icon: <SubjectIcon />,
-        title: "Blog Category List",
-      },
-    ],
-  },
-  {
-    segment: "enquiries",
-    title: "Enquiries",
-    icon: <LayersIcon />,
-  },
-];
+import { NAVIGATION } from "../data/data";
 
 const NestedList = ({ item, depth = 1.5 }) => {
   const navigate = useNavigate();
@@ -196,13 +66,12 @@ export default function MenuList() {
         edge="start"
         color="inherit"
         aria-label="open drawer"
-        sx={{ mr: 2 }}
         onClick={toggleDrawer(true)}
       >
         <MenuIcon />
       </IconButton>
       <Drawer open={open} onClose={toggleDrawer(false)}>
-        <Box sx={{ width: 280 }} role="presentation">
+        <Box sx={{ width: 280 }}>
           <List>
             {NAVIGATION.map((item) => (
               <NestedList key={item.segment} item={item} />
