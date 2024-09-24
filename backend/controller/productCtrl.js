@@ -34,18 +34,6 @@ exports.createProduct = asyncHandler(async (req, res) => {
   });
 });
 
-exports.createProduct1 = asyncHandler(async (req, res) => {
-  const { title } = req.body;
-  if (!title) throw new AppError("A product must has a title", 400);
-
-  req.body.slug = slugify(title);
-  const newProduct = await Product.create(req.body);
-  res.status(201).json({
-    status: "success",
-    newProduct,
-  });
-});
-
 exports.uploadImages = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const files = req.files;

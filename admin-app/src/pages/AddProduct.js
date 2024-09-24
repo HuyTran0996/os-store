@@ -25,6 +25,7 @@ import { createProduct } from "../store/thunks/fetchProduct";
 import { showToast } from "../components/ToastMessage";
 import CarouselShow from "../components/CarouselShow";
 import ContainerLayout from "../components/ContainerLayout";
+import { internationalSizes } from "../data/data";
 
 const style = {
   input: {
@@ -245,6 +246,48 @@ const AddProduct = () => {
                 </Box>
               </Box>
             </Paper>
+
+            <Paper
+              elevation={10}
+              sx={{
+                marginTop: "10px",
+                padding: "20px",
+              }}
+            >
+              <Typography variant="h5">Category & Brand</Typography>
+
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Box sx={{}}>
+                  <Typography variant="h6">Category</Typography>
+
+                  <Select
+                    value={state.category}
+                    onChange={handleChange}
+                    name="category"
+                    sx={{ ...style.input, minWidth: "120px" }}
+                  >
+                    <MenuItem value="Watch">Watch</MenuItem>
+                    <MenuItem value="Laptop">Laptop</MenuItem>
+                    <MenuItem value="Cellphone">Cellphone</MenuItem>
+                  </Select>
+                </Box>
+
+                <Box sx={{}}>
+                  <Typography variant="h6">Brand</Typography>
+
+                  <Select
+                    value={state.brand}
+                    onChange={handleChange}
+                    name="brand"
+                    sx={{ ...style.input, minWidth: "120px" }}
+                  >
+                    <MenuItem value="Watch">Dell</MenuItem>
+                    <MenuItem value="Laptop">HP</MenuItem>
+                    <MenuItem value="Cellphone">Asus</MenuItem>
+                  </Select>
+                </Box>
+              </Box>
+            </Paper>
           </Box>
 
           {/* IMAGE */}
@@ -252,30 +295,34 @@ const AddProduct = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
+              // justifyContent: "space-between",
               width: { lg: "850px", md: "600px", sm: "600px" },
             }}
           >
             <Paper elevation={10} sx={{ padding: "20px" }}>
               <Box>
-                <label htmlFor="img">
-                  <Button variant="contained">Add Images</Button>
-                </label>
-                <TextField
-                  id="img"
-                  type="file"
-                  name="images"
-                  sx={{
-                    display: "none",
-                  }}
-                  slotProps={{
-                    htmlInput: {
-                      multiple: true,
-                      onChange: handleFileChange,
-                    },
-                  }}
-                  required
-                />
+                <Button
+                  component="label"
+                  variant="contained"
+                  disabled={isLoading}
+                >
+                  Add Images
+                  <TextField
+                    id="img"
+                    type="file"
+                    name="images"
+                    sx={{
+                      display: "none",
+                    }}
+                    slotProps={{
+                      htmlInput: {
+                        multiple: true,
+                        onChange: handleFileChange,
+                      },
+                    }}
+                    required
+                  />
+                </Button>
               </Box>
 
               {state.images.length > 0 && (
@@ -306,25 +353,31 @@ const AddProduct = () => {
               )}
             </Paper>
 
-            <Paper elevation={10} sx={{ padding: "20px", marginTop: "10px" }}>
-              <Typography variant="h5" sx={{ margin: "10px" }}>
-                Category & Brand
-              </Typography>
+            <Paper
+              elevation={10}
+              sx={{
+                marginTop: "10px",
+                padding: "20px",
+              }}
+            >
+              <Typography variant="h5">Variants</Typography>
 
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Box>
                 <Box sx={{}}>
-                  <Typography variant="h6">Category</Typography>
-
-                  <Select
-                    value={state.category}
-                    onChange={handleChange}
-                    name="category"
-                    sx={{ ...style.input, minWidth: "120px" }}
-                  >
-                    <MenuItem value="Watch">Watch</MenuItem>
-                    <MenuItem value="Laptop">Laptop</MenuItem>
-                    <MenuItem value="Cellphone">Cellphone</MenuItem>
-                  </Select>
+                  <Typography variant="h6">Size</Typography>
+                  {internationalSizes.map((category) => {
+                    console.log(category);
+                    return (
+                      <Box>
+                        <Typography variant="p">{category.type}:</Typography>
+                        <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+                          {category.sizes.map((size) => {
+                            return <Box sx={{ margin: "5px" }}>{size}</Box>;
+                          })}
+                        </Box>
+                      </Box>
+                    );
+                  })}
                 </Box>
 
                 <Box sx={{}}>

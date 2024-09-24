@@ -49,9 +49,14 @@ const demoTheme = (mode) =>
     },
   });
 
+const appTheme = localStorage.getItem("appTheme");
+let initialTheme = "light";
+if (appTheme && (String(appTheme) === "light" || String(appTheme) === "dark")) {
+  initialTheme = String(appTheme);
+}
 const MainLayout = () => {
   const navigate = useNavigate();
-  const [themeMode, setThemeMode] = useState("light");
+  const [themeMode, setThemeMode] = useState(initialTheme);
   const theme = useMemo(() => demoTheme(themeMode), [themeMode]);
 
   const [logOut, setLogOut] = useState(false);
@@ -59,6 +64,8 @@ const MainLayout = () => {
 
   const toggleTheme = () => {
     setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+    const theme = themeMode === "light" ? "dark" : "light";
+    localStorage.setItem("appTheme", theme);
   };
 
   useEffect(() => {

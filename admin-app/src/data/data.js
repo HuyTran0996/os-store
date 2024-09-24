@@ -310,3 +310,62 @@ export const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 //////END///////////
+
+//////Add Product///////
+export const internationalSizes = [
+  { type: "Clothing", sizes: ["XS", "S", "M", "L", "XL", "XXL"] },
+  {
+    type: "Shoes",
+    sizes: [
+      "32",
+      "33",
+      "34",
+      "35",
+      "36",
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44",
+    ],
+  },
+  // {
+  //   type: "Children's Clothing",
+  //   sizes: [
+  //     "0-3 months",
+  //     "3-6 months",
+  //     "6-9 months",
+  //     "9-12 months",
+  //     "1T",
+  //     "2T",
+  //     "3T",
+  //     "4T",
+  //     "5T",
+  //     "6T",
+  //     "7T",
+  //     "8T",
+  //     "9T",
+  //     "10T",
+  //     "11T",
+  //     "12T",
+  //     "13T",
+  //     "14T",
+  //     "15T",
+  //     "16T",
+  //   ],
+  // },
+  // {
+  //   type: "Children's Shoes",
+  //   sizes: [
+  //     "Infant 0-12 months",
+  //     "Toddler 1-2 years",
+  //     "Child 2-4 years",
+  //     "Child 4-6 years",
+  //     "Child 6-8 years",
+  //   ],
+  // },
+];
+////////END/////
