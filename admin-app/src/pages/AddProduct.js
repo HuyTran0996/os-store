@@ -48,6 +48,7 @@ const AddProduct = () => {
   const [state, setState] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const [create] = useThunk(createProduct);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setState((prevState) => ({ ...prevState, [name]: value }));
@@ -65,6 +66,10 @@ const AddProduct = () => {
       ...prevState,
       images: prevState.images.filter((_, index) => index !== indexToRemove),
     }));
+  };
+
+  const clearForm = () => {
+    setState(initialState);
   };
 
   const handleSubmit = async (e) => {
@@ -90,9 +95,6 @@ const AddProduct = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-  const clearForm = () => {
-    setState(initialState);
   };
 
   return (
@@ -138,27 +140,26 @@ const AddProduct = () => {
         {/* Form */}
         <Box
           sx={{
-            display: "flex",
+            display: { lg: "flex", md: "flex", sm: "column" },
+
             justifyContent: "space-between",
-            flexWrap: "wrap",
           }}
         >
           {/* INFO */}
           <Box
             sx={{
               position: "relative",
-              backgroundColor: "red",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              // width: { xs: "20px", sm: "50px", md: "450px" },
+              width: { lg: "450px", md: "300px", sm: "600px" },
             }}
           >
             <Paper
               elevation={10}
               sx={{
                 position: "relative",
-                padding: "10px",
+                padding: "20px",
               }}
             >
               <Typography variant="h5" sx={{ margin: "10px" }}>
@@ -203,8 +204,8 @@ const AddProduct = () => {
             <Paper
               elevation={10}
               sx={{
-                padding: "10px",
                 marginTop: "10px",
+                padding: "20px",
               }}
             >
               <Typography variant="h5">Price & Stock</Typography>
@@ -249,24 +250,23 @@ const AddProduct = () => {
           {/* IMAGE */}
           <Box
             sx={{
-              backgroundColor: "green",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              // width: { xs: "20px", sm: "50px", md: "650px" },
+              width: { lg: "850px", md: "600px", sm: "600px" },
             }}
           >
-            <Paper elevation={10} sx={{ padding: "10px" }}>
-              <Box sx={{ display: "flex" }}>
-                <Typography variant="h5" sx={{ margin: "10px" }}>
-                  Images
-                </Typography>
-
+            <Paper elevation={10} sx={{ padding: "20px" }}>
+              <Box>
+                <label htmlFor="img">
+                  <Button variant="contained">Add Images</Button>
+                </label>
                 <TextField
+                  id="img"
                   type="file"
                   name="images"
                   sx={{
-                    "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+                    display: "none",
                   }}
                   slotProps={{
                     htmlInput: {
@@ -306,7 +306,7 @@ const AddProduct = () => {
               )}
             </Paper>
 
-            <Paper elevation={10} sx={{ padding: "10px", marginTop: "10px" }}>
+            <Paper elevation={10} sx={{ padding: "20px", marginTop: "10px" }}>
               <Typography variant="h5" sx={{ margin: "10px" }}>
                 Category & Brand
               </Typography>
