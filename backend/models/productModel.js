@@ -49,10 +49,13 @@ const productSchema = new mongoose.Schema(
     size: [
       {
         name: { type: String, lowercase: true },
+        price: {
+          type: Number,
+        },
         image: [{ url: String, asset_id: String, public_id: String }],
       },
     ],
-    variant: [
+    version: [
       {
         name: { type: String, lowercase: true },
         image: [{ url: String, asset_id: String, public_id: String }],

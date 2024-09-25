@@ -11,10 +11,15 @@ const { resizeImg } = require("../middlewares/uploadImage");
 const { cloudinaryDeleteImg } = require("../utils/cloudinary");
 
 exports.createProduct = asyncHandler(async (req, res) => {
-  const { title } = req.body;
+  const { title, size, version } = req.body;
   const files = req.files;
   const imgUrl = [];
+  let sizeArray = [];
+  let versionArray = [];
   if (!title) throw new AppError("A product must has a title", 400);
+
+  if (size) sizeArray = JSON.parse(req.body.size);
+  if (version) versionArray = JSON.parse(req.body.version);
 
   req.body.slug = slugify(title);
 
@@ -25,6 +30,8 @@ exports.createProduct = asyncHandler(async (req, res) => {
 
   const newProduct = await Product.create({
     ...req.body,
+    size: [...sizeArray],
+    version: [...versionArray],
     images: imgUrl,
   });
 

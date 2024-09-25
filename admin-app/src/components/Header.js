@@ -98,7 +98,7 @@ export default function Header({ themeMode, toggleTheme, setLogOut }) {
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: "flex" }}>
             <FormControlLabel
-              control={<MaterialUISwitch defaultChecked />}
+              control={<MaterialUISwitch />}
               checked={themeMode === "dark"}
               onChange={toggleTheme}
             />
