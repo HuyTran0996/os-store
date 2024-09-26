@@ -41,6 +41,39 @@ exports.createProduct = asyncHandler(async (req, res) => {
   });
 });
 
+exports.addColor = asyncHandler(async (req, res) => {
+  const { prodId, name, price, colorCode } = req.body;
+  const files = req.files;
+  const imgUrl = [];
+  validateMongodbId(prodId);
+  const product = await Product.findById(prodId);
+  if (!product) throw new AppError("Product not found", 404);
+
+  if (!name || !price || !colorCode)
+    throw new AppError("A Color must has name, price and colorCode", 400);
+
+  const check = product.color.find((v) => v.name === name.toLowerCase());
+
+  if (check) throw new AppError("Duplicate variant names are not allowed", 409);
+
+  for (const file of files) {
+    const info = await resizeImg(file);
+    imgUrl.push(info);
+  }
+
+  const updateProduct = await Product.findByIdAndUpdate(
+    prodId,
+    {
+      $addToSet: { color: { name, price, colorCode, images: imgUrl } },
+    },
+    { new: true }
+  );
+  res.status(200).json({
+    status: "success",
+    updateProduct,
+  });
+});
+
 exports.uploadImages = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const files = req.files;

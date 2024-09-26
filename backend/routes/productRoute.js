@@ -13,6 +13,13 @@ router.post(
   uploadPhoto.array("images", 10),
   productCtrl.createProduct
 );
+router.post(
+  "/addColor",
+  authMiddleware,
+  isAdmin,
+  uploadPhoto.array("images", 10),
+  productCtrl.addColor
+);
 
 router.get("/", authMiddleware, isAdmin, productCtrl.getAllProduct);
 router.get("/:id", productCtrl.getAProduct);

@@ -42,22 +42,22 @@ const productSchema = new mongoose.Schema(
     color: [
       {
         name: { type: String, lowercase: true },
+        price: { type: Number },
         colorCode: String,
-        image: [{ url: String, asset_id: String, public_id: String }],
+        images: [{ url: String, asset_id: String, public_id: String }],
       },
     ],
     size: [
       {
         name: { type: String, lowercase: true },
-        price: {
-          type: Number,
-        },
+        price: { type: Number },
         image: [{ url: String, asset_id: String, public_id: String }],
       },
     ],
     version: [
       {
         name: { type: String, lowercase: true },
+        price: { type: Number },
         image: [{ url: String, asset_id: String, public_id: String }],
       },
     ],

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid2,
   Typography,
@@ -21,9 +21,9 @@ import {
   CircularProgress,
   Input,
 } from "@mui/material";
-
+import { HexColorPicker } from "react-colorful";
 import { useThunk } from "../hook/use-thunk";
-import { createProduct } from "../store/thunks/fetchProduct";
+import { createProduct, addColor } from "../store/thunks/fetchProduct";
 import { showToast } from "../components/ToastMessage";
 import CarouselShow from "../components/CarouselShow";
 import ContainerLayout from "../components/ContainerLayout";
@@ -48,15 +48,34 @@ const initialState = {
   sizePrice: "",
   versionName: "",
   versionPrice: "",
+  colorName: "",
+  colorPrice: "",
   images: [],
   size: [],
   version: [],
+  colorDetail: [],
 };
 
 const AddProduct = () => {
   const [state, setState] = useState(initialState);
+  const [colorCode, setColorCode] = useState("#7a763d");
   const [isLoading, setIsLoading] = useState(false);
+  const [wrongColorCode, setWrongColorCode] = useState(null);
   const [create] = useThunk(createProduct);
+  const [addColorToProduct] = useThunk(addColor);
+
+  const isValidHexColor = (hexCode) => {
+    const hexColorRegex = /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/;
+
+    return hexColorRegex.test(hexCode);
+  };
+  useEffect(() => {
+    if (!isValidHexColor(colorCode)) {
+      setWrongColorCode("Invalid hex color code");
+    } else {
+      setWrongColorCode(null);
+    }
+  }, [colorCode]);
 
   const handleAddToArray = (array) => {
     let name;
@@ -86,30 +105,53 @@ const AddProduct = () => {
     }));
   };
 
-  console.log("size", state.size);
-  console.log("variant", state.variant);
-
   const handleChange = (event) => {
     const { name, value } = event.target;
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleFileChange = (event) => {
-    setState((prevState) => ({
-      ...prevState,
-      images: Array.from(event.target.files),
-    }));
+  const handleFileChange = (event, array) => {
+    if (array === "images") {
+      setState((prevState) => ({
+        ...prevState,
+        [array]: Array.from(event.target.files),
+      }));
+    }
+    if (array === "colorDetail") {
+      setState((prevState) => ({
+        ...prevState,
+        [array]: [
+          ...prevState[array],
+          {
+            name: state.colorName.toLowerCase(),
+            price: state.colorPrice,
+            colorCode: colorCode,
+            images: Array.from(event.target.files),
+          },
+        ],
+      }));
+    }
   };
 
-  const handleRemoveImage = (indexToRemove) => {
-    setState((prevState) => ({
-      ...prevState,
-      images: prevState.images.filter((_, index) => index !== indexToRemove),
-    }));
-  };
-
-  const clearForm = () => {
-    setState(initialState);
+  const handleRemoveImage = (indexToRemove, array, picIndex) => {
+    if (array === "colorDetailInside") {
+      setState((prevState) => ({
+        ...prevState,
+        colorDetail: prevState.colorDetail.map((color, index) =>
+          index === indexToRemove
+            ? {
+                ...color,
+                images: color.images.filter((_, i) => i !== picIndex),
+              }
+            : color
+        ),
+      }));
+    } else {
+      setState((prevState) => ({
+        ...prevState,
+        [array]: prevState[array].filter((_, index) => index !== indexToRemove),
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -127,11 +169,26 @@ const AddProduct = () => {
       formData.append("brand", state.brand);
       formData.append("size", JSON.stringify(state.size));
       formData.append("version", JSON.stringify(state.version));
+
       state.images.forEach((image) => {
         formData.append(`images`, image);
       });
 
-      await create(formData);
+      const product = await create(formData);
+
+      state.colorDetail.forEach(async (color) => {
+        const formData = new FormData();
+
+        formData.append("name", color.name);
+        formData.append("price", color.price);
+        formData.append("colorCode", color.colorCode);
+        formData.append("prodId", product._id);
+        color.images.forEach((image) => {
+          formData.append(`images`, image);
+        });
+
+        await addColorToProduct(formData);
+      });
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
@@ -170,7 +227,7 @@ const AddProduct = () => {
             <Grid2 xs={12} sm={6} md={6}>
               <Button
                 variant="outlined"
-                onClick={clearForm}
+                onClick={() => setState(initialState)}
                 disabled={isLoading}
               >
                 Clear Form
@@ -192,7 +249,8 @@ const AddProduct = () => {
               position: "relative",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
+              gap: 1,
+              // justifyContent: "space-between",
               width: { lg: "450px", md: "300px", sm: "600px" },
             }}
           >
@@ -361,20 +419,20 @@ const AddProduct = () => {
                     slotProps={{
                       htmlInput: {
                         multiple: true,
-                        onChange: handleFileChange,
+                        onChange: (e) => handleFileChange(e, "images"),
                       },
                     }}
                     required
                   />
                 </Button>
               </Box>
-
+              {/* RENDER IMAGE */}
               {state.images.length > 0 && (
                 <Box sx={{ marginTop: "5px" }}>
                   <Typography variant="h6">Preview:</Typography>
                   <CarouselShow>
                     {state.images.map((image, index) => (
-                      <Card key={index} sx={{ maxWidth: 200 }}>
+                      <Card key={`${index}-line-436`} sx={{ maxWidth: 200 }}>
                         <CardMedia
                           component="img"
                           alt="green iguana"
@@ -385,7 +443,7 @@ const AddProduct = () => {
                         <CardActions>
                           <Button
                             size="small"
-                            onClick={() => handleRemoveImage(index)}
+                            onClick={() => handleRemoveImage(index, "images")}
                           >
                             Remove
                           </Button>
@@ -408,14 +466,14 @@ const AddProduct = () => {
               <Typography variant="h5">Variants</Typography>
 
               <Grid2 container justifyContent="space-between">
-                {/* SIZE */}
                 <Grid2 item>
+                  {/* SIZE */}
                   <Paper
                     elevation={5}
                     sx={{
                       marginTop: "10px",
                       padding: "15px",
-                      maxWidth: "280px",
+                      maxWidth: "300px",
                     }}
                   >
                     <Typography variant="h5">Size</Typography>
@@ -483,10 +541,10 @@ const AddProduct = () => {
                         gap: "15px",
                       }}
                     >
-                      {state.size.map((size) => {
+                      {state.size.map((size, index) => {
                         return (
                           <Badge
-                            key={`size-${size}`}
+                            key={`size-${index}-line-548`}
                             color="error"
                             badgeContent={"X"}
                             onClick={() =>
@@ -498,6 +556,7 @@ const AddProduct = () => {
                               component="div"
                               variant="outlined"
                               key={size}
+                              sx={{ width: "20px" }}
                             >
                               {size.name} <br />
                               {size.price}$
@@ -507,16 +566,14 @@ const AddProduct = () => {
                       })}
                     </Box>
                   </Paper>
-                </Grid2>
 
-                {/* Version */}
-                <Grid2 item>
+                  {/* Version */}
                   <Paper
                     elevation={5}
                     sx={{
                       marginTop: "10px",
                       padding: "15px",
-                      maxWidth: "280px",
+                      maxWidth: "300px",
                     }}
                   >
                     <Typography variant="h5">Version</Typography>
@@ -574,7 +631,7 @@ const AddProduct = () => {
                       </Button>
                     </Box>
 
-                    {/* Render Size */}
+                    {/* Render Version */}
                     <Box
                       sx={{
                         marginTop: "10px",
@@ -584,9 +641,10 @@ const AddProduct = () => {
                         gap: "15px",
                       }}
                     >
-                      {state.version.map((version) => {
+                      {state.version.map((version, index) => {
                         return (
                           <Badge
+                            key={`${index}-line-648`}
                             color="error"
                             badgeContent={"X"}
                             onClick={() =>
@@ -598,6 +656,7 @@ const AddProduct = () => {
                               component="div"
                               variant="outlined"
                               key={version}
+                              sx={{ width: "120px" }}
                             >
                               {version.name} <br />
                               {version.price}$
@@ -606,6 +665,222 @@ const AddProduct = () => {
                         );
                       })}
                     </Box>
+                  </Paper>
+                </Grid2>
+
+                {/* COLOR */}
+                <Grid2 item>
+                  <Paper
+                    elevation={5}
+                    sx={{
+                      marginTop: "10px",
+                      padding: "15px",
+                      maxWidth: "380px",
+                    }}
+                  >
+                    <Typography variant="h5">Color</Typography>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        position: "relative",
+                      }}
+                    >
+                      <Typography variant="h6">Name-Price-Code</Typography>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          gap: "10px",
+                        }}
+                      >
+                        <TextField
+                          placeholder="Name..."
+                          type="text"
+                          required
+                          name="colorName"
+                          value={state.colorName}
+                          onChange={handleChange}
+                          sx={{ ...style.input }}
+                        />
+
+                        <TextField
+                          placeholder="Price..."
+                          type="number"
+                          required
+                          name="colorPrice"
+                          value={state.colorPrice}
+                          onChange={handleChange}
+                          sx={{ ...style.input }}
+                          slotProps={{
+                            input: {
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  $
+                                </InputAdornment>
+                              ),
+                            },
+                          }}
+                        />
+                      </Box>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          position: "relative",
+                          margin: "10px 0",
+                          width: "100%",
+                          "& .react-colorful": {
+                            maxWidth: "280px",
+                          },
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <HexColorPicker
+                          color={colorCode}
+                          onChange={setColorCode}
+                        />
+
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            width: "120px",
+                          }}
+                        >
+                          {wrongColorCode && (
+                            <div style={{ color: "red", fontSize: "12px" }}>
+                              {wrongColorCode}
+                            </div>
+                          )}
+                          <TextField
+                            placeholder="color code..."
+                            type="text"
+                            required
+                            name="colorCode"
+                            value={colorCode}
+                            onChange={(e) => setColorCode(e.target.value)}
+                            sx={{ ...style.input }}
+                          />
+
+                          <Button
+                            component="label"
+                            variant="contained"
+                            disabled={
+                              isLoading ||
+                              state.colorName.trim() === "" ||
+                              state.colorPrice === ""
+                            }
+                          >
+                            Add Images &<br /> Create Color
+                            <TextField
+                              id="imgForColor"
+                              type="file"
+                              name="colorDetail"
+                              sx={{
+                                display: "none",
+                              }}
+                              slotProps={{
+                                htmlInput: {
+                                  multiple: true,
+                                  onChange: (e) =>
+                                    handleFileChange(e, "colorDetail"),
+                                },
+                              }}
+                              required
+                            />
+                          </Button>
+                        </Box>
+                      </Box>
+                    </Box>
+
+                    {/* Render Image Color */}
+
+                    {state.colorDetail.length > 0 && (
+                      <Box sx={{ marginTop: "5px" }}>
+                        <Typography variant="h6">Preview:</Typography>
+
+                        {state.colorDetail.map((color, index) => (
+                          <Paper
+                            // elevation={5}
+                            key={`${index}-line-809`}
+                            sx={{
+                              margin: "10px 0",
+                              padding: "10px",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "space-around",
+                                marginBottom: "10px",
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  backgroundColor: `${color.colorCode}`,
+                                  borderRadius: "5px",
+                                  padding: "10px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Box
+                                  sx={{
+                                    backgroundColor: "black",
+                                    color: "#e0dfc8",
+                                    // fontSize: "12px",
+                                    padding: "2px",
+                                    borderRadius: "5px",
+                                  }}
+                                >
+                                  {color.name} - {color.price} $ -
+                                  {color.colorCode}
+                                </Box>
+                              </Box>
+                              <Button
+                                onClick={() =>
+                                  handleRemoveImage(index, "colorDetail")
+                                }
+                                variant="contained"
+                              >
+                                Remove Color
+                              </Button>
+                            </Box>
+                            <CarouselShow>
+                              {color.images.map((image, picIndex) => (
+                                <>
+                                  <CardMedia
+                                    key={`${picIndex}-line-858`}
+                                    component="img"
+                                    alt="green iguana"
+                                    height="140"
+                                    image={URL.createObjectURL(image)}
+                                  />
+
+                                  <CardActions>
+                                    <Button
+                                      size="small"
+                                      onClick={() =>
+                                        handleRemoveImage(
+                                          index,
+                                          "colorDetailInside",
+                                          picIndex
+                                        )
+                                      }
+                                    >
+                                      Remove
+                                    </Button>
+                                  </CardActions>
+                                </>
+                              ))}
+                            </CarouselShow>
+                          </Paper>
+                        ))}
+                      </Box>
+                    )}
                   </Paper>
                 </Grid2>
               </Grid2>
