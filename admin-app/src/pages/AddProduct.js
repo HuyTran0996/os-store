@@ -13,13 +13,6 @@ import {
   CardActions,
   Card,
   Badge,
-  Container,
-  CardContent,
-  IconButton,
-  InputLabel,
-  Slide,
-  CircularProgress,
-  Input,
 } from "@mui/material";
 import { HexColorPicker } from "react-colorful";
 import { useThunk } from "../hook/use-thunk";
@@ -28,7 +21,6 @@ import { showToast } from "../components/ToastMessage";
 import CarouselShow from "../components/CarouselShow";
 import ContainerLayout from "../components/ContainerLayout";
 import { Loading } from "../components/Loading/Loading";
-import { internationalSizes } from "../data/data";
 
 const style = {
   input: {
@@ -188,19 +180,21 @@ const AddProduct = () => {
 
       const product = await create(formData);
 
-      state.colorDetail.forEach(async (color) => {
-        const formData = new FormData();
+      if (state.colorDetail.length > 0) {
+        state.colorDetail.forEach(async (color) => {
+          const formData = new FormData();
+          formData.append("name", color.name);
+          formData.append("price", color.price);
+          formData.append("colorCode", color.colorCode);
+          formData.append("prodId", product._id);
+          color.images.forEach((image) => {
+            formData.append(`images`, image);
+          });
 
-        formData.append("name", color.name);
-        formData.append("price", color.price);
-        formData.append("colorCode", color.colorCode);
-        formData.append("prodId", product._id);
-        color.images.forEach((image) => {
-          formData.append(`images`, image);
+          await addColorToProduct(formData);
         });
+      }
 
-        await addColorToProduct(formData);
-      });
       showToast("Create Product Successfully", "success");
     } catch (err) {
       showToast(`${err.message}`, "error");
@@ -211,7 +205,7 @@ const AddProduct = () => {
 
   return (
     <ContainerLayout>
-      {isLoading ? <Loading /> : ""}
+      {isLoading ? <Loading message="Processing" /> : ""}
       <form onSubmit={handleSubmit}>
         <Box sx={{ margin: "20px" }}>
           {/* Page Title */}

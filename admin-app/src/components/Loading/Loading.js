@@ -9,11 +9,11 @@ export const Logout = () => {
     </div>
   );
 };
-export const Loading = () => {
+export const Loading = ({ message }) => {
   return (
     <div className="loading">
       <div className="ring"></div>
-      <span>Loading...</span>
+      <span>{message}...</span>
     </div>
   );
 };
