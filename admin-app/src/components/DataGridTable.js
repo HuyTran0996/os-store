@@ -7,10 +7,12 @@ export default function DataGridTable({
   columns,
   isLoading,
   isLoadingSelf,
+  setIsLoadingSelf,
   rowModesModel,
   handleRowModesModelChange,
   processRowUpdate,
   EditToolbar,
+  rowHeight,
 }) {
   //////////////MUI DATA GRID functions, no need to care this//////////
 
@@ -45,6 +47,7 @@ export default function DataGridTable({
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
+        rowHeight={rowHeight || 52}
         hideFooter
         slots={{
           toolbar: EditToolbar,
@@ -52,6 +55,7 @@ export default function DataGridTable({
         slotProps={{
           toolbar: {
             isLoadingSelf,
+            setIsLoadingSelf,
           },
 
           loadingOverlay: {

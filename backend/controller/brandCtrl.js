@@ -4,12 +4,41 @@ const Brand = require("../models/brandModel");
 const validateMongoDbId = require("../utils/validateMongodbId");
 const AppError = require("../utils/appError");
 const APIFeatures = require("../utils/apiFeatures");
+const { resizeImg } = require("../middlewares/uploadImage");
+const { cloudinaryDeleteImg } = require("../utils/cloudinary");
+
+exports.getAllBrand = asyncHandler(async (req, res) => {
+  const features = new APIFeatures(Brand.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  const total = new APIFeatures(Brand.countDocuments(), req.query).filter();
+
+  const brands = await features.query;
+  const totalBrand = await total.query;
+
+  res.status(200).json({
+    status: "success",
+    data: { total: totalBrand.length, brands },
+  });
+});
 
 exports.createBrand = asyncHandler(async (req, res) => {
-  if (!req.body.title)
-    throw new AppError("Please provide all information", 400);
+  const { title } = req.body;
+  const files = req.files;
+  const imgUrl = [];
 
-  const newBrand = await Brand.create(req.body);
+  if (!title) throw new AppError("A brand must has a title", 400);
+  for (const file of files) {
+    const info = await resizeImg(file);
+    imgUrl.push(info);
+  }
+  const newBrand = await Brand.create({
+    title,
+    images: imgUrl,
+  });
 
   res.status(201).json({
     status: "success",
@@ -53,24 +82,5 @@ exports.getBrand = asyncHandler(async (req, res) => {
   res.status(200).json({
     status: "success",
     getaBrand,
-  });
-});
-
-exports.getallBrand = asyncHandler(async (req, res) => {
-  const features = new APIFeatures(Brand.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-
-  const total = new APIFeatures(Brand.countDocuments(), req.query).filter();
-
-  const brands = await features.query;
-  const totalBrands = await total.query;
-
-  res.status(200).json({
-    status: "success",
-    totalBrand: totalBrands.length,
-    brands,
   });
 });
