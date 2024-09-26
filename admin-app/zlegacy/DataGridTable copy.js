@@ -1,27 +1,24 @@
-import React, { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { Typography, Box, TextField, IconButton } from "@mui/material";
+import { Box, TextField, IconButton } from "@mui/material";
 import {
   GridRowModes,
+  DataGrid,
   GridToolbarContainer,
   GridActionsCellItem,
+  GridRowEditStopReasons,
 } from "@mui/x-data-grid";
+
+import { showToast } from "./ToastMessage";
 import { useThunk } from "../hook/use-thunk";
 import {
-  getAllUser,
-  smartUserSearch,
   blockUser,
   unblockUser,
+  getAllUser,
   updateNameEmail,
   deleteUser,
   changeRole,
 } from "../store/thunks/fetchUsers";
-
-import DataGridTable from "../components/DataGridTable";
-import Paginate from "../components/Pagination";
-import { showToast } from "../components/ToastMessage";
-import ContainerLayout from "../components/ContainerLayout";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
@@ -80,60 +77,19 @@ function EditToolbar(props) {
   );
 }
 
-const Customer = () => {
-  ///////////// declare///////////////
-  const [isLoading, setIsLoading] = useState(false);
+export default function DataGridTable({ data, isLoading }) {
   const [isLoadingSelf, setIsLoadingSelf] = useState(false);
   const [rows, setRows] = useState([]);
   const [rowModesModel, setRowModesModel] = useState({});
   let [searchParams] = useSearchParams();
   let page = parseInt(searchParams.get("page")) || 1;
-  let search = String(searchParams.get("search"));
 
-  const [getDataAllUser] = useThunk(getAllUser);
-  const [smartUserSearching] = useThunk(smartUserSearch);
   const [block] = useThunk(blockUser);
   const [unblock] = useThunk(unblockUser);
   const [updateUserNameEmail] = useThunk(updateNameEmail);
   const [changeRoleUser] = useThunk(changeRole);
   const [deleteAUser] = useThunk(deleteUser);
-
-  const { dataAllUser } = useSelector((state) => {
-    return state.users;
-  });
-  /////////////End declare///////////////
-
-  const getData = async () => {
-    try {
-      setIsLoading(true);
-      if (search.trim() === "" || search === "null") {
-        await getDataAllUser(page);
-      } else {
-        smartUserSearching({ page, searchField: search.trim() });
-      }
-    } catch (err) {
-      showToast(`err.message`, "error");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    getData(page);
-  }, [page, search]);
-
-  //convert data to for table//////
-  useEffect(() => {
-    const dataUpdate = dataAllUser.users?.map((user) => {
-      return {
-        ...user,
-        id: user._id,
-        phone: user.phone.replace(/"/g, ""),
-        createdAt: new Date(user.createdAt),
-      };
-    });
-    setRows(dataUpdate);
-  }, [dataAllUser]);
-  //////////////////////
+  const [getDataAllUser] = useThunk(getAllUser);
 
   const action = async (functionA) => {
     try {
@@ -146,6 +102,46 @@ const Customer = () => {
       setIsLoadingSelf(false);
     }
   };
+
+  useEffect(() => {
+    const dataUpdate = data?.users?.map((user) => {
+      return {
+        ...user,
+        id: user._id,
+        phone: user.phone.replace(/"/g, ""),
+        createdAt: new Date(user.createdAt),
+      };
+    });
+    setRows(dataUpdate);
+  }, [data]);
+
+  //////////////MUI DATA GRID functions, no need to care this//////////
+  const handleEditClick = (id) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  };
+  const handleRowEditStop = (params, event) => {
+    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+      event.defaultMuiPrevented = true;
+    }
+  };
+  const handleSaveClick = (id) => () => {
+    setRowModesModel({
+      ...rowModesModel,
+      [id]: { mode: GridRowModes.View },
+    });
+  };
+  const handleCancelClick = (id) => () => {
+    setRowModesModel({
+      ...rowModesModel,
+      [id]: { mode: GridRowModes.View, ignoreModifications: true },
+    });
+
+    const editedRow = rows.find((row) => row.id === id);
+    if (editedRow.isNew) {
+      setRows(rows.filter((row) => row.id !== id));
+    }
+  };
+  ///////////////////////////
 
   const handleBlockUser = (id) => async () => {
     action(block(id));
@@ -185,30 +181,6 @@ const Customer = () => {
   const handleRowModesModelChange = (newRowModesModel) => {
     setRowModesModel(newRowModesModel);
   };
-
-  //////////////MUI DATA GRID functions, no need to care this//////////
-  const handleEditClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-  };
-
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View },
-    });
-  };
-  const handleCancelClick = (id) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
-
-    const editedRow = rows.find((row) => row.id === id);
-    if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
-    }
-  };
-  ///////////////////////////
 
   const columns = [
     { field: "id", headerName: "ID", width: 220 },
@@ -335,35 +307,43 @@ const Customer = () => {
   ];
 
   return (
-    <ContainerLayout>
-      <Box sx={{ margin: "20px" }}>
-        <Typography variant="h3" sx={{ marginBottom: "20px" }}>
-          Customers
-        </Typography>
+    <Box
+      sx={{
+        width: "100%",
 
-        <DataGridTable
-          rows={rows}
-          columns={columns}
-          isLoading={isLoading}
-          isLoadingSelf={isLoadingSelf}
-          rowModesModel={rowModesModel}
-          handleRowModesModelChange={handleRowModesModelChange}
-          processRowUpdate={processRowUpdate}
-          EditToolbar={EditToolbar}
-        />
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "20px",
-          }}
-        >
-          <Paginate data={dataAllUser} />
-        </Box>
-      </Box>
-    </ContainerLayout>
+        "& .actions": {
+          color: "text.secondary",
+        },
+        "& .textPrimary": {
+          color: "text.primary",
+        },
+      }}
+    >
+      <DataGrid
+        loading={isLoading || isLoadingSelf}
+        autoHeight
+        rows={rows}
+        columns={columns}
+        editMode="row"
+        rowModesModel={rowModesModel}
+        onRowModesModelChange={handleRowModesModelChange}
+        onRowEditStop={handleRowEditStop}
+        processRowUpdate={processRowUpdate}
+        hideFooter
+        slots={{
+          toolbar: EditToolbar,
+        }}
+        slotProps={{
+          toolbar: {
+            isLoadingSelf,
+          },
+
+          loadingOverlay: {
+            variant: "linear-progress",
+            noRowsVariant: "linear-progress",
+          },
+        }}
+      />
+    </Box>
   );
-};
-
-export default Customer;
+}

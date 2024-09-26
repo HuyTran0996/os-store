@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Customer from "./pages/Customer";
 import ProductList from "./pages/ProductList";
 import AddProduct from "./pages/AddProduct";
+import BrandList from "./pages/BrandList";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="customers" element={<Customer />} />
           <Route path="productList" element={<ProductList />} />
           <Route path="addProduct" element={<AddProduct />} />
+          <Route path="brandList" element={<BrandList />} />
         </Route>
       </Routes>
     </BrowserRouter>

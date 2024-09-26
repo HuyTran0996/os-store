@@ -168,7 +168,7 @@ export const NAVIGATION = [
         title: "Brand",
       },
       {
-        segment: "list-brand",
+        segment: "brandList",
         icon: <FactoryIcon />,
         title: "Brand List ",
       },
