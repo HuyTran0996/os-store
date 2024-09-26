@@ -6,7 +6,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 
 import { showToast } from "./ToastMessage";
-import Loading from "./Logout/Loading";
+import { Logout } from "./Loading/Loading";
 
 const demoTheme = (mode) =>
   createTheme({
@@ -76,7 +76,7 @@ const MainLayout = () => {
   }, []);
 
   if (logOut) {
-    return <Loading />;
+    return <Logout />;
   }
 
   return (
