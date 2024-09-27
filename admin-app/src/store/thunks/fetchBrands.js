@@ -41,3 +41,14 @@ export const deleteBrand = createAsyncThunk(
     return res.data.data;
   }
 );
+
+export const smartBrandSearch = createAsyncThunk(
+  "brands/smartBrandSearch",
+  async ({ page, searchField }) => {
+    const res = await apiService.post(
+      `/brand/smartBrandSearch?page=${page}&limit=${limit}`,
+      { searchField }
+    );
+    return res.data.data;
+  }
+);

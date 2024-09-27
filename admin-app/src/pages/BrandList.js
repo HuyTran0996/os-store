@@ -16,6 +16,7 @@ import {
   getAllBrand,
   updateBrand,
   deleteBrand,
+  smartBrandSearch,
 } from "../store/thunks/fetchBrands";
 
 import DataGridTable from "../components/DataGridTable";
@@ -191,7 +192,7 @@ const BrandList = () => {
 
   const [getDataAllBrand] = useThunk(getAllBrand);
   const [brandDelete] = useThunk(deleteBrand);
-  // const [smartUserSearching] = useThunk(smartUserSearch);
+  const [smartBrandSearching] = useThunk(smartBrandSearch);
 
   const { dataAllBrand } = useSelector((state) => {
     return state.brands;
@@ -204,7 +205,7 @@ const BrandList = () => {
       if (search.trim() === "" || search === "null") {
         await getDataAllBrand(page);
       } else {
-        // smartUserSearching({ page, searchField: search.trim() });
+        smartBrandSearching({ page, searchField: search.trim() });
       }
     } catch (err) {
       showToast(`err.message`, "error");

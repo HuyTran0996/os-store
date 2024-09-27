@@ -46,7 +46,7 @@ export const EditToolbarBrandList = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate(`/customers?search=${searchValue.trim()}&page=${1}`);
+    navigate(`/brandList?search=${searchValue.trim()}&page=${1}`);
   };
   const handleAddBrand = async (e) => {
     e.preventDefault();
@@ -180,7 +180,7 @@ export const EditToolbarBrandList = (props) => {
           >
             <TextField
               className="input"
-              placeholder="Search User..."
+              placeholder="Search Brand..."
               type="text"
               fullWidth
               value={searchValue}

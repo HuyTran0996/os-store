@@ -1,6 +1,7 @@
 const express = require("express");
 
 const brandCtrl = require("../controller/brandCtrl");
+const userCtrl = require("../controller/userCtrl");
 const { authMiddleware, isAdmin } = require("../middlewares/authMiddleware");
 const { uploadPhoto } = require("../middlewares/uploadImage");
 
@@ -12,6 +13,12 @@ router.post(
   isAdmin,
   uploadPhoto.array("images", 10),
   brandCtrl.createBrand
+);
+router.post(
+  "/smartBrandSearch",
+  authMiddleware,
+  isAdmin,
+  userCtrl.smartUserSearch("brand")
 );
 
 router.put(

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAllBrand } from "../thunks/fetchBrands";
+import { getAllBrand, smartBrandSearch } from "../thunks/fetchBrands";
 
 const initialState = {
   dataAllBrand: [],
@@ -10,6 +10,9 @@ const brandSlice = createSlice({
   initialState,
   extraReducers(builder) {
     builder.addCase(getAllBrand.fulfilled, (state, action) => {
+      state.dataAllBrand = action.payload;
+    });
+    builder.addCase(smartBrandSearch.fulfilled, (state, action) => {
       state.dataAllBrand = action.payload;
     });
   },
