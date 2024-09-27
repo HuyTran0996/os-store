@@ -53,6 +53,9 @@ exports.updateBrand = asyncHandler(async (req, res) => {
   const files = req.files;
   const imgUrl = [];
   let object = {};
+  const brand = await Brand.findById(brandId);
+  if (!brand) throw new AppError("Brand not found", 404);
+  let oldImages = brand.images;
 
   if (!title) throw new AppError("A brand must has a title", 400);
   if (files.length > 0) {
@@ -69,7 +72,11 @@ exports.updateBrand = asyncHandler(async (req, res) => {
     new: true,
   });
 
-  if (!updatedBrand) throw new AppError("Brand not found", 404);
+  if (files.length > 0) {
+    oldImages.map(async (image) => {
+      await cloudinaryDeleteImg(image.public_id);
+    });
+  }
 
   res.status(200).json({
     status: "success",
@@ -80,9 +87,15 @@ exports.updateBrand = asyncHandler(async (req, res) => {
 exports.deleteBrand = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
+  const brand = await Brand.findById(id);
+  if (!brand) throw new AppError("Brand not found", 404);
+  let oldImages = brand.images;
 
-  const deletedBrand = await Brand.findByIdAndDelete(id);
-  if (!deletedBrand) throw new AppError("Brand not found", 404);
+  await Brand.findByIdAndDelete(id);
+
+  oldImages.map(async (image) => {
+    await cloudinaryDeleteImg(image.public_id);
+  });
 
   res.status(204).json();
 });
