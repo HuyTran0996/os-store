@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Typography, Box, TextField, IconButton } from "@mui/material";
-import {
-  GridRowModes,
-  GridToolbarContainer,
-  GridActionsCellItem,
-} from "@mui/x-data-grid";
+import { Typography, Box } from "@mui/material";
+import { GridRowModes, GridActionsCellItem } from "@mui/x-data-grid";
 import { useThunk } from "../hook/use-thunk";
 import {
   getAllUser,
@@ -30,55 +26,9 @@ import CancelIcon from "@mui/icons-material/Close";
 import PersonIcon from "@mui/icons-material/Person";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
-import SearchIcon from "@mui/icons-material/Search";
 import { GiSharkBite } from "react-icons/gi";
 
-function EditToolbar(props) {
-  const navigate = useNavigate();
-  const [searchValue, setSearchValue] = useState("");
-  const { isLoadingSelf } = props;
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    navigate(`/customers?search=${searchValue.trim()}&page=${1}`);
-  };
-
-  return (
-    <GridToolbarContainer sx={{ width: "100%" }}>
-      <form onSubmit={handleSubmit} style={{ width: "100%", margin: "7px" }}>
-        <Box
-          sx={{
-            position: "relative",
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-          }}
-        >
-          <TextField
-            className="input"
-            placeholder="Search User..."
-            type="text"
-            fullWidth
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-          />
-
-          <IconButton
-            type="submit"
-            color="primary"
-            variant="contained"
-            fullWidth
-            size="large"
-            disabled={isLoadingSelf}
-            sx={{ position: "absolute", right: "7px" }}
-          >
-            <SearchIcon />
-          </IconButton>
-        </Box>
-      </form>
-    </GridToolbarContainer>
-  );
-}
+import { EditToolbarCustomer } from "../components/EditToolbar/EditToolbarCustomer";
 
 const Customer = () => {
   ///////////// declare///////////////
@@ -349,7 +299,7 @@ const Customer = () => {
           rowModesModel={rowModesModel}
           handleRowModesModelChange={handleRowModesModelChange}
           processRowUpdate={processRowUpdate}
-          EditToolbar={EditToolbar}
+          EditToolbar={EditToolbarCustomer}
         />
         <Box
           sx={{
