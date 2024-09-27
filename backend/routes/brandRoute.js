@@ -14,7 +14,13 @@ router.post(
   brandCtrl.createBrand
 );
 
-router.put("/:id", authMiddleware, isAdmin, brandCtrl.updateBrand);
+router.put(
+  "/",
+  authMiddleware,
+  isAdmin,
+  uploadPhoto.array("images", 10),
+  brandCtrl.updateBrand
+);
 
 router.get("/:id", brandCtrl.getBrand);
 router.get("/", brandCtrl.getAllBrand);

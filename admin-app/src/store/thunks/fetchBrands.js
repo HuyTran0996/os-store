@@ -11,6 +11,17 @@ export const getAllBrand = createAsyncThunk(
     return res.data.data;
   }
 );
+export const updateBrand = createAsyncThunk(
+  "brands/updateBrand",
+  async (formData) => {
+    const res = await apiService.put(`/brand`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return res.data.data;
+  }
+);
 export const createBrand = createAsyncThunk(
   "brands/createBrand",
   async (formData) => {
@@ -19,6 +30,14 @@ export const createBrand = createAsyncThunk(
         "Content-Type": "multipart/form-data",
       },
     });
+    return res.data.data;
+  }
+);
+export const deleteBrand = createAsyncThunk(
+  "brands/deleteBrand",
+  async (id) => {
+    console.log("ádas", id);
+    const res = await apiService.delete(`/brand/${id}`);
     return res.data.data;
   }
 );

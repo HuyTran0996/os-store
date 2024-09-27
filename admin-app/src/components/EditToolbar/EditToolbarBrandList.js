@@ -144,7 +144,6 @@ export const EditToolbarBrandList = (props) => {
                   variant="contained"
                   type="submit"
                   onClick={(e) => {
-                    console.log("Button clicked");
                     handleAddBrand(e);
                   }}
                   disabled={isLoadingSelf}

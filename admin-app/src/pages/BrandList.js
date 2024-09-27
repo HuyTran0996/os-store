@@ -4,15 +4,19 @@ import { useSelector } from "react-redux";
 import {
   Typography,
   Box,
+  Button,
+  Modal,
   TextField,
   IconButton,
-  Button,
   CardMedia,
-  Modal,
 } from "@mui/material";
 import { GridRowModes, GridActionsCellItem } from "@mui/x-data-grid";
 import { useThunk } from "../hook/use-thunk";
-import { getAllBrand } from "../store/thunks/fetchBrands";
+import {
+  getAllBrand,
+  updateBrand,
+  deleteBrand,
+} from "../store/thunks/fetchBrands";
 
 import DataGridTable from "../components/DataGridTable";
 import Paginate from "../components/Pagination";
@@ -32,21 +36,162 @@ import CancelIcon from "@mui/icons-material/Close";
 // import { GiSharkBite } from "react-icons/gi";
 import { EditToolbarBrandList } from "../components/EditToolbar/EditToolbarBrandList";
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
+const BasicModal = ({
+  open,
+  handleClose,
+  params,
+  isLoadingSelf,
+  setIsLoadingSelf,
+}) => {
+  const [title, setTitle] = useState(params.row.title);
+  const [imageChange, setImageChange] = useState("");
+  const [update] = useThunk(updateBrand);
+  const [getDataAllBrand] = useThunk(getAllBrand);
+
+  let image;
+  if (imageChange !== "") {
+    image = URL.createObjectURL(imageChange[0]);
+  } else image = params.row.images[0]?.url || imageNotFound;
+
+  const handleChangeBrand = async (e) => {
+    e.preventDefault();
+
+    try {
+      setIsLoadingSelf(true);
+      const formData = new FormData();
+      formData.append("brandId", params.row.id);
+      formData.append("title", title);
+      if (imageChange.length > 0) {
+        imageChange.forEach((image) => {
+          formData.append(`images`, image);
+        });
+      }
+      await update(formData);
+      await getDataAllBrand();
+      showToast(`Update brand successfully`, "success");
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    } finally {
+      setIsLoadingSelf(false);
+      handleClose(false);
+      setImageChange("");
+      setTitle("");
+    }
+  };
+
+  return (
+    <form onSubmit={handleChangeBrand}>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <TextField
+            className="input"
+            placeholder="Title..."
+            type="text"
+            fullWidth
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <Box
+            sx={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "7px",
+            }}
+          >
+            <img
+              src={image}
+              alt="brand"
+              style={{
+                height: "200px",
+                objectFit: "contain",
+              }}
+            />
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-evenly",
+                height: "50px",
+                width: "100%",
+              }}
+            >
+              <Button
+                component="label"
+                variant="outlined"
+                disabled={isLoadingSelf}
+              >
+                Change Image
+                <TextField
+                  id="img"
+                  type="file"
+                  name="images"
+                  sx={{
+                    display: "none",
+                  }}
+                  slotProps={{
+                    htmlInput: {
+                      multiple: true,
+                      onChange: (e) =>
+                        setImageChange(Array.from(e.target.files)),
+                    },
+                  }}
+                  required
+                />
+              </Button>
+
+              <Button
+                variant="contained"
+                type="submit"
+                onClick={(e) => {
+                  handleChangeBrand(e);
+                }}
+                disabled={isLoadingSelf}
+              >
+                Save
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+      </Modal>
+    </form>
+  );
+};
+
 const BrandList = () => {
   ///////////// declare///////////////
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingSelf, setIsLoadingSelf] = useState(false);
-  const [imageChange, setImageChange] = useState("");
   const [rows, setRows] = useState([]);
-  const [rowModesModel, setRowModesModel] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalParams, setModalParams] = useState(null);
+
   let [searchParams] = useSearchParams();
   let page = parseInt(searchParams.get("page")) || 1;
   let search = String(searchParams.get("search"));
 
   const [getDataAllBrand] = useThunk(getAllBrand);
+  const [brandDelete] = useThunk(deleteBrand);
   // const [smartUserSearching] = useThunk(smartUserSearch);
-  // const [updateUserNameEmail] = useThunk(updateNameEmail);
-  // const [deleteAUser] = useThunk(deleteUser);
 
   const { dataAllBrand } = useSelector((state) => {
     return state.brands;
@@ -102,68 +247,28 @@ const BrandList = () => {
     );
 
     if (confirmed) {
-      // await action(deleteAUser(id));
+      await action(brandDelete(id));
     }
   };
 
-  //Note: the only way to get input value to update name and phone in back-end is to use newRow value of MUI in this function
-  const processRowUpdate = (newRow) => {
-    const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-
-    // action(
-    //   updateUserNameEmail({
-    //     id: newRow.id,
-    //     name: newRow.name,
-    //     phone: newRow.phone.toString(),
-    //   })
-    // );
-
-    return updatedRow;
+  const handleEditClick = (params) => {
+    setModalParams(params);
+    setModalOpen(true);
   };
 
-  const handleRowModesModelChange = (newRowModesModel) => {
-    setRowModesModel(newRowModesModel);
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setModalParams(null);
   };
-
-  //////////////MUI DATA GRID functions, no need to care this//////////
-  const handleEditClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-  };
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View },
-    });
-  };
-  const handleCancelClick = (id) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
-
-    const editedRow = rows.find((row) => row.id === id);
-    if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
-    }
-  };
-  ///////////////////////////
 
   const columns = [
     { field: "id", headerName: "ID", width: 220 },
     {
       field: "images",
-      type: "images",
       headerName: "Images",
       width: 180,
-      editable: true,
       renderCell: (params) => {
-        let image;
-        if (imageChange !== "") {
-          image = URL.createObjectURL(imageChange[0]);
-        } else {
-          image = params.row.images[0]?.url;
-        }
+        const imageUrl = params.row.images[0]?.url || imageNotFound;
 
         return (
           <Box
@@ -177,38 +282,22 @@ const BrandList = () => {
             }}
           >
             <img
-              src={image || imageNotFound}
+              src={imageUrl}
               alt="brand"
               style={{
                 height: "100px",
                 objectFit: "contain",
               }}
             />
-
-            <Button component="label" variant="contained" disabled={isLoading}>
-              Change Images
-              <TextField
-                id="img"
-                type="file"
-                name="images"
-                sx={{
-                  display: "none",
-                }}
-                slotProps={{
-                  htmlInput: {
-                    multiple: false,
-                    onChange: (e) => setImageChange(Array.from(e.target.files)),
-                  },
-                }}
-                required
-              />
-            </Button>
           </Box>
         );
       },
     },
-    { field: "title", headerName: "Title", width: 200, editable: true },
-
+    {
+      field: "title",
+      headerName: "Title",
+      width: 200,
+    },
     {
       field: "createdAt",
       headerName: "Created At",
@@ -226,41 +315,19 @@ const BrandList = () => {
       headerName: "Actions",
       width: 100,
       cellClassName: "actions",
-      getActions: ({ id, row }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<SaveIcon />}
-              label="Save"
-              sx={{
-                color: "primary.main",
-              }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
-          ];
-        }
-
+      getActions: (params) => {
         return [
           <GridActionsCellItem
             icon={<EditIcon />}
             label="Edit"
             className="textPrimary"
-            onClick={handleEditClick(id)}
+            onClick={() => handleEditClick(params)}
             color="inherit"
           />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
             label="Delete"
-            onClick={handleDeleteABrand(id)}
+            onClick={handleDeleteABrand(params.row.id)}
             color="inherit"
           />,
         ];
@@ -281,11 +348,8 @@ const BrandList = () => {
           isLoading={isLoading}
           isLoadingSelf={isLoadingSelf}
           setIsLoadingSelf={setIsLoadingSelf}
-          rowModesModel={rowModesModel}
-          handleRowModesModelChange={handleRowModesModelChange}
-          processRowUpdate={processRowUpdate}
           EditToolbar={EditToolbarBrandList}
-          rowHeight={160}
+          rowHeight={120}
         />
         <Box
           sx={{
@@ -298,6 +362,15 @@ const BrandList = () => {
           <Paginate data={dataAllBrand} />
         </Box>
       </Box>
+      {modalParams && (
+        <BasicModal
+          open={modalOpen}
+          handleClose={handleCloseModal}
+          params={modalParams}
+          isLoadingSelf={isLoadingSelf}
+          setIsLoadingSelf={setIsLoadingSelf}
+        />
+      )}
     </ContainerLayout>
   );
 };
