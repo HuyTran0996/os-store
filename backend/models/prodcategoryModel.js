@@ -8,6 +8,7 @@ const prodcategorySchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
+    images: [{ url: String, asset_id: String, public_id: String }],
   },
   { timestamps: true }
 );

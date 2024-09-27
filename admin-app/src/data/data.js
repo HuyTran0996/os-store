@@ -179,9 +179,9 @@ export const NAVIGATION = [
         title: "Category",
       },
       {
-        segment: "list-category",
+        segment: "productCategoryList",
         icon: <WidgetsIcon />,
-        title: "Category List",
+        title: " Product Category List",
       },
 
       {

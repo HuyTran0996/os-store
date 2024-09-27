@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import "./styles/App.scss";
 import MainLayout from "./components/MainLayout";
-import Header from "./components/Header";
+
 import Login from "./pages/Login";
 import Resetpassword from "./pages/Resetpassword";
 import Forgotpassword from "./pages/Forgotpassword";
@@ -13,6 +13,7 @@ import Customer from "./pages/Customer";
 import ProductList from "./pages/ProductList";
 import AddProduct from "./pages/AddProduct";
 import BrandList from "./pages/BrandList";
+import ProductCategoryList from "./pages/ProductCategoryList";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="productList" element={<ProductList />} />
           <Route path="addProduct" element={<AddProduct />} />
           <Route path="brandList" element={<BrandList />} />
+          <Route path="productCategoryList" element={<ProductCategoryList />} />
         </Route>
       </Routes>
     </BrowserRouter>

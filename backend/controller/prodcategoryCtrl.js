@@ -4,12 +4,41 @@ const Category = require("../models/prodcategoryModel");
 const validateMongoDbId = require("../utils/validateMongodbId");
 const AppError = require("../utils/appError");
 const APIFeatures = require("../utils/apiFeatures");
+const { resizeImg } = require("../middlewares/uploadImage");
+const { cloudinaryDeleteImg } = require("../utils/cloudinary");
+
+exports.getAllCategory = asyncHandler(async (req, res) => {
+  const features = new APIFeatures(Category.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  const total = new APIFeatures(Category.countDocuments(), req.query).filter();
+
+  const categories = await features.query;
+  const totalCategory = await total.query;
+
+  res.status(200).json({
+    status: "success",
+    data: { total: totalCategory.length, categories },
+  });
+});
 
 exports.createCategory = asyncHandler(async (req, res) => {
-  if (!req.body.title)
-    throw new AppError("Please provide all information", 400);
+  const { title } = req.body;
+  const files = req.files;
+  const imgUrl = [];
 
-  const newCategory = await Category.create(req.body);
+  if (!title) throw new AppError("A category must has a title", 400);
+  for (const file of files) {
+    const info = await resizeImg(file);
+    imgUrl.push(info);
+  }
+  const newCategory = await Category.create({
+    title,
+    images: imgUrl,
+  });
 
   res.status(201).json({
     status: "success",
@@ -18,14 +47,37 @@ exports.createCategory = asyncHandler(async (req, res) => {
 });
 
 exports.updateCategory = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  validateMongoDbId(id);
+  const { categoryId, title } = req.body;
+  validateMongoDbId(categoryId);
+  const files = req.files;
+  const imgUrl = [];
+  let object = {};
 
-  const updatedCategory = await Category.findByIdAndUpdate(id, req.body, {
+  if (!title) throw new AppError("A brand must has a title", 400);
+
+  const category = await Category.findById(categoryId);
+  if (!category) throw new AppError("Brand not found", 404);
+  let oldImages = category.images;
+
+  if (files.length > 0) {
+    for (const file of files) {
+      const info = await resizeImg(file);
+      imgUrl.push(info);
+    }
+    object = { title: title, images: imgUrl };
+  } else {
+    object = { title: title };
+  }
+
+  const updatedCategory = await Category.findByIdAndUpdate(categoryId, object, {
     new: true,
   });
 
-  if (!updatedCategory) throw new AppError("Category not found", 404);
+  if (files.length > 0) {
+    oldImages.map(async (image) => {
+      await cloudinaryDeleteImg(image.public_id);
+    });
+  }
 
   res.status(200).json({
     status: "success",
@@ -36,9 +88,15 @@ exports.updateCategory = asyncHandler(async (req, res) => {
 exports.deleteCategory = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
+  const category = await Category.findById(id);
+  if (!category) throw new AppError("Brand not found", 404);
+  let oldImages = category.images;
 
-  const deletedCategory = await Category.findByIdAndDelete(id);
-  if (!deletedCategory) throw new AppError("Category not found", 404);
+  await Category.findByIdAndDelete(id);
+
+  oldImages.map(async (image) => {
+    await cloudinaryDeleteImg(image.public_id);
+  });
 
   res.status(204).json();
 });
@@ -53,24 +111,5 @@ exports.getCategory = asyncHandler(async (req, res) => {
   res.status(200).json({
     status: "success",
     getaCategory,
-  });
-});
-
-exports.getallCategory = asyncHandler(async (req, res) => {
-  const features = new APIFeatures(Category.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-
-  const total = new APIFeatures(Category.countDocuments(), req.query).filter();
-
-  const categories = await features.query;
-  const totalCategories = await total.query;
-
-  res.status(200).json({
-    status: "success",
-    totalCategory: totalCategories.length,
-    categories,
   });
 });

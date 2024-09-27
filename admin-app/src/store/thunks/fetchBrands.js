@@ -36,7 +36,6 @@ export const createBrand = createAsyncThunk(
 export const deleteBrand = createAsyncThunk(
   "brands/deleteBrand",
   async (id) => {
-    console.log("ádas", id);
     const res = await apiService.delete(`/brand/${id}`);
     return res.data.data;
   }

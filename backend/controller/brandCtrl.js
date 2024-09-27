@@ -49,15 +49,16 @@ exports.createBrand = asyncHandler(async (req, res) => {
 exports.updateBrand = asyncHandler(async (req, res) => {
   const { brandId, title } = req.body;
   validateMongoDbId(brandId);
-
   const files = req.files;
   const imgUrl = [];
   let object = {};
+
+  if (!title) throw new AppError("A brand must has a title", 400);
+
   const brand = await Brand.findById(brandId);
   if (!brand) throw new AppError("Brand not found", 404);
   let oldImages = brand.images;
 
-  if (!title) throw new AppError("A brand must has a title", 400);
   if (files.length > 0) {
     for (const file of files) {
       const info = await resizeImg(file);

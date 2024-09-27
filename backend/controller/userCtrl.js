@@ -5,6 +5,7 @@ const User = require("../models/userModel");
 const Product = require("../models/productModel");
 const Order = require("../models/orderModel");
 const Brand = require("../models/brandModel");
+const ProdCategory = require("../models/prodcategoryModel");
 const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const validateMongodbId = require("../utils/validateMongodbId");
@@ -270,6 +271,18 @@ exports.smartUserSearch = (action) =>
     if (action === "brand") {
       model = Brand;
       field = "brands";
+      searchArea = ["title"];
+      filedToShow = {
+        _id: 1,
+        title: 1,
+        images: 1,
+        createdAt: 1,
+        score: { $meta: "searchScore" },
+      };
+    }
+    if (action === "prodCategory") {
+      model = ProdCategory;
+      field = "categories";
       searchArea = ["title"];
       filedToShow = {
         _id: 1,

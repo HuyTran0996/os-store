@@ -5,11 +5,11 @@ import { Typography, Box, Button, Modal, TextField } from "@mui/material";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { useThunk } from "../hook/use-thunk";
 import {
-  getAllBrand,
-  updateBrand,
-  deleteBrand,
-  smartBrandSearch,
-} from "../store/thunks/fetchBrands";
+  getAllCategory,
+  updateCategory,
+  deleteCategory,
+  smartCategorySearch,
+} from "../store/thunks/fetchProductCategories";
 
 import DataGridTable from "../components/DataGridTable";
 import Paginate from "../components/Pagination";
@@ -20,7 +20,7 @@ import imageNotFound from "../images/imageNotFound.png";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 
-import { EditToolbarBrandList } from "../components/EditToolbar/EditToolbarBrandList";
+import { EditToolbarProductCategoryList } from "../components/EditToolbar/EditToolbarProductCategoryList";
 
 const style = {
   position: "absolute",
@@ -43,8 +43,8 @@ const BasicModal = ({
 }) => {
   const [title, setTitle] = useState(params.row.title);
   const [imageChange, setImageChange] = useState("");
-  const [update] = useThunk(updateBrand);
-  const [getDataAllBrand] = useThunk(getAllBrand);
+  const [update] = useThunk(updateCategory);
+  const [getDataAllCategory] = useThunk(getAllCategory);
 
   let image;
   if (imageChange !== "") {
@@ -57,7 +57,7 @@ const BasicModal = ({
     try {
       setIsLoadingSelf(true);
       const formData = new FormData();
-      formData.append("brandId", params.row.id);
+      formData.append("categoryId", params.row.id);
       formData.append("title", title);
       if (imageChange.length > 0) {
         imageChange.forEach((image) => {
@@ -65,8 +65,8 @@ const BasicModal = ({
         });
       }
       await update(formData);
-      await getDataAllBrand();
-      showToast(`Update brand successfully`, "success");
+      await getDataAllCategory();
+      showToast(`Update category successfully`, "success");
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
@@ -163,7 +163,7 @@ const BasicModal = ({
   );
 };
 
-const BrandList = () => {
+const ProductCategoryList = () => {
   ///////////// declare///////////////
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingSelf, setIsLoadingSelf] = useState(false);
@@ -175,12 +175,12 @@ const BrandList = () => {
   let page = parseInt(searchParams.get("page")) || 1;
   let search = String(searchParams.get("search"));
 
-  const [getDataAllBrand] = useThunk(getAllBrand);
-  const [brandDelete] = useThunk(deleteBrand);
-  const [smartBrandSearching] = useThunk(smartBrandSearch);
+  const [getDataAllCategory] = useThunk(getAllCategory);
+  const [categoryDelete] = useThunk(deleteCategory);
+  const [smartCategorySearching] = useThunk(smartCategorySearch);
 
-  const { dataAllBrand } = useSelector((state) => {
-    return state.brands;
+  const { dataAllProductCategory } = useSelector((state) => {
+    return state.productCategories;
   });
   /////////////End declare///////////////
 
@@ -188,9 +188,9 @@ const BrandList = () => {
     try {
       setIsLoading(true);
       if (search.trim() === "" || search === "null") {
-        await getDataAllBrand(page);
+        await getDataAllCategory(page);
       } else {
-        smartBrandSearching({ page, searchField: search.trim() });
+        smartCategorySearching({ page, searchField: search.trim() });
       }
     } catch (err) {
       showToast(`err.message`, "error");
@@ -204,7 +204,7 @@ const BrandList = () => {
 
   //convert data to for table//////
   useEffect(() => {
-    const dataUpdate = dataAllBrand.brands?.map((brand) => {
+    const dataUpdate = dataAllProductCategory.categories?.map((brand) => {
       return {
         ...brand,
         id: brand._id,
@@ -212,14 +212,14 @@ const BrandList = () => {
       };
     });
     setRows(dataUpdate);
-  }, [dataAllBrand]);
+  }, [dataAllProductCategory]);
   //////////////////////
 
   const action = async (functionA) => {
     try {
       setIsLoadingSelf(true);
       await functionA;
-      await getDataAllBrand(page);
+      await getDataAllCategory(page);
     } catch (err) {
       showToast(`${err.message}`, "error", 3000);
     } finally {
@@ -233,7 +233,7 @@ const BrandList = () => {
     );
 
     if (confirmed) {
-      await action(brandDelete(id));
+      await action(categoryDelete(id));
     }
   };
 
@@ -325,7 +325,7 @@ const BrandList = () => {
     <ContainerLayout>
       <Box sx={{ margin: "20px" }}>
         <Typography variant="h3" sx={{ marginBottom: "20px" }}>
-          Brands
+          Product Categories
         </Typography>
 
         <DataGridTable
@@ -334,7 +334,7 @@ const BrandList = () => {
           isLoading={isLoading}
           isLoadingSelf={isLoadingSelf}
           setIsLoadingSelf={setIsLoadingSelf}
-          EditToolbar={EditToolbarBrandList}
+          EditToolbar={EditToolbarProductCategoryList}
           rowHeight={120}
         />
         <Box
@@ -345,7 +345,7 @@ const BrandList = () => {
             marginTop: "20px",
           }}
         >
-          <Paginate data={dataAllBrand} />
+          <Paginate data={dataAllProductCategory} />
         </Box>
       </Box>
       {modalParams && (
@@ -361,4 +361,4 @@ const BrandList = () => {
   );
 };
 
-export default BrandList;
+export default ProductCategoryList;
