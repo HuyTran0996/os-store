@@ -1,10 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { Box, TextField, IconButton, Button, Modal } from "@mui/material";
+import { useSelector } from "react-redux";
 import { GridToolbarContainer } from "@mui/x-data-grid";
+import {
+  Box,
+  TextField,
+  IconButton,
+  Button,
+  Modal,
+  Select,
+  MenuItem,
+  Typography,
+} from "@mui/material";
+
 import { useThunk } from "../../hook/use-thunk";
 import { getAllBrand, createBrand } from "../../store/thunks/fetchBrands";
+import { getAllCategory } from "../../store/thunks/fetchProductCategories";
 
 import { showToast } from "../ToastMessage";
 
@@ -14,15 +25,52 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 
 const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
+  modal: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  },
+  input: {
+    backgroundColor: "rgba(103, 58, 183, 0.5)",
+    borderRadius: "10px",
+    borderStyle: "none",
+    "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+  },
+  removeTagButton: {
+    position: "absolute",
+    top: "-5px",
+    right: "-5px",
+    backgroundColor: "red",
+    width: "20px",
+    height: "20px",
+    borderRadius: "50%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    cursor: "pointer",
+  },
+
+  // GridToolbarContainer//////
+  gridToolbarContainer: {
+    width: "100%",
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    padding: "7px",
+  },
+  box1: {
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    width: "100%",
+  },
+  ///////////////////
 };
 
 export const EditToolbarBrandList = (props) => {
@@ -30,11 +78,31 @@ export const EditToolbarBrandList = (props) => {
   const navigate = useNavigate();
   const [imageChange, setImageChange] = useState("");
   const [searchValue, setSearchValue] = useState("");
+  const [category, setCategory] = useState("");
+  const [tag, setTag] = useState([]);
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(false);
 
   const [getDataAllBrand] = useThunk(getAllBrand);
   const [create] = useThunk(createBrand);
+  const [getAllProdCategory] = useThunk(getAllCategory);
+  const { dataAllProductCategory } = useSelector((state) => {
+    return state.productCategories;
+  });
+
+  useEffect(() => {
+    const getCategory = async () => {
+      try {
+        setIsLoadingSelf(true);
+        await getAllProdCategory(1, 10000);
+      } catch (err) {
+        showToast(`${err.message}`, "error");
+      } finally {
+        setIsLoadingSelf(false);
+      }
+    };
+    getCategory();
+  }, []);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -55,6 +123,7 @@ export const EditToolbarBrandList = (props) => {
       setIsLoadingSelf(true);
       const formData = new FormData();
       formData.append("title", title);
+      formData.append("tag", JSON.stringify(tag));
       imageChange.forEach((image) => {
         formData.append(`images`, image);
       });
@@ -71,6 +140,25 @@ export const EditToolbarBrandList = (props) => {
     }
   };
 
+  const handleAddTag = () => {
+    if (!category.trim()) return;
+
+    setTag((prevState) => {
+      const find = prevState.findIndex((item) => item.title === category);
+      if (find !== -1) {
+        showToast("Duplicate tag", "error");
+        return prevState;
+      }
+      return [...prevState, { title: category }];
+    });
+  };
+
+  const handleRemoveFromTag = (categoryToRemove) => {
+    setTag((prevState) =>
+      prevState.filter((tag) => tag.title !== categoryToRemove)
+    );
+  };
+  console.log("category", category);
   return (
     <>
       <form onSubmit={handleAddBrand}>
@@ -80,15 +168,99 @@ export const EditToolbarBrandList = (props) => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <Box sx={style}>
-            <TextField
-              className="input"
-              placeholder="Title..."
-              type="text"
-              fullWidth
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
+          <Box sx={style.modal}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                // justifyContent: "space-between",
+                width: "100%",
+              }}
+            >
+              <Typography variant="h4">Title:</Typography>
+              <TextField
+                className="input"
+                type="text"
+                value={title}
+                variant="standard"
+                sx={{ marginLeft: "5px" }}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </Box>
+            {/* Add Tag */}
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography variant="h4">Tag:</Typography>
+              <Select
+                required
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                name="category"
+                sx={{
+                  ...style.input,
+                  minWidth: "120px",
+                  height: "36px",
+                  margin: "0 10px",
+                }}
+                // variant="standard"
+              >
+                {dataAllProductCategory.categories?.map((category, index) => {
+                  const categoryValue = category.title;
+                  return (
+                    <MenuItem key={index} value={categoryValue}>
+                      {category.title}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+              <Button
+                variant="contained"
+                disabled={isLoadingSelf}
+                onClick={handleAddTag}
+              >
+                Add Tag
+              </Button>
+            </Box>
+
+            {tag.length > 0 && (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  justifyContent: "space-between",
+                  margin: "15px 0",
+                }}
+              >
+                {tag.map((category, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      backgroundColor: "blue",
+                      position: "relative",
+                      width: "80px",
+                      borderRadius: "7px",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        padding: "5px",
+                        position: "relative",
+                        textAlign: "center",
+                      }}
+                    >
+                      {category.title}
+                    </Box>
+                    <Box
+                      sx={style.removeTagButton}
+                      onClick={() => handleRemoveFromTag(category)}
+                    >
+                      &times;
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+            )}
+
+            {/* Change Image */}
             <Box
               sx={{
                 height: "100%",
@@ -156,28 +328,13 @@ export const EditToolbarBrandList = (props) => {
         </Modal>
       </form>
 
-      <GridToolbarContainer
-        sx={{
-          width: "100%",
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
-          padding: "7px",
-        }}
-      >
+      <GridToolbarContainer sx={style.gridToolbarContainer}>
         <Button color="primary" startIcon={<AddIcon />} onClick={handleOpen}>
           Add brand
         </Button>
 
         <form onSubmit={handleSubmit} style={{ width: "60%" }}>
-          <Box
-            sx={{
-              position: "relative",
-              display: "flex",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
+          <Box sx={style.box1}>
             <TextField
               className="input"
               placeholder="Search Brand..."

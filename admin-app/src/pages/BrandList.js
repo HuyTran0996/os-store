@@ -21,6 +21,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 
 import { EditToolbarBrandList } from "../components/EditToolbar/EditToolbarBrandList";
+import { maxWidth } from "@mui/system";
 
 const style = {
   position: "absolute",
@@ -193,7 +194,7 @@ const BrandList = () => {
         smartBrandSearching({ page, searchField: search.trim() });
       }
     } catch (err) {
-      showToast(`err.message`, "error");
+      showToast(`${err.message}`, "error");
     } finally {
       setIsLoading(false);
     }
@@ -229,7 +230,7 @@ const BrandList = () => {
 
   const handleDeleteABrand = (id) => async () => {
     const confirmed = window.confirm(
-      "Are you sure you want to delete this user?"
+      "Are you sure you want to delete this brand?"
     );
 
     if (confirmed) {
@@ -283,6 +284,34 @@ const BrandList = () => {
       field: "title",
       headerName: "Title",
       width: 200,
+    },
+    {
+      field: "tag",
+      headerName: "Tag",
+      flex: 1,
+      width: 200,
+      renderCell: (params) => {
+        const arrayTag = params.row.tag;
+        return (
+          <Box
+            sx={{
+              //Note: do not use wrap because the height of row is fix
+              display: "flex",
+              gap: 1.5,
+            }}
+          >
+            {arrayTag.map((tag, index) => (
+              <Typography
+                variant="p"
+                sx={{ height: "30px", padding: "0", margin: "0" }}
+                key={index}
+              >
+                {tag.title}
+              </Typography>
+            ))}
+          </Box>
+        );
+      },
     },
     {
       field: "createdAt",

@@ -8,6 +8,7 @@ const brandSchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
+    tag: [{ title: String }],
     images: [{ url: String, asset_id: String, public_id: String }],
   },
   {

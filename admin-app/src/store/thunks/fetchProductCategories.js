@@ -6,9 +6,9 @@ const limit = process.env.REACT_APP_LIMIT_PAGINATION;
 
 export const getAllCategory = createAsyncThunk(
   "productCategories/getAllCategory",
-  async (page) => {
+  async (page, newLimit) => {
     const res = await apiService.get(
-      `/category?page=${page || 1}&limit=${limit}`
+      `/category?page=${page || 1}&limit=${newLimit || limit}`
     );
     return res.data.data;
   }

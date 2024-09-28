@@ -26,17 +26,21 @@ exports.getAllBrand = asyncHandler(async (req, res) => {
 });
 
 exports.createBrand = asyncHandler(async (req, res) => {
-  const { title } = req.body;
+  const { title, tag } = req.body;
   const files = req.files;
   const imgUrl = [];
+  let tagArray = [];
 
   if (!title) throw new AppError("A brand must has a title", 400);
+  if (tag) tagArray = JSON.parse(tag);
+
   for (const file of files) {
     const info = await resizeImg(file);
     imgUrl.push(info);
   }
   const newBrand = await Brand.create({
     title,
+    tag: [...tagArray],
     images: imgUrl,
   });
 
