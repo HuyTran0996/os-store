@@ -51,13 +51,15 @@ exports.createBrand = asyncHandler(async (req, res) => {
 });
 
 exports.updateBrand = asyncHandler(async (req, res) => {
-  const { brandId, title } = req.body;
+  const { brandId, title, tag } = req.body;
   validateMongoDbId(brandId);
   const files = req.files;
   const imgUrl = [];
+  let tagArray = [];
   let object = {};
 
   if (!title) throw new AppError("A brand must has a title", 400);
+  if (tag) tagArray = JSON.parse(tag);
 
   const brand = await Brand.findById(brandId);
   if (!brand) throw new AppError("Brand not found", 404);
@@ -68,9 +70,9 @@ exports.updateBrand = asyncHandler(async (req, res) => {
       const info = await resizeImg(file);
       imgUrl.push(info);
     }
-    object = { title: title, images: imgUrl };
+    object = { title: title, images: imgUrl, tag: [...tagArray] };
   } else {
-    object = { title: title };
+    object = { title: title, tag: [...tagArray] };
   }
 
   const updatedBrand = await Brand.findByIdAndUpdate(brandId, object, {

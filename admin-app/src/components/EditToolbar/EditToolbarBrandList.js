@@ -95,6 +95,7 @@ export const EditToolbarBrandList = (props) => {
       try {
         setIsLoadingSelf(true);
         await getAllProdCategory(1, 10000);
+        setCategory(dataAllProductCategory.categories[0]?.title);
       } catch (err) {
         showToast(`${err.message}`, "error");
       } finally {
@@ -158,7 +159,7 @@ export const EditToolbarBrandList = (props) => {
       prevState.filter((tag) => tag.title !== categoryToRemove)
     );
   };
-  console.log("category", category);
+
   return (
     <>
       <form onSubmit={handleAddBrand}>
@@ -251,7 +252,7 @@ export const EditToolbarBrandList = (props) => {
                     </Box>
                     <Box
                       sx={style.removeTagButton}
-                      onClick={() => handleRemoveFromTag(category)}
+                      onClick={() => handleRemoveFromTag(category.title)}
                     >
                       &times;
                     </Box>

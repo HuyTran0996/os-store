@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Typography, Box, Button, Modal, TextField } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Button,
+  Modal,
+  TextField,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { useThunk } from "../hook/use-thunk";
 import {
@@ -10,6 +18,7 @@ import {
   deleteBrand,
   smartBrandSearch,
 } from "../store/thunks/fetchBrands";
+import { getAllCategory } from "../store/thunks/fetchProductCategories";
 
 import DataGridTable from "../components/DataGridTable";
 import Paginate from "../components/Pagination";
@@ -21,18 +30,33 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 
 import { EditToolbarBrandList } from "../components/EditToolbar/EditToolbarBrandList";
-import { maxWidth } from "@mui/system";
 
 const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
+  modal: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  },
+
+  removeTagButton: {
+    position: "absolute",
+    top: "-5px",
+    right: "-5px",
+    backgroundColor: "red",
+    width: "20px",
+    height: "20px",
+    borderRadius: "50%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    cursor: "pointer",
+  },
 };
 
 const BasicModal = ({
@@ -44,8 +68,29 @@ const BasicModal = ({
 }) => {
   const [title, setTitle] = useState(params.row.title);
   const [imageChange, setImageChange] = useState("");
+  const [category, setCategory] = useState("");
+  const [tag, setTag] = useState(params.row.tag);
   const [update] = useThunk(updateBrand);
   const [getDataAllBrand] = useThunk(getAllBrand);
+  const [getAllProdCategory] = useThunk(getAllCategory);
+  const { dataAllProductCategory } = useSelector(
+    (state) => state.productCategories
+  );
+
+  useEffect(() => {
+    const getCategory = async () => {
+      try {
+        setIsLoadingSelf(true);
+        await getAllProdCategory(1, 10000);
+        setCategory(dataAllProductCategory.categories[0]?.title);
+      } catch (err) {
+        showToast(`${err.message}`, "error");
+      } finally {
+        setIsLoadingSelf(false);
+      }
+    };
+    getCategory();
+  }, []);
 
   let image;
   if (imageChange !== "") {
@@ -60,6 +105,7 @@ const BasicModal = ({
       const formData = new FormData();
       formData.append("brandId", params.row.id);
       formData.append("title", title);
+      formData.append("tag", JSON.stringify(tag));
       if (imageChange.length > 0) {
         imageChange.forEach((image) => {
           formData.append(`images`, image);
@@ -78,6 +124,25 @@ const BasicModal = ({
     }
   };
 
+  const handleAddTag = () => {
+    if (!category.trim()) return;
+
+    setTag((prevState) => {
+      const find = prevState.findIndex((item) => item.title === category);
+      if (find !== -1) {
+        showToast("Duplicate tag", "error");
+        return prevState;
+      }
+      return [...prevState, { title: category }];
+    });
+  };
+
+  const handleRemoveFromTag = (categoryToRemove) => {
+    setTag((prevState) =>
+      prevState.filter((tag) => tag.title !== categoryToRemove)
+    );
+  };
+
   return (
     <form onSubmit={handleChangeBrand}>
       <Modal
@@ -86,15 +151,101 @@ const BasicModal = ({
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          <TextField
-            className="input"
-            placeholder="Title..."
-            type="text"
-            fullWidth
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+        <Box sx={style.modal}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              // justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <Typography variant="h4">Title:</Typography>
+            <TextField
+              className="input"
+              placeholder="Title..."
+              type="text"
+              fullWidth
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </Box>
+
+          {/* Add Tag */}
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Typography variant="h4">Tag:</Typography>
+            <Select
+              required
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              name="category"
+              sx={{
+                ...style.input,
+                minWidth: "120px",
+                height: "36px",
+                margin: "0 10px",
+              }}
+              // variant="standard"
+            >
+              {dataAllProductCategory.categories?.map((category, index) => {
+                const categoryValue = category.title;
+                return (
+                  <MenuItem key={index} value={categoryValue}>
+                    {category.title}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+            <Button
+              variant="contained"
+              disabled={isLoadingSelf}
+              onClick={handleAddTag}
+            >
+              Add Tag
+            </Button>
+          </Box>
+
+          {/* Render tag list */}
+          {tag.length > 0 && (
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "space-between",
+                margin: "15px 0",
+              }}
+            >
+              {tag.map((category, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    backgroundColor: "blue",
+                    position: "relative",
+                    width: "80px",
+                    borderRadius: "7px",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      padding: "5px",
+                      position: "relative",
+                      textAlign: "center",
+                    }}
+                  >
+                    {category.title}
+                  </Box>
+                  <Box
+                    sx={style.removeTagButton}
+                    onClick={() => handleRemoveFromTag(category.title)}
+                  >
+                    &times;
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          )}
+
+          {/* IMAGE */}
           <Box
             sx={{
               height: "100%",
