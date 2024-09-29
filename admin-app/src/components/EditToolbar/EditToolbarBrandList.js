@@ -94,8 +94,8 @@ export const EditToolbarBrandList = (props) => {
     const getCategory = async () => {
       try {
         setIsLoadingSelf(true);
-        await getAllProdCategory(1, 10000);
-        setCategory(dataAllProductCategory.categories[0]?.title);
+        const result = await getAllProdCategory(1, 10000);
+        setCategory(result.categories[0]?.title);
       } catch (err) {
         showToast(`${err.message}`, "error");
       } finally {

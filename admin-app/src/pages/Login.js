@@ -36,7 +36,7 @@ const Login = () => {
     try {
       const adminData = await login({ email, password });
       showToast("Successfully Login", "success");
-      console.log("admin data", adminData);
+
       const dataToStore = { email: adminData.email, name: adminData.name };
       const stringifiedAdminData = JSON.stringify(dataToStore);
       if (!localStorage.getItem("adminData")) {

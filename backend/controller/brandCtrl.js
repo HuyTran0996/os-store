@@ -8,6 +8,19 @@ const { resizeImg } = require("../middlewares/uploadImage");
 const { cloudinaryDeleteImg } = require("../utils/cloudinary");
 
 exports.getAllBrand = asyncHandler(async (req, res) => {
+  const tagTitle = req.query.tag;
+  if (tagTitle) {
+    const brands = await Brand.find({
+      tag: { $elemMatch: { title: tagTitle } },
+    }).sort("title");
+    if (!brands) throw new AppError("Brand not found", 404);
+    const totalBrand = brands.length;
+    return res.status(200).json({
+      status: "success",
+      data: { total: totalBrand.length, brands },
+    });
+  }
+
   const features = new APIFeatures(Brand.find(), req.query)
     .filter()
     .sort()

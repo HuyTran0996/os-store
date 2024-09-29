@@ -24,7 +24,6 @@ const SingleProduct = () => {
   const [orderedProduct, setOrderedProduct] = useState(!false);
 
   const copyToClipboard = (text) => {
-    console.log("text", text);
     var textField = document.createElement("textarea");
     textField.innerText = text;
     document.body.appendChild(textField);

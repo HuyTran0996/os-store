@@ -81,8 +81,8 @@ const BasicModal = ({
     const getCategory = async () => {
       try {
         setIsLoadingSelf(true);
-        await getAllProdCategory(1, 10000);
-        setCategory(dataAllProductCategory.categories[0]?.title);
+        const result = await getAllProdCategory(1, 10000);
+        setCategory(result?.categories[0]?.title);
       } catch (err) {
         showToast(`${err.message}`, "error");
       } finally {
@@ -340,7 +340,7 @@ const BrandList = () => {
     try {
       setIsLoading(true);
       if (search.trim() === "" || search === "null") {
-        await getDataAllBrand(page);
+        await getDataAllBrand({ page });
       } else {
         smartBrandSearching({ page, searchField: search.trim() });
       }
@@ -371,7 +371,7 @@ const BrandList = () => {
     try {
       setIsLoadingSelf(true);
       await functionA;
-      await getDataAllBrand(page);
+      await getDataAllBrand({ page });
     } catch (err) {
       showToast(`${err.message}`, "error", 3000);
     } finally {

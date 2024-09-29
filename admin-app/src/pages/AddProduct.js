@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Grid2,
   Typography,
@@ -16,7 +17,11 @@ import {
 } from "@mui/material";
 import { HexColorPicker } from "react-colorful";
 import { useThunk } from "../hook/use-thunk";
+
 import { createProduct, addColor } from "../store/thunks/fetchProduct";
+import { getAllBrand } from "../store/thunks/fetchBrands";
+import { getAllCategory } from "../store/thunks/fetchProductCategories";
+
 import { showToast } from "../components/ToastMessage";
 import CarouselShow from "../components/CarouselShow";
 import ContainerLayout from "../components/ContainerLayout";
@@ -50,12 +55,60 @@ const initialState = {
 };
 
 const AddProduct = () => {
+  ///////////// declare///////////////
   const [state, setState] = useState(initialState);
   const [colorCode, setColorCode] = useState("#7a763d");
   const [isLoading, setIsLoading] = useState(false);
   const [wrongColorCode, setWrongColorCode] = useState(null);
   const [create] = useThunk(createProduct);
   const [addColorToProduct] = useThunk(addColor);
+  const [getDataAllBrand] = useThunk(getAllBrand);
+  const [getDataAllCategory] = useThunk(getAllCategory);
+
+  const { dataAllBrand } = useSelector((state) => {
+    return state.brands;
+  });
+  const { dataAllProductCategory } = useSelector((state) => {
+    return state.productCategories;
+  });
+
+  ////////////////
+
+  useEffect(() => {
+    const getCategory = async () => {
+      try {
+        setIsLoading(true);
+        const categories = await getDataAllCategory().then();
+        setState((prevState) => ({
+          ...prevState,
+          category: categories?.categories[0]?.title,
+        }));
+      } catch (err) {
+        showToast(`${err.message}`, "error");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getCategory();
+  }, []);
+
+  useEffect(() => {
+    const getBrand = async () => {
+      try {
+        setIsLoading(true);
+        const brands = await getDataAllBrand({ page: 1, tag: state.category });
+        setState((prevState) => ({
+          ...prevState,
+          brand: brands?.brands[0]?.title,
+        }));
+      } catch (err) {
+        showToast(`${err.message}`, "error");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getBrand();
+  }, [state.category]);
 
   const isValidHexColor = (hexCode) => {
     const hexColorRegex = /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/;
@@ -378,9 +431,16 @@ const AddProduct = () => {
                       name="category"
                       sx={{ ...style.input, minWidth: "120px" }}
                     >
-                      <MenuItem value="Watch">Watch</MenuItem>
-                      <MenuItem value="Laptop">Laptop</MenuItem>
-                      <MenuItem value="Cellphone">Cellphone</MenuItem>
+                      {dataAllProductCategory.categories?.map(
+                        (category, index) => (
+                          <MenuItem
+                            key={`${index}-category`}
+                            value={category.title}
+                          >
+                            {category.title}
+                          </MenuItem>
+                        )
+                      )}
                     </Select>
                   </Box>
 
@@ -394,9 +454,11 @@ const AddProduct = () => {
                       name="brand"
                       sx={{ ...style.input, minWidth: "120px" }}
                     >
-                      <MenuItem value="Watch">Dell</MenuItem>
-                      <MenuItem value="Laptop">HP</MenuItem>
-                      <MenuItem value="Cellphone">Asus</MenuItem>
+                      {dataAllBrand.brands?.map((brand, index) => (
+                        <MenuItem key={`${index}-brand`} value={brand.title}>
+                          {brand.title}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Box>
                 </Box>
