@@ -96,7 +96,7 @@ const AddProduct = () => {
     const getBrand = async () => {
       try {
         setIsLoading(true);
-        const brands = await getDataAllBrand({ page: 1, tag: state.category });
+        const brands = await getDataAllBrand(state.category);
         setState((prevState) => ({
           ...prevState,
           brand: brands?.brands[0]?.title,

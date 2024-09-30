@@ -117,6 +117,7 @@ export const EditToolbarBrandList = (props) => {
     e.preventDefault();
     navigate(`/brandList?search=${searchValue.trim()}`);
   };
+
   const handleAddBrand = async (e) => {
     e.preventDefault();
 

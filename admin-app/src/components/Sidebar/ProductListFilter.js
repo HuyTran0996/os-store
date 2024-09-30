@@ -47,17 +47,15 @@ const ProductListFilter = ({ dataAllProductCategory }) => {
           <Typography sx={style.filterTitle}>Shop By Categories</Typography>
           {/* <Box> */}
           <List sx={style.list}>
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemText primary="Trash" />
-              </ListItemButton>
-            </ListItem>
-
-            <ListItem disablePadding>
-              <ListItemButton component="a" href="#simple-list">
-                <ListItemText primary="Spam" />
-              </ListItemButton>
-            </ListItem>
+            {dataAllProductCategory.categories?.map((category, index) => {
+              return (
+                <ListItem disablePadding key={index}>
+                  <ListItemButton component="a" href="#simple-list">
+                    <ListItemText primary={category.title} />
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
           </List>
           {/* </Box> */}
         </CardContent>

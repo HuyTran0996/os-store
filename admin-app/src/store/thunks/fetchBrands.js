@@ -6,7 +6,7 @@ const limit = process.env.REACT_APP_LIMIT_PAGINATION;
 
 export const getAllBrand = createAsyncThunk(
   "brands/getAllBrand",
-  async ({ tag }) => {
+  async (tag) => {
     let res;
     if (tag) {
       res = await apiService.get(`/brand?tag=${tag}`);
