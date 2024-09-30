@@ -12,7 +12,6 @@ import {
 } from "../store/thunks/fetchProductCategories";
 
 import DataGridTable from "../components/DataGridTable";
-import Paginate from "../components/Pagination";
 import { showToast } from "../components/ToastMessage";
 import ContainerLayout from "../components/ContainerLayout";
 import imageNotFound from "../images/imageNotFound.png";
@@ -172,7 +171,7 @@ const ProductCategoryList = () => {
   const [modalParams, setModalParams] = useState(null);
 
   let [searchParams] = useSearchParams();
-  let page = parseInt(searchParams.get("page")) || 1;
+
   let search = String(searchParams.get("search"));
 
   const [getDataAllCategory] = useThunk(getAllCategory);
@@ -188,9 +187,9 @@ const ProductCategoryList = () => {
     try {
       setIsLoading(true);
       if (search.trim() === "" || search === "null") {
-        await getDataAllCategory(page);
+        await getDataAllCategory();
       } else {
-        smartCategorySearching({ page, searchField: search.trim() });
+        smartCategorySearching({ searchField: search.trim() });
       }
     } catch (err) {
       showToast(`err.message`, "error");
@@ -199,8 +198,8 @@ const ProductCategoryList = () => {
     }
   };
   useEffect(() => {
-    getData(page);
-  }, [page, search]);
+    getData();
+  }, [search]);
 
   //convert data to for table//////
   useEffect(() => {
@@ -219,7 +218,7 @@ const ProductCategoryList = () => {
     try {
       setIsLoadingSelf(true);
       await functionA;
-      await getDataAllCategory(page);
+      await getDataAllCategory();
     } catch (err) {
       showToast(`${err.message}`, "error", 3000);
     } finally {
@@ -337,16 +336,6 @@ const ProductCategoryList = () => {
           EditToolbar={EditToolbarProductCategoryList}
           rowHeight={120}
         />
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "20px",
-          }}
-        >
-          <Paginate data={dataAllProductCategory} />
-        </Box>
       </Box>
       {modalParams && (
         <BasicModal

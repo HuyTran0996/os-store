@@ -13,7 +13,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
-import { NAVIGATION } from "../data/data";
+import { NAVIGATION } from "../../data/data";
 
 const NestedList = ({ item, depth = 1.5 }) => {
   const navigate = useNavigate();

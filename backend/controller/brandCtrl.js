@@ -21,11 +21,12 @@ exports.getAllBrand = asyncHandler(async (req, res) => {
     });
   }
 
+  //Note: for a normal store, there is not many brand, so no need the pagination for this
   const features = new APIFeatures(Brand.find(), req.query)
     .filter()
     .sort()
-    .limitFields()
-    .paginate();
+    .limitFields();
+  // .paginate();
 
   const total = new APIFeatures(Brand.countDocuments(), req.query).filter();
 

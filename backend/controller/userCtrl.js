@@ -276,6 +276,7 @@ exports.smartUserSearch = (action) =>
         _id: 1,
         title: 1,
         images: 1,
+        tag: 1,
         createdAt: 1,
         score: { $meta: "searchScore" },
       };

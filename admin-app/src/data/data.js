@@ -161,39 +161,36 @@ export const NAVIGATION = [
         icon: <ShoppingCartIcon />,
         title: "Product List",
       },
-
-      {
-        segment: "brand",
-        icon: <FactoryIcon />,
-        title: "Brand",
-      },
+      // {
+      //   segment: "brand",
+      //   icon: <FactoryIcon />,
+      //   title: "Brand",
+      // },
       {
         segment: "brandList",
         icon: <FactoryIcon />,
         title: "Brand List ",
       },
-
-      {
-        segment: "category",
-        icon: <WidgetsIcon />,
-        title: "Category",
-      },
+      // {
+      //   segment: "category",
+      //   icon: <WidgetsIcon />,
+      //   title: "Category",
+      // },
       {
         segment: "productCategoryList",
         icon: <WidgetsIcon />,
         title: " Product Category List",
       },
-
-      {
-        segment: "color",
-        icon: <FormatColorFillIcon />,
-        title: "Color",
-      },
-      {
-        segment: "list-color",
-        icon: <FormatColorFillIcon />,
-        title: "Color List",
-      },
+      // {
+      //   segment: "color",
+      //   icon: <FormatColorFillIcon />,
+      //   title: "Color",
+      // },
+      // {
+      //   segment: "list-color",
+      //   icon: <FormatColorFillIcon />,
+      //   title: "Color List",
+      // },
     ],
   },
   {

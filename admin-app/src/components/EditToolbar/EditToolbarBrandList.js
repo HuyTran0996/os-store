@@ -94,7 +94,7 @@ export const EditToolbarBrandList = (props) => {
     const getCategory = async () => {
       try {
         setIsLoadingSelf(true);
-        const result = await getAllProdCategory(1, 10000);
+        const result = await getAllProdCategory();
         setCategory(result.categories[0]?.title);
       } catch (err) {
         showToast(`${err.message}`, "error");
@@ -115,7 +115,7 @@ export const EditToolbarBrandList = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate(`/brandList?search=${searchValue.trim()}&page=${1}`);
+    navigate(`/brandList?search=${searchValue.trim()}`);
   };
   const handleAddBrand = async (e) => {
     e.preventDefault();

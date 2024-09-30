@@ -6,10 +6,8 @@ const limit = process.env.REACT_APP_LIMIT_PAGINATION;
 
 export const getAllCategory = createAsyncThunk(
   "productCategories/getAllCategory",
-  async (page, newLimit) => {
-    const res = await apiService.get(
-      `/category?page=${page || 1}&limit=${newLimit || limit}`
-    );
+  async () => {
+    const res = await apiService.get(`/category`);
     return res.data.data;
   }
 );
@@ -45,11 +43,10 @@ export const deleteCategory = createAsyncThunk(
 
 export const smartCategorySearch = createAsyncThunk(
   "productCategories/smartCategorySearch",
-  async ({ page, searchField }) => {
-    const res = await apiService.post(
-      `/category/smartCategorySearch?page=${page}&limit=${limit}`,
-      { searchField }
-    );
+  async ({ searchField }) => {
+    const res = await apiService.post(`/category/smartCategorySearch`, {
+      searchField,
+    });
     return res.data.data;
   }
 );

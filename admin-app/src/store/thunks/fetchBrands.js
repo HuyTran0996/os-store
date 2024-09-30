@@ -6,12 +6,12 @@ const limit = process.env.REACT_APP_LIMIT_PAGINATION;
 
 export const getAllBrand = createAsyncThunk(
   "brands/getAllBrand",
-  async ({ page, tag }) => {
+  async ({ tag }) => {
     let res;
     if (tag) {
       res = await apiService.get(`/brand?tag=${tag}`);
     } else {
-      res = await apiService.get(`/brand?page=${page || 1}&limit=${limit}`);
+      res = await apiService.get(`/brand`);
     }
     return res.data.data;
   }
@@ -48,11 +48,10 @@ export const deleteBrand = createAsyncThunk(
 
 export const smartBrandSearch = createAsyncThunk(
   "brands/smartBrandSearch",
-  async ({ page, searchField }) => {
-    const res = await apiService.post(
-      `/brand/smartBrandSearch?page=${page}&limit=${limit}`,
-      { searchField }
-    );
+  async ({ searchField }) => {
+    const res = await apiService.post(`/brand/smartBrandSearch`, {
+      searchField,
+    });
     return res.data.data;
   }
 );

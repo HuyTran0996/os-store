@@ -324,7 +324,7 @@ const BrandList = () => {
   const [modalParams, setModalParams] = useState(null);
 
   let [searchParams] = useSearchParams();
-  let page = parseInt(searchParams.get("page")) || 1;
+
   let search = String(searchParams.get("search"));
 
   const [getDataAllBrand] = useThunk(getAllBrand);
@@ -340,9 +340,9 @@ const BrandList = () => {
     try {
       setIsLoading(true);
       if (search.trim() === "" || search === "null") {
-        await getDataAllBrand({ page });
+        await getDataAllBrand();
       } else {
-        smartBrandSearching({ page, searchField: search.trim() });
+        smartBrandSearching({ searchField: search.trim() });
       }
     } catch (err) {
       showToast(`${err.message}`, "error");
@@ -351,8 +351,8 @@ const BrandList = () => {
     }
   };
   useEffect(() => {
-    getData(page);
-  }, [page, search]);
+    getData();
+  }, [search]);
 
   //convert data to for table//////
   useEffect(() => {
@@ -371,7 +371,7 @@ const BrandList = () => {
     try {
       setIsLoadingSelf(true);
       await functionA;
-      await getDataAllBrand({ page });
+      await getDataAllBrand();
     } catch (err) {
       showToast(`${err.message}`, "error", 3000);
     } finally {
@@ -517,7 +517,7 @@ const BrandList = () => {
           EditToolbar={EditToolbarBrandList}
           rowHeight={120}
         />
-        <Box
+        {/* <Box
           sx={{
             width: "100%",
             display: "flex",
@@ -526,7 +526,7 @@ const BrandList = () => {
           }}
         >
           <Paginate data={dataAllBrand} />
-        </Box>
+        </Box> */}
       </Box>
       {modalParams && (
         <BasicModal

@@ -49,7 +49,7 @@ export const EditToolbarProductCategoryList = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate(`/productCategoryList?search=${searchValue.trim()}&page=${1}`);
+    navigate(`/productCategoryList?search=${searchValue.trim()}`);
   };
   const handleAddBrand = async (e) => {
     e.preventDefault();

@@ -8,11 +8,12 @@ const { resizeImg } = require("../middlewares/uploadImage");
 const { cloudinaryDeleteImg } = require("../utils/cloudinary");
 
 exports.getAllCategory = asyncHandler(async (req, res) => {
+  //Note: for a normal store, there is not many categories, so no need the pagination for this
   const features = new APIFeatures(Category.find(), req.query)
     .filter()
     .sort()
-    .limitFields()
-    .paginate();
+    .limitFields();
+  // .paginate();
 
   const total = new APIFeatures(Category.countDocuments(), req.query).filter();
 

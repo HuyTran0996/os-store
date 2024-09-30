@@ -10,7 +10,7 @@ import Menu from "@mui/material/Menu";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import MenuList from "./MenuList";
+import MenuList from "./Sidebar/MenuList";
 import logo from "../images/logo.png";
 import { MaterialUISwitch } from "../data/data";
 
