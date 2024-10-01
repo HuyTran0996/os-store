@@ -25,7 +25,7 @@ const TotalCard = ({ title, amount, percentage, color }) => {
   return (
     <Paper elevation={10} sx={{ p: 3 }}>
       <Grid2 container spacing={4}>
-        <Grid2 item xs={12} sm={8}>
+        <Grid2 xs={12} sm={8}>
           <Typography variant="body2" color="text.secondary">
             {title}
           </Typography>
@@ -49,7 +49,7 @@ const TotalCard = ({ title, amount, percentage, color }) => {
             {amount}
           </Typography>
         </Grid2>
-        <Grid2 item xs={12} sm={4} textAlign="right">
+        <Grid2 xs={12} sm={4} textAlign="right">
           <Box display="flex" alignItems="center" justifyContent="flex-end">
             {percentage <= 0 ? <CallReceivedIcon /> : <CallMadeIcon />}
             <Typography variant="subtitle1" color={color}>

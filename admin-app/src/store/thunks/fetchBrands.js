@@ -11,7 +11,7 @@ export const getAllBrand = createAsyncThunk(
     if (tag) {
       res = await apiService.get(`/brand?tag=${tag}`);
     } else {
-      res = await apiService.get(`/brand`);
+      res = await apiService.get(`/brand?sort=title`);
     }
     return res.data.data;
   }

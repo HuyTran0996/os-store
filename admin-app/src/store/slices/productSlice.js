@@ -1,19 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {} from "../thunks/fetchProduct";
+import { getAllProduct } from "../thunks/fetchProduct";
 
 const initialState = {
-  dataOfYou: [],
-  dataOfUserTotalCompare: [],
-  dataAllUser: [],
+  dataAllProduct: [],
 };
 
 const productSlice = createSlice({
-  name: "users",
+  name: "products",
   initialState,
   extraReducers(builder) {
-    // builder.addCase(loginAdmin.fulfilled, (state, action) => {
-    //   state.dataOfYou = action.payload;
-    // });
+    builder.addCase(getAllProduct.fulfilled, (state, action) => {
+      state.dataAllProduct = action.payload;
+    });
   },
 });
 

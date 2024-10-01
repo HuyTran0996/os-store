@@ -4,6 +4,19 @@ import { apiService } from "../../app/apiService";
 
 const limit = process.env.REACT_APP_LIMIT_PAGINATION;
 
+export const getAllProduct = createAsyncThunk(
+  "products/getAllProduct",
+  async (queryString) => {
+    let res;
+    if (queryString) {
+      res = await apiService.get(`/product?${queryString}&limit=${limit}`);
+    } else {
+      res = await apiService.get(`/brand?sort=title`);
+    }
+    return res.data.data;
+  }
+);
+
 export const createProduct = createAsyncThunk(
   "products/createProduct",
   async (formData) => {

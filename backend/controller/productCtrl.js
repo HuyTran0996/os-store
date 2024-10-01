@@ -10,6 +10,27 @@ const APIFeatures = require("../utils/apiFeatures");
 const { resizeImg } = require("../middlewares/uploadImage");
 const { cloudinaryDeleteImg } = require("../utils/cloudinary");
 
+exports.getAllProduct = asyncHandler(async (req, res) => {
+  const features = new APIFeatures(Product.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  const total = new APIFeatures(Product.countDocuments(), req.query).filter();
+
+  const products = await features.query;
+  const totalProduct = await total.query;
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      total: totalProduct.length,
+      products,
+    },
+  });
+});
+
 exports.createProduct = asyncHandler(async (req, res) => {
   const { title, size, version } = req.body;
   const files = req.files;
@@ -160,25 +181,6 @@ exports.getAProduct = asyncHandler(async (req, res) => {
   res.status(200).json({
     status: "success",
     findProduct,
-  });
-});
-
-exports.getAllProduct = asyncHandler(async (req, res) => {
-  const features = new APIFeatures(Product.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-
-  const total = new APIFeatures(Product.countDocuments(), req.query).filter();
-
-  const products = await features.query;
-  const totalProduct = await total.query;
-
-  res.status(200).json({
-    status: "success",
-    totalProduct: totalProduct.length,
-    products,
   });
 });
 

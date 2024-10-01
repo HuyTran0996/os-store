@@ -192,7 +192,7 @@ const ProductCategoryList = () => {
         smartCategorySearching({ searchField: search.trim() });
       }
     } catch (err) {
-      showToast(`err.message`, "error");
+      showToast(`${err.message}`, "error");
     } finally {
       setIsLoading(false);
     }

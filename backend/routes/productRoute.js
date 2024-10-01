@@ -21,7 +21,7 @@ router.post(
   productCtrl.addColor
 );
 
-router.get("/", authMiddleware, isAdmin, productCtrl.getAllProduct);
+router.get("/", productCtrl.getAllProduct);
 router.get("/:id", productCtrl.getAProduct);
 
 router.put("/wishlist", authMiddleware, productCtrl.toggleWishlist);
