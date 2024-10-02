@@ -1,25 +1,32 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
-  Grid2,
   Box,
   Typography,
   Paper,
   Select,
   MenuItem,
   IconButton,
+  TextField,
 } from "@mui/material";
-import ReactStars from "react-rating-stars-component";
 
 import { useThunk } from "../hook/use-thunk";
 import { getAllCategory } from "../store/thunks/fetchProductCategories";
 import { getAllBrand } from "../store/thunks/fetchBrands";
-import { getAllProduct } from "../store/thunks/fetchProduct";
+import {
+  getAllProduct,
+  smartProductSearch,
+} from "../store/thunks/fetchProduct";
 
 import { showToast } from "../components/ToastMessage";
 import { Loading } from "../components/Loading/Loading";
 import ContainerLayout from "../components/ContainerLayout";
 import ProductListFilter from "../components/Sidebar/ProductListFilter";
+import ProductCard from "../components/ProductCard";
+import Paginate from "../components/Pagination";
+
+import SearchIcon from "@mui/icons-material/Search";
 import gr4 from "../images/gr4.svg";
 import gr3 from "../images/gr3.svg";
 import gr2 from "../images/gr2.svg";
@@ -33,15 +40,33 @@ const initialState = {
 };
 
 const style = {
+  bigBox: {
+    margin: "20px",
+    display: "flex",
+    justifyContent: "space-between",
+    gap: 2,
+  },
   paper: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     padding: "10px",
   },
+  boxSort: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    width: "300px",
+  },
+  boxGrid: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
 
   select: {
-    // width: "250px",
     height: "38px",
     padding: "6px 36px 6px 12px",
     fontSize: "1rem",
@@ -52,21 +77,44 @@ const style = {
   icon: {
     display: "block",
     objectFit: "contain",
-    width: "35px",
-    height: "35px",
-    padding: "8px",
+    width: "25px",
+    height: "25px",
+    padding: "4px",
+  },
+
+  boxProduct: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    margin: "20px 0",
+    width: "100%",
+    position: "relative",
+  },
+
+  boxPagination: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    marginTop: "20px",
   },
 };
 
 const ProductList = () => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [grid, setGrid] = useState(6);
   const [filterString, setFilterString] = useState("");
   const [filter, setFilter] = useState(initialState);
   const [sort, setSort] = useState("created");
+  const [searchValue, setSearchValue] = useState("");
+  let [searchParams] = useSearchParams();
+  let page = parseInt(searchParams.get("page")) || 1;
+  let search = String(searchParams.get("search"));
 
   const [getDataAllCategory] = useThunk(getAllCategory);
   const [getDataAllBrand] = useThunk(getAllBrand);
   const [getDataAllProduct] = useThunk(getAllProduct);
+  const [smartProductSearching] = useThunk(smartProductSearch);
 
   const { dataAllProductCategory } = useSelector((state) => {
     return state.productCategories;
@@ -99,7 +147,12 @@ const ProductList = () => {
     const getProduct = async () => {
       try {
         setIsLoading(true);
-        await getDataAllProduct(`${filterString}&sort=${sort}`);
+
+        if (search.trim() === "" || search === "null") {
+          await getDataAllProduct(`${filterString}&sort=${sort}&page=${page}`);
+        } else {
+          smartProductSearching({ sort, page, searchField: search.trim() });
+        }
       } catch (err) {
         showToast(`${err.message}`, "error");
       } finally {
@@ -107,26 +160,41 @@ const ProductList = () => {
       }
     };
     getProduct();
-  }, [filterString, sort]);
+  }, [filterString, sort, page, search]);
 
-  const handleChangeSort = (e) => {
-    setSort(e.target.value);
+  // Set grid size based on screen width
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.matchMedia("(max-width: 600px)").matches) {
+        setGrid(6); // show 2 items
+      } else if (window.matchMedia("(max-width: 900px)").matches) {
+        setGrid(6); // show 2 items
+      } else if (window.matchMedia("(max-width: 1200px)").matches) {
+        setGrid(4); // show 3 items
+      } else if (window.matchMedia("(max-width: 1536px)").matches) {
+        setGrid(3); // show 4 items
+      }
+    };
+
+    handleResize(); // Set initial grid size
+    window.addEventListener("resize", handleResize); // Update grid size on resize
+
+    return () => {
+      window.removeEventListener("resize", handleResize); // Cleanup listener on unmount
+    };
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    navigate(`/productList?search=${searchValue.trim()}&page=${1}`);
   };
-  console.log("sada", sort);
 
   return (
     <ContainerLayout>
       {isLoading ? (
         <Loading message="Loading..." />
       ) : (
-        <Box
-          sx={{
-            margin: "20px",
-            display: "flex",
-            justifyContent: "space-between",
-            gap: 2,
-          }}
-        >
+        <Box sx={style.bigBox}>
           {/* Filter sidebar */}
           <Box sx={{ display: { xs: "none", sm: "none", md: "block" } }}>
             <ProductListFilter
@@ -140,20 +208,57 @@ const ProductList = () => {
           </Box>
 
           {/* Main */}
-          <Box sx={{ width: "100%" }}>
-            <Paper elevation={10} sx={style.paper}>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ width: "100%", position: "relative" }}>
+            {/* search bar */}
+            <form
+              onSubmit={handleSubmit}
+              style={{ width: "100%", margin: "7px 0" }}
+            >
+              <Box
+                sx={{
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <TextField
+                  className="input"
+                  placeholder="Search Product..."
+                  type="text"
+                  fullWidth
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                />
+
+                <IconButton
+                  type="submit"
+                  color="primary"
+                  variant="contained"
+                  fullWidth
+                  size="large"
+                  disabled={isLoading}
+                  sx={{ position: "absolute", right: "7px" }}
+                >
+                  <SearchIcon />
+                </IconButton>
+              </Box>
+            </form>
+
+            {/* Sort and Grid bar */}
+            <Paper elevation={5} sx={style.paper}>
+              {/* Sort */}
+              <Box sx={style.boxSort}>
                 <Typography
                   variant="p"
-                  sx={{ width: "70px", fontSize: "16px" }}
+                  sx={{ margin: "0 5px", fontSize: "16px" }}
                 >
                   Sort By:
                 </Typography>
                 <Select
                   sx={style.select}
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  onChange={(e) => handleChangeSort(e)}
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
                   defaultValue="created"
                 >
                   <MenuItem value="-sold">Best selling</MenuItem>
@@ -166,30 +271,82 @@ const ProductList = () => {
                 </Select>
               </Box>
 
-              <Box sx={{ display: "flex", alignItems: "center" }}>
+              {/* Grid */}
+              <Box sx={style.boxGrid}>
                 <Typography
                   variant="p"
-                  sx={{ width: "100px", fontSize: "16px" }}
+                  sx={{ margin: "0 5px", fontSize: "16px" }}
                 >
                   {dataAllProduct?.total} Products
                 </Typography>
 
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <IconButton>
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                  <IconButton
+                    onClick={() => setGrid(3)}
+                    sx={{
+                      backgroundColor: grid === 3 ? "aqua" : "none",
+                      display: {
+                        xs: "none",
+                        sm: "none",
+                        md: "none",
+                        lg: "block",
+                        xl: "block",
+                      },
+                    }}
+                  >
                     <img style={style.icon} src={gr4} alt="grid" />
                   </IconButton>
-                  <IconButton>
+
+                  <IconButton
+                    onClick={() => setGrid(4)}
+                    sx={{
+                      backgroundColor: grid === 4 ? "aqua" : "none",
+                      display: {
+                        xs: "none",
+                        sm: "none",
+                        md: "block",
+                        lg: "block",
+                        xl: "block",
+                      },
+                    }}
+                  >
                     <img style={style.icon} src={gr3} alt="grid" />
                   </IconButton>
-                  <IconButton>
+
+                  <IconButton
+                    onClick={() => setGrid(6)}
+                    sx={{
+                      backgroundColor: grid === 6 ? "aqua" : "none",
+                      display: "block",
+                    }}
+                  >
                     <img style={style.icon} src={gr2} alt="grid" />
                   </IconButton>
-                  <IconButton>
+
+                  <IconButton
+                    onClick={() => setGrid(12)}
+                    sx={{
+                      backgroundColor: grid === 12 ? "aqua" : "none",
+                      display: "block",
+                    }}
+                  >
                     <img style={style.icon} src={gr} alt="grid" />
                   </IconButton>
                 </Box>
               </Box>
             </Paper>
+
+            {/* Product */}
+            <Box sx={style.boxProduct}>
+              {dataAllProduct?.products?.map((product) => (
+                <ProductCard grid={grid} product={product} />
+              ))}
+            </Box>
+
+            {/* Pagination */}
+            <Box sx={style.boxPagination}>
+              <Paginate data={dataAllProduct} />
+            </Box>
           </Box>
         </Box>
       )}

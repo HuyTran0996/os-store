@@ -41,3 +41,16 @@ export const addColor = createAsyncThunk(
     return product.data;
   }
 );
+
+export const smartProductSearch = createAsyncThunk(
+  "products/smartProductSearch",
+  async ({ sort, page, searchField }) => {
+    const res = await apiService.post(
+      `/product/smartProductSearch?sort=${sort}&page=${page}&limit=${limit}`,
+      {
+        searchField,
+      }
+    );
+    return res.data.data;
+  }
+);

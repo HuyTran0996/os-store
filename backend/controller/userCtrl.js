@@ -294,9 +294,39 @@ exports.smartUserSearch = (action) =>
       };
     }
 
-    const transformedMatch = searchArea.map((field) => ({
-      [field]: { $regex: searchField, $options: "i" },
-    }));
+    if (action === "product") {
+      model = Product;
+      field = "products";
+      searchArea = ["title", "brand", "size", "version"];
+
+      searchAreaForArrayFields = [
+        { "size.name": { $regex: searchField, $options: "i" } },
+        { "version.name": { $regex: searchField, $options: "i" } },
+        { "color.name": { $regex: searchField, $options: "i" } },
+      ];
+
+      filedToShow = {
+        _id: 1,
+        title: 1,
+        description: 1,
+        price: 1,
+        quantity: 1,
+        quantity: 1,
+        brand: 1,
+        ratings: 1,
+        totalrating: 1,
+        images: 1,
+        createdAt: 1,
+        score: { $meta: "searchScore" },
+      };
+    }
+
+    const transformedMatch = [
+      ...searchArea.map((field) => ({
+        [field]: { $regex: searchField, $options: "i" },
+      })),
+      ...searchAreaForArrayFields,
+    ];
 
     const aggregate = model.aggregate([
       {
@@ -310,7 +340,7 @@ exports.smartUserSearch = (action) =>
     ]);
     const total = await aggregate;
 
-    const features = new APIFeatures(aggregate, req.query).paginate();
+    const features = new APIFeatures(aggregate, req.query).sort().paginate();
 
     const data = await features.query;
 

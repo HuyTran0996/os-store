@@ -1,6 +1,7 @@
 const express = require("express");
 
 const productCtrl = require("../controller/productCtrl");
+const userCtrl = require("../controller/userCtrl");
 const { authMiddleware, isAdmin } = require("../middlewares/authMiddleware");
 const { uploadPhoto } = require("../middlewares/uploadImage");
 
@@ -20,6 +21,7 @@ router.post(
   uploadPhoto.array("images", 10),
   productCtrl.addColor
 );
+router.post("/smartProductSearch", userCtrl.smartUserSearch("product"));
 
 router.get("/", productCtrl.getAllProduct);
 router.get("/:id", productCtrl.getAProduct);

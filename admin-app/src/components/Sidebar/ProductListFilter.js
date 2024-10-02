@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -72,6 +72,7 @@ const ProductListFilter = ({
   setFilter,
   initialState,
 }) => {
+  const navigate = useNavigate();
   const handleChange = (name, value) => {
     if (name === "priceFrom" || name === "priceTo") {
       setFilter((prevFilters) => ({
@@ -95,15 +96,20 @@ const ProductListFilter = ({
       return showToast("Bad price request", "error");
     }
     if (filter.category.length > 0) {
-      queryString += `category=${filter.category.join(",")}&`;
+      filter.category.forEach((category) => {
+        queryString += `category=${category}&`;
+      });
     }
     if (filter.brand.length > 0) {
-      queryString += `brand=${filter.brand.join(",")}&`;
+      filter.brand.forEach((brand) => {
+        queryString += `brand=${brand}&`;
+      });
     }
     if (filter.priceTo > 0) {
       queryString += `price[gte]=${filter.priceFrom}&price[lte]=${filter.priceTo}`;
     }
     setFilterString(queryString);
+    navigate(`/productList?&page=${1}`);
   };
 
   const handleClearFilter = () => {
@@ -119,7 +125,7 @@ const ProductListFilter = ({
           display: "flex",
           flexDirection: "column",
           gap: 2,
-          width: "350px",
+          maxWidth: "350px",
           padding: "10px",
         }}
       >
