@@ -8,7 +8,7 @@ const ProductCard = (props) => {
   const { grid, product } = props;
 
   return (
-    <Link to={`/product/${product._id}`} className={`gr-${grid}`}>
+    <Link to={`/productList/${product._id}`} className={`gr-${grid}`}>
       <Paper className="product-card">
         <Box className="product-image">
           <img src={product?.images[0]?.url} alt="product-image" />

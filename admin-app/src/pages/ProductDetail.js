@@ -1,32 +1,24 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import {
-  Grid2,
-  Typography,
-  Box,
-  Paper,
-  TextField,
-  Button,
-  Select,
-  MenuItem,
-  InputAdornment,
-  CardMedia,
-  CardActions,
-  Card,
-  Badge,
-} from "@mui/material";
-import { HexColorPicker } from "react-colorful";
+import { Grid2, Typography, Box, Button } from "@mui/material";
+
 import { useThunk } from "../hook/use-thunk";
 
-import { createProduct, addColor } from "../store/thunks/fetchProduct";
+import {
+  addColor,
+  getAProduct,
+  updateProduct,
+  deleteImages,
+  deleteProductColor,
+} from "../store/thunks/fetchProduct";
 import { getAllBrand } from "../store/thunks/fetchBrands";
 import { getAllCategory } from "../store/thunks/fetchProductCategories";
 
 import { showToast } from "../components/ToastMessage";
-import CarouselShow from "../components/CarouselShow";
 import ContainerLayout from "../components/ContainerLayout";
-import AddProductInfo from "../components/AddProductInfo";
-import AddProductVariant from "../components/AddProductVariant";
+import ProductDetailInfo from "../components/ProductDetailInfo";
+import ProductDetailVariant from "../components/ProductDetailVariant";
 import { Loading } from "../components/Loading/Loading";
 
 const style = {
@@ -42,6 +34,7 @@ const initialState = {
   description: "",
   price: "",
   stock: "",
+  sold: "",
   category: "",
   brand: "",
   sizeName: "",
@@ -51,21 +44,30 @@ const initialState = {
   colorName: "",
   colorPrice: "",
   images: [],
+  oldImages: [],
   size: [],
   version: [],
   colorDetail: [],
+  oldColorDetail: [],
 };
 
-const AddProduct = () => {
+const ProductDetail = () => {
   ///////////// declare///////////////
+  const params = useParams();
   const [state, setState] = useState(initialState);
   const [colorCode, setColorCode] = useState("#7a763d");
   const [isLoading, setIsLoading] = useState(false);
   const [wrongColorCode, setWrongColorCode] = useState(null);
-  const [create] = useThunk(createProduct);
+  const [imagesToDelete, setImagesToDelete] = useState([]);
+  const [colorsToDelete, setColorsToDelete] = useState([]);
+
   const [addColorToProduct] = useThunk(addColor);
   const [getDataAllBrand] = useThunk(getAllBrand);
   const [getDataAllCategory] = useThunk(getAllCategory);
+  const [getAProductById] = useThunk(getAProduct);
+  const [update] = useThunk(updateProduct);
+  const [deleteImage] = useThunk(deleteImages);
+  const [deleteColor] = useThunk(deleteProductColor);
 
   const { dataAllBrand } = useSelector((state) => {
     return state.brands;
@@ -73,36 +75,48 @@ const AddProduct = () => {
   const { dataAllProductCategory } = useSelector((state) => {
     return state.productCategories;
   });
+  const { dataProduct } = useSelector((state) => {
+    return state.products;
+  });
 
   ////////////////
 
+  const getData = async () => {
+    try {
+      setIsLoading(true);
+      await getDataAllCategory();
+      const product = await getAProductById(params.id);
+      setState((prevState) => ({
+        ...prevState,
+        images: [],
+        prodName: product?.title,
+        description: product?.description,
+        price: product?.price,
+        stock: product?.quantity,
+        sold: product?.sold,
+        category: product?.category,
+        brand: product?.brand,
+        size: product?.size,
+        version: product?.version,
+        oldColorDetail: product?.color,
+        oldImages: product?.images,
+      }));
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const getCategory = async () => {
-      try {
-        setIsLoading(true);
-        const categories = await getDataAllCategory();
-        setState((prevState) => ({
-          ...prevState,
-          category: categories?.categories[0]?.title,
-        }));
-      } catch (err) {
-        showToast(`${err.message}`, "error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    getCategory();
+    getData();
   }, []);
 
   useEffect(() => {
     const getBrand = async () => {
       try {
         setIsLoading(true);
-        const brands = await getDataAllBrand(state.category);
-        setState((prevState) => ({
-          ...prevState,
-          brand: brands?.brands[0]?.title,
-        }));
+        await getDataAllBrand(state.category);
       } catch (err) {
         showToast(`${err.message}`, "error");
       } finally {
@@ -125,13 +139,6 @@ const AddProduct = () => {
     }
   }, [colorCode]);
 
-  //control input value
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setState((prevState) => ({ ...prevState, [name]: value }));
-  };
-
-  //add to size and version array to submit
   const handleAddToArray = (array) => {
     let name;
     let price;
@@ -165,12 +172,16 @@ const AddProduct = () => {
     });
   };
 
-  //remove from size and version array to submit
   const handleRemoveFromArray = (array, name) => {
     setState((prevState) => ({
       ...prevState,
       [array]: prevState[array].filter((s) => s.name !== name.toLowerCase()),
     }));
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleFileChange = (event, array) => {
@@ -185,8 +196,10 @@ const AddProduct = () => {
         const checkDuplicate = prevState[array].find(
           (item) => item.name === state.colorName
         );
-
-        if (checkDuplicate) {
+        const checkDuplicateOldColorDetail = prevState.oldColorDetail.find(
+          (item) => item.name === state.colorName
+        );
+        if (checkDuplicate || checkDuplicateOldColorDetail) {
           showToast("Duplicate name", "error");
           return { ...prevState };
         } else {
@@ -207,25 +220,20 @@ const AddProduct = () => {
     }
   };
 
-  const handleRemoveImage = (indexToRemove, array, picIndex) => {
-    if (array === "colorDetailInside") {
-      setState((prevState) => ({
-        ...prevState,
-        colorDetail: prevState.colorDetail.map((color, index) =>
-          index === indexToRemove
-            ? {
-                ...color,
-                images: color.images.filter((_, i) => i !== picIndex),
-              }
-            : color
-        ),
-      }));
-    } else {
-      setState((prevState) => ({
+  const handleRemoveImage = (indexToRemove, array, public_idOrName) => {
+    setState((prevState) => {
+      if (array === "oldImages") {
+        setImagesToDelete((prevState) => [...prevState, public_idOrName]);
+      }
+      if (array === "oldColorDetail") {
+        setColorsToDelete((prevState) => [...prevState, public_idOrName]);
+      }
+
+      return {
         ...prevState,
         [array]: prevState[array].filter((_, index) => index !== indexToRemove),
-      }));
-    }
+      };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -238,6 +246,7 @@ const AddProduct = () => {
       formData.append("description", state.description);
       formData.append("price", state.price);
       formData.append("quantity", state.stock);
+      formData.append("sold", state.sold);
       formData.append("category", state.category);
       formData.append("brand", state.brand);
       formData.append("size", JSON.stringify(state.size));
@@ -247,7 +256,7 @@ const AddProduct = () => {
         formData.append(`images`, image);
       });
 
-      const product = await create(formData);
+      const product = await update({ id: params.id, formData });
 
       if (state.colorDetail.length > 0) {
         state.colorDetail.forEach(async (color) => {
@@ -264,11 +273,23 @@ const AddProduct = () => {
         });
       }
 
-      showToast("Create Product Successfully", "success");
+      if (imagesToDelete.length > 0) {
+        imagesToDelete.forEach(async (image) => {
+          await deleteImage({ productId: params.id, publicId: image });
+        });
+      }
+      if (colorsToDelete.length > 0) {
+        colorsToDelete.forEach(async (color) => {
+          await deleteColor({ productId: params.id, colorName: color });
+        });
+      }
+
+      showToast("Update Product Successfully", "success");
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
       setIsLoading(false);
+      await getData();
     }
   };
 
@@ -286,7 +307,7 @@ const AddProduct = () => {
             }}
           >
             <Typography variant="h4" sx={{ margin: "20px 0" }}>
-              Add New Product
+              Edit Product
             </Typography>
             <Grid2
               container
@@ -295,16 +316,32 @@ const AddProduct = () => {
             >
               <Grid2 xs={12} sm={6} md={6}>
                 <Button type="submit" variant="contained" disabled={isLoading}>
-                  Create Product
+                  Update Product
                 </Button>
               </Grid2>
               <Grid2 xs={12} sm={6} md={6}>
                 <Button
                   variant="outlined"
-                  onClick={() => setState(initialState)}
+                  onClick={() =>
+                    setState((prevState) => ({
+                      ...prevState,
+                      images: [],
+                      prodName: dataProduct?.title,
+                      description: dataProduct?.description,
+                      price: dataProduct?.price,
+                      stock: dataProduct?.quantity,
+                      sold: dataProduct?.sold,
+                      category: dataProduct?.category,
+                      brand: dataProduct?.brand,
+                      size: dataProduct?.size,
+                      version: dataProduct?.version,
+                      oldColorDetail: dataProduct?.color,
+                      oldImages: dataProduct?.images,
+                    }))
+                  }
                   disabled={isLoading}
                 >
-                  Clear Form
+                  Cancel
                 </Button>
               </Grid2>
             </Grid2>
@@ -318,7 +355,7 @@ const AddProduct = () => {
             }}
           >
             {/* INFO */}
-            <AddProductInfo
+            <ProductDetailInfo
               state={state}
               handleChange={handleChange}
               style={style}
@@ -327,7 +364,8 @@ const AddProduct = () => {
             />
 
             {/* IMAGE */}
-            <AddProductVariant
+
+            <ProductDetailVariant
               isLoading={isLoading}
               handleFileChange={handleFileChange}
               state={state}
@@ -347,4 +385,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default ProductDetail;

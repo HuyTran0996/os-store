@@ -51,27 +51,15 @@ const productSchema = new mongoose.Schema(
       {
         name: { type: String, lowercase: true },
         price: { type: Number },
-        image: [{ url: String, asset_id: String, public_id: String }],
       },
     ],
     version: [
       {
         name: { type: String, lowercase: true },
         price: { type: Number },
-        image: [{ url: String, asset_id: String, public_id: String }],
       },
     ],
-    // variant: [
-    //   {
-    //     tag: {
-    //       type: String,
-    //       enum: ["color", "size", "version"],
-    //     },
-    //     name: { type: String, lowercase: true },
-    //     colorCode: String,
-    //     image: String,
-    //   },
-    // ],
+
     tags: String,
     ratings: [
       {

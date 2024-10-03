@@ -1,8 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAllProduct, smartProductSearch } from "../thunks/fetchProduct";
+import {
+  getAllProduct,
+  smartProductSearch,
+  getAProduct,
+} from "../thunks/fetchProduct";
 
 const initialState = {
   dataAllProduct: [],
+  dataProduct: [],
 };
 
 const productSlice = createSlice({
@@ -14,6 +19,9 @@ const productSlice = createSlice({
     });
     builder.addCase(smartProductSearch.fulfilled, (state, action) => {
       state.dataAllProduct = action.payload;
+    });
+    builder.addCase(getAProduct.fulfilled, (state, action) => {
+      state.dataProduct = action.payload;
     });
   },
 });

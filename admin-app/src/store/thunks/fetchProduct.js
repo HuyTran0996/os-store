@@ -54,3 +54,43 @@ export const smartProductSearch = createAsyncThunk(
     return res.data.data;
   }
 );
+export const getAProduct = createAsyncThunk(
+  "products/getAProduct",
+  async (id) => {
+    const res = await apiService.get(`/product/${id}`);
+    return res.data.product;
+  }
+);
+export const updateProduct = createAsyncThunk(
+  "products/updateProduct",
+  async ({ id, formData }) => {
+    const product = await apiService.put(`/product/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return product.data.product;
+  }
+);
+
+export const deleteImages = createAsyncThunk(
+  "products/deleteImages",
+  async ({ productId, publicId }) => {
+    const product = await apiService.delete(`/product/deleteImg`, {
+      data: { productId, publicId },
+    });
+
+    return product.data.product;
+  }
+);
+export const deleteProductColor = createAsyncThunk(
+  "products/deleteProductColor",
+  async ({ productId, colorName }) => {
+    const product = await apiService.delete(`/product/deleteProductColor`, {
+      data: { productId, colorName },
+    });
+
+    return product.data.product;
+  }
+);

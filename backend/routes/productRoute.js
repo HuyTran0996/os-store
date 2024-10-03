@@ -29,22 +29,34 @@ router.get("/:id", productCtrl.getAProduct);
 router.put("/wishlist", authMiddleware, productCtrl.toggleWishlist);
 router.put("/rating", authMiddleware, productCtrl.rating);
 router.put("/addVariant", authMiddleware, productCtrl.addVariant);
-// router.put(
-//   "/upload/:id",
-//   authMiddleware,
-//   isAdmin,
-//   uploadPhoto.array("images", 10),
-//   productCtrl.uploadImages
-// );
 router.put(
   "/upload/:id",
-
+  authMiddleware,
+  isAdmin,
   uploadPhoto.array("images", 10),
   productCtrl.uploadImages
 );
-router.put("/:id", authMiddleware, isAdmin, productCtrl.updateProduct);
 
-router.delete("/deleteImg", authMiddleware, isAdmin, productCtrl.deleteImages);
+router.put(
+  "/:id",
+  authMiddleware,
+  isAdmin,
+  uploadPhoto.array("images", 10),
+  productCtrl.updateProduct
+);
+
+router.delete(
+  "/deleteImg",
+  authMiddleware,
+  isAdmin,
+  productCtrl.deleteImages("productImg")
+);
+router.delete(
+  "/deleteProductColor",
+  authMiddleware,
+  isAdmin,
+  productCtrl.deleteImages("productColor")
+);
 router.delete("/:id", authMiddleware, isAdmin, productCtrl.deleteProduct);
 
 module.exports = router;
