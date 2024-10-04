@@ -255,6 +255,7 @@ const ProductList = () => {
             {/* Sort and Grid bar */}
             <Paper elevation={5} sx={style.paper}>
               <Box sx={{ display: "flex", alignItems: "center" }}>
+                {/* ToggleFilter menu for small screen */}
                 <Box>
                   <IconButton
                     onClick={toggleDrawer(true)}
