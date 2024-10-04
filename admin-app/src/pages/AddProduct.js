@@ -175,17 +175,20 @@ const AddProduct = () => {
 
       if (state.variantDetail.length > 0) {
         state.variantDetail.forEach(async (color) => {
-          const formData = new FormData();
-          formData.append("variantName", color.variantName);
-          formData.append("colorName", color.colorName);
-          formData.append("price", color.price);
-          formData.append("colorCode", color.colorCode);
-          formData.append("prodId", product._id);
+          const formData1 = new FormData();
+          formData1.append("variantName", color.variantName);
+          formData1.append("colorName", color.colorName);
+          formData1.append("price", color.price);
+          formData1.append("colorCode", color.colorCode);
+
           color.images.forEach((image) => {
-            formData.append(`images`, image);
+            formData1.append(`images`, image);
           });
 
-          await addVariantToProduct({ formData });
+          await addVariantToProduct({
+            prodId: product._id,
+            formData: formData1,
+          });
         });
       }
 

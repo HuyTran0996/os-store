@@ -15,7 +15,7 @@ router.post(
   productCtrl.createProduct
 );
 router.post(
-  "/addVariant",
+  "/addVariant/:prodId",
   authMiddleware,
   isAdmin,
   uploadPhoto.array("images", 10),
@@ -52,10 +52,10 @@ router.delete(
   productCtrl.deleteImages("productImg")
 );
 router.delete(
-  "/deleteProductColor",
+  "/deleteProductVariant",
   authMiddleware,
   isAdmin,
-  productCtrl.deleteImages("productColor")
+  productCtrl.deleteImages("productVariant")
 );
 router.delete("/:id", authMiddleware, isAdmin, productCtrl.deleteProduct);
 

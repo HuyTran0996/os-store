@@ -31,10 +31,10 @@ export const createProduct = createAsyncThunk(
 );
 export const addVariant = createAsyncThunk(
   "products/addVariant",
-  async ({ formData }) => {
+  async ({ prodId, formData }) => {
     const product = await apiService.post(
-      "/product/addVariant",
-      { data: formData },
+      `/product/addVariant/${prodId}`,
+      formData,
       {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -88,11 +88,11 @@ export const deleteImages = createAsyncThunk(
     return product.data.product;
   }
 );
-export const deleteProductColor = createAsyncThunk(
-  "products/deleteProductColor",
-  async ({ productId, colorName }) => {
-    const product = await apiService.delete(`/product/deleteProductColor`, {
-      data: { productId, colorName },
+export const deleteProductVariant = createAsyncThunk(
+  "products/deleteProductVariant",
+  async ({ productId, variantName }) => {
+    const product = await apiService.delete(`/product/deleteProductVariant`, {
+      data: { productId, variantName },
     });
 
     return product.data.product;

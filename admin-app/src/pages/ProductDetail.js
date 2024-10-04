@@ -6,11 +6,11 @@ import { Grid2, Typography, Box, Button } from "@mui/material";
 import { useThunk } from "../hook/use-thunk";
 
 import {
-  addColor,
+  addVariant,
   getAProduct,
   updateProduct,
   deleteImages,
-  deleteProductColor,
+  deleteProductVariant,
 } from "../store/thunks/fetchProduct";
 import { getAllBrand } from "../store/thunks/fetchBrands";
 import { getAllCategory } from "../store/thunks/fetchProductCategories";
@@ -37,18 +37,13 @@ const initialState = {
   sold: "",
   category: "",
   brand: "",
-  sizeName: "",
-  sizePrice: "",
-  versionName: "",
-  versionPrice: "",
+  variantName: "",
   colorName: "",
   colorPrice: "",
   images: [],
+  variantDetail: [],
   oldImages: [],
-  size: [],
-  version: [],
-  colorDetail: [],
-  oldColorDetail: [],
+  oldVariantDetail: [],
 };
 
 const ProductDetail = () => {
@@ -59,15 +54,15 @@ const ProductDetail = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [wrongColorCode, setWrongColorCode] = useState(null);
   const [imagesToDelete, setImagesToDelete] = useState([]);
-  const [colorsToDelete, setColorsToDelete] = useState([]);
+  const [variantsToDelete, setVariantsToDelete] = useState([]);
 
-  const [addColorToProduct] = useThunk(addColor);
+  const [addVariantToProduct] = useThunk(addVariant);
   const [getDataAllBrand] = useThunk(getAllBrand);
   const [getDataAllCategory] = useThunk(getAllCategory);
   const [getAProductById] = useThunk(getAProduct);
   const [update] = useThunk(updateProduct);
   const [deleteImage] = useThunk(deleteImages);
-  const [deleteColor] = useThunk(deleteProductColor);
+  const [deleteVariant] = useThunk(deleteProductVariant);
 
   const { dataAllBrand } = useSelector((state) => {
     return state.brands;
@@ -86,9 +81,10 @@ const ProductDetail = () => {
       setIsLoading(true);
       await getDataAllCategory();
       const product = await getAProductById(params.id);
-      setState((prevState) => ({
-        ...prevState,
-        images: [],
+      setState({
+        ...initialState,
+        setImagesToDelete: [],
+        setVariantsToDelete: [],
         prodName: product?.title,
         description: product?.description,
         price: product?.price,
@@ -96,11 +92,9 @@ const ProductDetail = () => {
         sold: product?.sold,
         category: product?.category,
         brand: product?.brand,
-        size: product?.size,
-        version: product?.version,
-        oldColorDetail: product?.color,
+        oldVariantDetail: product?.variant,
         oldImages: product?.images,
-      }));
+      });
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
@@ -128,7 +122,6 @@ const ProductDetail = () => {
 
   const isValidHexColor = (hexCode) => {
     const hexColorRegex = /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/;
-
     return hexColorRegex.test(hexCode);
   };
   useEffect(() => {
@@ -138,46 +131,6 @@ const ProductDetail = () => {
       setWrongColorCode(null);
     }
   }, [colorCode]);
-
-  const handleAddToArray = (array) => {
-    let name;
-    let price;
-    if (array === "size") {
-      name = "sizeName";
-      price = "sizePrice";
-    }
-    if (array === "version") {
-      name = "versionName";
-      price = "versionPrice";
-    }
-
-    setState((prevState) => {
-      const checkDuplicate = prevState[array].find(
-        (item) =>
-          item.name === state.sizeName || item.name === state.versionName
-      );
-
-      if (checkDuplicate) {
-        showToast("Duplicate name", "error");
-        return { ...prevState };
-      } else {
-        return {
-          ...prevState,
-          [array]: [
-            ...prevState[array],
-            { name: state[name].toLowerCase(), price: state[price] },
-          ],
-        };
-      }
-    });
-  };
-
-  const handleRemoveFromArray = (array, name) => {
-    setState((prevState) => ({
-      ...prevState,
-      [array]: prevState[array].filter((s) => s.name !== name.toLowerCase()),
-    }));
-  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -191,15 +144,15 @@ const ProductDetail = () => {
         [array]: Array.from(event.target.files),
       }));
     }
-    if (array === "colorDetail") {
+    if (array === "variantDetail") {
       setState((prevState) => {
         const checkDuplicate = prevState[array].find(
-          (item) => item.name === state.colorName
+          (item) => item.variantName.trim() === state.variantName.trim()
         );
-        const checkDuplicateOldColorDetail = prevState.oldColorDetail.find(
-          (item) => item.name === state.colorName
+        const checkDuplicateOldVariantDetail = prevState.oldVariantDetail.find(
+          (item) => item.variantName.trim() === state.variantName.trim()
         );
-        if (checkDuplicate || checkDuplicateOldColorDetail) {
+        if (checkDuplicate || checkDuplicateOldVariantDetail) {
           showToast("Duplicate name", "error");
           return { ...prevState };
         } else {
@@ -208,7 +161,8 @@ const ProductDetail = () => {
             [array]: [
               ...prevState[array],
               {
-                name: state.colorName.toLowerCase(),
+                variantName: state.variantName.toLowerCase(),
+                colorName: state.colorName.toLowerCase(),
                 price: state.colorPrice,
                 colorCode: colorCode,
                 images: Array.from(event.target.files),
@@ -223,10 +177,16 @@ const ProductDetail = () => {
   const handleRemoveImage = (indexToRemove, array, public_idOrName) => {
     setState((prevState) => {
       if (array === "oldImages") {
-        setImagesToDelete((prevState) => [...prevState, public_idOrName]);
+        setImagesToDelete((prevStateImgToDelete) => [
+          ...prevStateImgToDelete,
+          public_idOrName,
+        ]);
       }
-      if (array === "oldColorDetail") {
-        setColorsToDelete((prevState) => [...prevState, public_idOrName]);
+      if (array === "oldVariantDetail") {
+        setVariantsToDelete((prevStateVariantToDelete) => [
+          ...prevStateVariantToDelete,
+          public_idOrName,
+        ]);
       }
 
       return {
@@ -249,8 +209,6 @@ const ProductDetail = () => {
       formData.append("sold", state.sold);
       formData.append("category", state.category);
       formData.append("brand", state.brand);
-      formData.append("size", JSON.stringify(state.size));
-      formData.append("version", JSON.stringify(state.version));
 
       state.images.forEach((image) => {
         formData.append(`images`, image);
@@ -258,18 +216,22 @@ const ProductDetail = () => {
 
       const product = await update({ id: params.id, formData });
 
-      if (state.colorDetail.length > 0) {
-        state.colorDetail.forEach(async (color) => {
-          const formData = new FormData();
-          formData.append("name", color.name);
-          formData.append("price", color.price);
-          formData.append("colorCode", color.colorCode);
-          formData.append("prodId", product._id);
-          color.images.forEach((image) => {
-            formData.append(`images`, image);
+      if (state.variantDetail.length > 0) {
+        state.variantDetail.forEach(async (variant) => {
+          const formData1 = new FormData();
+          formData1.append("variantName", variant.variantName);
+          formData1.append("colorName", variant.colorName);
+          formData1.append("price", variant.price);
+          formData1.append("colorCode", variant.colorCode);
+
+          variant.images.forEach((image) => {
+            formData1.append(`images`, image);
           });
 
-          await addColorToProduct(formData);
+          await addVariantToProduct({
+            prodId: product._id,
+            formData: formData1,
+          });
         });
       }
 
@@ -278,9 +240,10 @@ const ProductDetail = () => {
           await deleteImage({ productId: params.id, publicId: image });
         });
       }
-      if (colorsToDelete.length > 0) {
-        colorsToDelete.forEach(async (color) => {
-          await deleteColor({ productId: params.id, colorName: color });
+
+      if (variantsToDelete.length > 0) {
+        variantsToDelete.forEach(async (variant) => {
+          await deleteVariant({ productId: params.id, variantName: variant });
         });
       }
 
@@ -323,9 +286,10 @@ const ProductDetail = () => {
                 <Button
                   variant="outlined"
                   onClick={() =>
-                    setState((prevState) => ({
-                      ...prevState,
-                      images: [],
+                    setState({
+                      ...initialState,
+                      setImagesToDelete: [],
+                      setVariantsToDelete: [],
                       prodName: dataProduct?.title,
                       description: dataProduct?.description,
                       price: dataProduct?.price,
@@ -333,11 +297,9 @@ const ProductDetail = () => {
                       sold: dataProduct?.sold,
                       category: dataProduct?.category,
                       brand: dataProduct?.brand,
-                      size: dataProduct?.size,
-                      version: dataProduct?.version,
-                      oldColorDetail: dataProduct?.color,
+                      oldVariantDetail: dataProduct?.variant,
                       oldImages: dataProduct?.images,
-                    }))
+                    })
                   }
                   disabled={isLoading}
                 >
@@ -372,8 +334,6 @@ const ProductDetail = () => {
               handleRemoveImage={handleRemoveImage}
               handleChange={handleChange}
               style={style}
-              handleAddToArray={handleAddToArray}
-              handleRemoveFromArray={handleRemoveFromArray}
               colorCode={colorCode}
               setColorCode={setColorCode}
               wrongColorCode={wrongColorCode}

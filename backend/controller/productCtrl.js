@@ -57,7 +57,8 @@ exports.createProduct = asyncHandler(async (req, res) => {
 });
 
 exports.addVariant = asyncHandler(async (req, res) => {
-  const { prodId, variantName, colorName, price, colorCode } = req.body;
+  const { prodId } = req.params;
+  const { variantName, colorName, price, colorCode } = req.body;
 
   const files = req.files;
   const imgUrl = [];
@@ -94,6 +95,53 @@ exports.addVariant = asyncHandler(async (req, res) => {
   });
 });
 
+exports.updateProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body;
+  validateMongodbId(id);
+  const files = req.files;
+  const imgUrl = [];
+
+  if (!title) throw new AppError("A product must has a title", 400);
+
+  req.body.slug = slugify(title);
+
+  const product = await Product.findById(id);
+  if (!product) throw new AppError("Product not found", 404);
+
+  for (const file of files) {
+    const info = await resizeImg(file);
+    imgUrl.push(info);
+  }
+
+  const updatedImages = [...product.images, ...imgUrl];
+
+  const updateProduct = await Product.findByIdAndUpdate(
+    id,
+    {
+      ...req.body,
+      images: updatedImages,
+    },
+    { new: true }
+  );
+
+  res.status(200).json({
+    status: "success",
+    product: updateProduct,
+  });
+});
+
+exports.getAProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongodbId(id);
+  const product = await Product.findById(id);
+  if (!product) throw new AppError("Product not found", 404);
+  res.status(200).json({
+    status: "success",
+    product,
+  });
+});
+
 exports.uploadImages = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const files = req.files;
@@ -124,68 +172,12 @@ exports.uploadImages = asyncHandler(async (req, res) => {
   });
 });
 
-exports.updateProduct = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const { title, size, version } = req.body;
-  validateMongodbId(id);
-  const files = req.files;
-  const imgUrl = [];
-  let sizeArray = [];
-  let versionArray = [];
-  if (!title) throw new AppError("A product must has a title", 400);
-
-  if (size) sizeArray = JSON.parse(req.body.size);
-  if (version) versionArray = JSON.parse(req.body.version);
-
-  req.body.slug = slugify(title);
-
-  const product = await Product.findById(id);
-  if (!product) throw new AppError("Product not found", 404);
-
-  for (const file of files) {
-    const info = await resizeImg(file);
-    imgUrl.push(info);
-  }
-
-  const updatedImages = [...product.images, ...imgUrl];
-  const updatedSizes = [...sizeArray];
-  const updatedVersions = [...versionArray];
-
-  const updateProduct = await Product.findByIdAndUpdate(
-    id,
-    {
-      ...req.body,
-      size: updatedSizes,
-      version: updatedVersions,
-      images: updatedImages,
-    },
-    { new: true }
-  );
-
-  res.status(201).json({
-    status: "success",
-    product: updateProduct,
-  });
-});
-
 exports.deleteProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongodbId(id);
   await Product.findByIdAndDelete(id);
   res.status(204).json();
 });
-
-exports.getAProduct = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  validateMongodbId(id);
-  const product = await Product.findById(id);
-  if (!product) throw new AppError("Product not found", 404);
-  res.status(200).json({
-    status: "success",
-    product,
-  });
-});
-
 exports.toggleWishlist = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { prodId } = req.body;
@@ -258,7 +250,7 @@ exports.rating = asyncHandler(async (req, res) => {
 
 exports.deleteImages = (action) =>
   asyncHandler(async (req, res) => {
-    const { productId, publicId, colorName } = req.body;
+    const { productId, publicId, variantName } = req.body;
 
     validateMongodbId(productId);
 
@@ -280,26 +272,31 @@ exports.deleteImages = (action) =>
 
       await cloudinaryDeleteImg(publicId, "images");
 
-      res.status(204).json({
+      return res.status(204).json({
         status: "success",
       });
     }
-    if (action === "productColor") {
+
+    if (action === "productVariant") {
       const product = await Product.findById(productId);
       if (!product) throw new AppError("Product not found", 404);
 
-      const colorToDelete = product.color.find((c) => c.name === colorName);
-      if (!colorToDelete) throw new AppError("Color not found", 404);
+      const variantToDelete = product.variant.find(
+        (v) => v.variantName === variantName
+      );
+      if (!variantToDelete) throw new AppError("Variant not found", 404);
 
-      colorToDelete.images.forEach(
+      variantToDelete.images.forEach(
         async (img) => await cloudinaryDeleteImg(img.public_id, "images")
       );
 
-      product.color = product.color.filter((c) => c.name !== colorName);
+      product.variant = product.variant.filter(
+        (v) => v.variantName !== variantName
+      );
 
       const updatedProduct = await product.save();
 
-      res.status(200).json({
+      return res.status(200).json({
         status: "success",
         updatedProduct,
       });
