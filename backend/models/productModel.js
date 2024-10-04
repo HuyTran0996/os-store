@@ -39,24 +39,13 @@ const productSchema = new mongoose.Schema(
       default: 0,
     },
     images: [{ url: String, asset_id: String, public_id: String }],
-    color: [
+    variant: [
       {
-        name: { type: String, lowercase: true },
-        price: { type: Number },
+        variantName: { type: String, lowercase: true },
+        colorName: { type: String, lowercase: true },
         colorCode: String,
+        price: { type: Number },
         images: [{ url: String, asset_id: String, public_id: String }],
-      },
-    ],
-    size: [
-      {
-        name: { type: String, lowercase: true },
-        price: { type: Number },
-      },
-    ],
-    version: [
-      {
-        name: { type: String, lowercase: true },
-        price: { type: Number },
       },
     ],
 

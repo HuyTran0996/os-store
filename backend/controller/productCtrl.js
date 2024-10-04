@@ -32,15 +32,11 @@ exports.getAllProduct = asyncHandler(async (req, res) => {
 });
 
 exports.createProduct = asyncHandler(async (req, res) => {
-  const { title, size, version } = req.body;
+  const { title } = req.body;
   const files = req.files;
   const imgUrl = [];
-  let sizeArray = [];
-  let versionArray = [];
-  if (!title) throw new AppError("A product must has a title", 400);
 
-  if (size) sizeArray = JSON.parse(req.body.size);
-  if (version) versionArray = JSON.parse(req.body.version);
+  if (!title) throw new AppError("A product must has a title", 400);
 
   req.body.slug = slugify(title);
 
@@ -51,8 +47,6 @@ exports.createProduct = asyncHandler(async (req, res) => {
 
   const newProduct = await Product.create({
     ...req.body,
-    size: [...sizeArray],
-    version: [...versionArray],
     images: imgUrl,
   });
 
@@ -62,18 +56,21 @@ exports.createProduct = asyncHandler(async (req, res) => {
   });
 });
 
-exports.addColor = asyncHandler(async (req, res) => {
-  const { prodId, name, price, colorCode } = req.body;
+exports.addVariant = asyncHandler(async (req, res) => {
+  const { prodId, variantName, colorName, price, colorCode } = req.body;
+
   const files = req.files;
   const imgUrl = [];
   validateMongodbId(prodId);
   const product = await Product.findById(prodId);
   if (!product) throw new AppError("Product not found", 404);
 
-  if (!name || !price || !colorCode)
-    throw new AppError("A Color must has name, price and colorCode", 400);
+  if (!variantName || !price || !colorCode)
+    throw new AppError("A Variant must has name, price and colorCode", 400);
 
-  const check = product.color.find((v) => v.name === name.toLowerCase());
+  const check = product.variant.find(
+    (v) => v.variantName === variantName.toLowerCase()
+  );
 
   if (check) throw new AppError("Duplicate variant names are not allowed", 409);
 
@@ -85,7 +82,9 @@ exports.addColor = asyncHandler(async (req, res) => {
   const updateProduct = await Product.findByIdAndUpdate(
     prodId,
     {
-      $addToSet: { color: { name, price, colorCode, images: imgUrl } },
+      $addToSet: {
+        variant: { variantName, colorName, price, colorCode, images: imgUrl },
+      },
     },
     { new: true }
   );
@@ -166,31 +165,6 @@ exports.updateProduct = asyncHandler(async (req, res) => {
   res.status(201).json({
     status: "success",
     product: updateProduct,
-  });
-});
-
-exports.addVariant = asyncHandler(async (req, res) => {
-  const { prodId, tag, name, image } = req.body;
-  if (!prodId || !tag || !name || !image)
-    throw new AppError("Missing required files", 400);
-  validateMongodbId(prodId);
-  const product = await Product.findById(prodId);
-  if (!product) throw new AppError("Product not found", 404);
-
-  const check = product.variant.find((v) => v.name === name.toLowerCase());
-
-  if (check) throw new AppError("Duplicate variant names are not allowed", 409);
-
-  const updateProduct = await Product.findByIdAndUpdate(
-    prodId,
-    {
-      $addToSet: { variant: { prodId, tag, name, image } },
-    },
-    { new: true }
-  );
-  res.status(200).json({
-    status: "success",
-    updateProduct,
   });
 });
 

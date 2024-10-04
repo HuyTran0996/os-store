@@ -29,14 +29,18 @@ export const createProduct = createAsyncThunk(
     return product.data.newProduct;
   }
 );
-export const addColor = createAsyncThunk(
-  "products/addColor",
-  async (formData) => {
-    const product = await apiService.post("/product/addColor", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+export const addVariant = createAsyncThunk(
+  "products/addVariant",
+  async ({ formData }) => {
+    const product = await apiService.post(
+      "/product/addVariant",
+      { data: formData },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
 
     return product.data;
   }

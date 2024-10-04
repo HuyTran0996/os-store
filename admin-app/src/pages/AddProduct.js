@@ -1,29 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import {
-  Grid2,
-  Typography,
-  Box,
-  Paper,
-  TextField,
-  Button,
-  Select,
-  MenuItem,
-  InputAdornment,
-  CardMedia,
-  CardActions,
-  Card,
-  Badge,
-} from "@mui/material";
-import { HexColorPicker } from "react-colorful";
+import { Grid2, Typography, Box, Button } from "@mui/material";
+
 import { useThunk } from "../hook/use-thunk";
 
-import { createProduct, addColor } from "../store/thunks/fetchProduct";
+import { createProduct, addVariant } from "../store/thunks/fetchProduct";
 import { getAllBrand } from "../store/thunks/fetchBrands";
 import { getAllCategory } from "../store/thunks/fetchProductCategories";
 
 import { showToast } from "../components/ToastMessage";
-import CarouselShow from "../components/CarouselShow";
 import ContainerLayout from "../components/ContainerLayout";
 import AddProductInfo from "../components/AddProductInfo";
 import AddProductVariant from "../components/AddProductVariant";
@@ -44,16 +29,11 @@ const initialState = {
   stock: "",
   category: "",
   brand: "",
-  sizeName: "",
-  sizePrice: "",
-  versionName: "",
-  versionPrice: "",
+  variantName: "",
   colorName: "",
   colorPrice: "",
   images: [],
-  size: [],
-  version: [],
-  colorDetail: [],
+  variantDetail: [],
 };
 
 const AddProduct = () => {
@@ -63,7 +43,7 @@ const AddProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [wrongColorCode, setWrongColorCode] = useState(null);
   const [create] = useThunk(createProduct);
-  const [addColorToProduct] = useThunk(addColor);
+  const [addVariantToProduct] = useThunk(addVariant);
   const [getDataAllBrand] = useThunk(getAllBrand);
   const [getDataAllCategory] = useThunk(getAllCategory);
 
@@ -131,48 +111,6 @@ const AddProduct = () => {
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  //add to size and version array to submit
-  const handleAddToArray = (array) => {
-    let name;
-    let price;
-    if (array === "size") {
-      name = "sizeName";
-      price = "sizePrice";
-    }
-    if (array === "version") {
-      name = "versionName";
-      price = "versionPrice";
-    }
-
-    setState((prevState) => {
-      const checkDuplicate = prevState[array].find(
-        (item) =>
-          item.name === state.sizeName || item.name === state.versionName
-      );
-
-      if (checkDuplicate) {
-        showToast("Duplicate name", "error");
-        return { ...prevState };
-      } else {
-        return {
-          ...prevState,
-          [array]: [
-            ...prevState[array],
-            { name: state[name].toLowerCase(), price: state[price] },
-          ],
-        };
-      }
-    });
-  };
-
-  //remove from size and version array to submit
-  const handleRemoveFromArray = (array, name) => {
-    setState((prevState) => ({
-      ...prevState,
-      [array]: prevState[array].filter((s) => s.name !== name.toLowerCase()),
-    }));
-  };
-
   const handleFileChange = (event, array) => {
     if (array === "images") {
       setState((prevState) => ({
@@ -180,10 +118,11 @@ const AddProduct = () => {
         [array]: Array.from(event.target.files),
       }));
     }
-    if (array === "colorDetail") {
+
+    if (array === "variantDetail") {
       setState((prevState) => {
         const checkDuplicate = prevState[array].find(
-          (item) => item.name === state.colorName
+          (item) => item.variantName.trim() === state.variantName.trim()
         );
 
         if (checkDuplicate) {
@@ -195,7 +134,8 @@ const AddProduct = () => {
             [array]: [
               ...prevState[array],
               {
-                name: state.colorName.toLowerCase(),
+                variantName: state.variantName.toLowerCase(),
+                colorName: state.colorName.toLowerCase(),
                 price: state.colorPrice,
                 colorCode: colorCode,
                 images: Array.from(event.target.files),
@@ -207,25 +147,11 @@ const AddProduct = () => {
     }
   };
 
-  const handleRemoveImage = (indexToRemove, array, picIndex) => {
-    if (array === "colorDetailInside") {
-      setState((prevState) => ({
-        ...prevState,
-        colorDetail: prevState.colorDetail.map((color, index) =>
-          index === indexToRemove
-            ? {
-                ...color,
-                images: color.images.filter((_, i) => i !== picIndex),
-              }
-            : color
-        ),
-      }));
-    } else {
-      setState((prevState) => ({
-        ...prevState,
-        [array]: prevState[array].filter((_, index) => index !== indexToRemove),
-      }));
-    }
+  const handleRemoveImage = (indexToRemove, array) => {
+    setState((prevState) => ({
+      ...prevState,
+      [array]: prevState[array].filter((_, index) => index !== indexToRemove),
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -240,8 +166,6 @@ const AddProduct = () => {
       formData.append("quantity", state.stock);
       formData.append("category", state.category);
       formData.append("brand", state.brand);
-      formData.append("size", JSON.stringify(state.size));
-      formData.append("version", JSON.stringify(state.version));
 
       state.images.forEach((image) => {
         formData.append(`images`, image);
@@ -249,10 +173,11 @@ const AddProduct = () => {
 
       const product = await create(formData);
 
-      if (state.colorDetail.length > 0) {
-        state.colorDetail.forEach(async (color) => {
+      if (state.variantDetail.length > 0) {
+        state.variantDetail.forEach(async (color) => {
           const formData = new FormData();
-          formData.append("name", color.name);
+          formData.append("variantName", color.variantName);
+          formData.append("colorName", color.colorName);
           formData.append("price", color.price);
           formData.append("colorCode", color.colorCode);
           formData.append("prodId", product._id);
@@ -260,7 +185,7 @@ const AddProduct = () => {
             formData.append(`images`, image);
           });
 
-          await addColorToProduct(formData);
+          await addVariantToProduct({ formData });
         });
       }
 
@@ -334,8 +259,6 @@ const AddProduct = () => {
               handleRemoveImage={handleRemoveImage}
               handleChange={handleChange}
               style={style}
-              handleAddToArray={handleAddToArray}
-              handleRemoveFromArray={handleRemoveFromArray}
               colorCode={colorCode}
               setColorCode={setColorCode}
               wrongColorCode={wrongColorCode}

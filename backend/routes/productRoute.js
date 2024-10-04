@@ -15,11 +15,11 @@ router.post(
   productCtrl.createProduct
 );
 router.post(
-  "/addColor",
+  "/addVariant",
   authMiddleware,
   isAdmin,
   uploadPhoto.array("images", 10),
-  productCtrl.addColor
+  productCtrl.addVariant
 );
 router.post("/smartProductSearch", userCtrl.smartUserSearch("product"));
 
@@ -28,7 +28,7 @@ router.get("/:id", productCtrl.getAProduct);
 
 router.put("/wishlist", authMiddleware, productCtrl.toggleWishlist);
 router.put("/rating", authMiddleware, productCtrl.rating);
-router.put("/addVariant", authMiddleware, productCtrl.addVariant);
+
 router.put(
   "/upload/:id",
   authMiddleware,
