@@ -9,6 +9,7 @@ import {
   MenuItem,
   IconButton,
   TextField,
+  Drawer,
 } from "@mui/material";
 
 import { useThunk } from "../hook/use-thunk";
@@ -27,6 +28,7 @@ import ProductCard from "../components/ProductCard";
 import Paginate from "../components/Pagination";
 
 import SearchIcon from "@mui/icons-material/Search";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import gr4 from "../images/gr4.svg";
 import gr3 from "../images/gr3.svg";
 import gr2 from "../images/gr2.svg";
@@ -101,6 +103,7 @@ const style = {
 
 const ProductList = () => {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [grid, setGrid] = useState(6);
   const [filterString, setFilterString] = useState("");
@@ -189,6 +192,10 @@ const ProductList = () => {
     navigate(`/productList?search=${searchValue.trim()}&page=${1}`);
   };
 
+  const toggleDrawer = (newOpen) => () => {
+    setOpen(newOpen);
+  };
+
   return (
     <ContainerLayout>
       {isLoading ? (
@@ -247,28 +254,56 @@ const ProductList = () => {
 
             {/* Sort and Grid bar */}
             <Paper elevation={5} sx={style.paper}>
-              {/* Sort */}
-              <Box sx={style.boxSort}>
-                <Typography
-                  variant="p"
-                  sx={{ margin: "0 5px", fontSize: "16px" }}
-                >
-                  Sort By:
-                </Typography>
-                <Select
-                  sx={style.select}
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value)}
-                  defaultValue="created"
-                >
-                  <MenuItem value="-sold">Best selling</MenuItem>
-                  <MenuItem value="title">Alphabetically, A-Z</MenuItem>
-                  <MenuItem value="-title">Alphabetically, Z-A</MenuItem>
-                  <MenuItem value="price">Price, low to high</MenuItem>
-                  <MenuItem value="-price">Price, high to low</MenuItem>
-                  <MenuItem value="-created">Date, old to new</MenuItem>
-                  <MenuItem value="created">Date, new to old</MenuItem>
-                </Select>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box>
+                  <IconButton
+                    onClick={toggleDrawer(true)}
+                    sx={{ display: { xs: "block", sm: "block", md: "none" } }}
+                  >
+                    <FilterAltIcon />
+                  </IconButton>
+
+                  <Drawer
+                    open={open}
+                    onClose={toggleDrawer(false)}
+                    anchor="right"
+                  >
+                    <Box sx={{ width: 350 }} role="presentation">
+                      <ProductListFilter
+                        dataAllProductCategory={dataAllProductCategory}
+                        dataAllBrand={dataAllBrand}
+                        setFilterString={setFilterString}
+                        filter={filter}
+                        setFilter={setFilter}
+                        initialState={initialState}
+                      />
+                    </Box>
+                  </Drawer>
+                </Box>
+
+                {/* Sort */}
+                <Box sx={style.boxSort}>
+                  <Typography
+                    variant="p"
+                    sx={{ margin: "0 5px", fontSize: "16px" }}
+                  >
+                    Sort By:
+                  </Typography>
+                  <Select
+                    sx={style.select}
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value)}
+                    defaultValue="created"
+                  >
+                    <MenuItem value="-sold">Best selling</MenuItem>
+                    <MenuItem value="title">Alphabetically, A-Z</MenuItem>
+                    <MenuItem value="-title">Alphabetically, Z-A</MenuItem>
+                    <MenuItem value="price">Price, low to high</MenuItem>
+                    <MenuItem value="-price">Price, high to low</MenuItem>
+                    <MenuItem value="-created">Date, old to new</MenuItem>
+                    <MenuItem value="created">Date, new to old</MenuItem>
+                  </Select>
+                </Box>
               </Box>
 
               {/* Grid */}
