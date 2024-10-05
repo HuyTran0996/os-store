@@ -173,23 +173,30 @@ const AddProduct = () => {
 
       const product = await create(formData);
 
-      if (state.variantDetail.length > 0) {
-        state.variantDetail.forEach(async (color) => {
-          const formData1 = new FormData();
-          formData1.append("variantName", color.variantName);
-          formData1.append("colorName", color.colorName);
-          formData1.append("price", color.price);
-          formData1.append("colorCode", color.colorCode);
+      let promises = [];
 
-          color.images.forEach((image) => {
+      if (state.variantDetail.length > 0) {
+        const variantPromises = state.variantDetail.map(async (variant) => {
+          const formData1 = new FormData();
+          formData1.append("variantName", variant.variantName);
+          formData1.append("colorName", variant.colorName);
+          formData1.append("price", variant.price);
+          formData1.append("colorCode", variant.colorCode);
+
+          variant.images.forEach((image) => {
             formData1.append(`images`, image);
           });
 
-          await addVariantToProduct({
+          return addVariantToProduct({
             prodId: product._id,
             formData: formData1,
           });
         });
+        promises = [...promises, ...variantPromises];
+      }
+
+      if (promises.length > 0) {
+        await Promise.all(promises);
       }
 
       showToast("Create Product Successfully", "success");

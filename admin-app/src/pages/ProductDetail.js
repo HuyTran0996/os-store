@@ -216,8 +216,10 @@ const ProductDetail = () => {
 
       const product = await update({ id: params.id, formData });
 
+      let promises = [];
+
       if (state.variantDetail.length > 0) {
-        state.variantDetail.forEach(async (variant) => {
+        const variantPromises = state.variantDetail.map(async (variant) => {
           const formData1 = new FormData();
           formData1.append("variantName", variant.variantName);
           formData1.append("colorName", variant.colorName);
@@ -228,31 +230,38 @@ const ProductDetail = () => {
             formData1.append(`images`, image);
           });
 
-          await addVariantToProduct({
+          return addVariantToProduct({
             prodId: product._id,
             formData: formData1,
           });
         });
+        promises = [...promises, ...variantPromises];
       }
 
       if (imagesToDelete.length > 0) {
-        imagesToDelete.forEach(async (image) => {
-          await deleteImage({ productId: params.id, publicId: image });
-        });
+        const imageDeletePromises = imagesToDelete.map((image) =>
+          deleteImage({ productId: params.id, publicId: image })
+        );
+        promises = [...promises, ...imageDeletePromises];
       }
 
       if (variantsToDelete.length > 0) {
-        variantsToDelete.forEach(async (variant) => {
-          await deleteVariant({ productId: params.id, variantName: variant });
-        });
+        const variantDeletePromises = variantsToDelete.map((variant) =>
+          deleteVariant({ productId: params.id, variantName: variant })
+        );
+        promises = [...promises, ...variantDeletePromises];
+      }
+
+      if (promises.length > 0) {
+        await Promise.all(promises);
       }
 
       showToast("Update Product Successfully", "success");
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
-      setIsLoading(false);
       await getData();
+      setIsLoading(false);
     }
   };
 
