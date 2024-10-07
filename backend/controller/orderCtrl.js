@@ -19,26 +19,48 @@ exports.userAddToCart = asyncHandler(async (req, res) => {
   let products = [];
   let cartTotal = 0;
 
-  for (let i = 0; i < cart.length; i++) {
-    let object = {};
+  await Promise.all(
+    cart.map(async (item) => {
+      let object = {};
+      object.product = item._id;
+      object.count = item.count;
 
-    object.product = cart[i]._id;
-    object.count = cart[i].count;
-    object.color = cart[i].color;
+      const product = await Product.findById(item._id)
+        .select("price")
+        .select("variant")
+        .exec();
+      if (!product) throw new AppError("Product not found", 404);
 
-    const getPrice = await Product.findById(cart[i]._id).select("price").exec();
-    if (!getPrice) throw new AppError("Product not found", 404);
+      // if product has variant,set price of variant, if product does not has variant, set price normal
 
-    object.price = getPrice.price;
-    products.push(object);
-  }
+      if (item.variantId) {
+        validateMongodbId(item.variantId);
 
-  for (let i = 0; i < products.length; i++) {
-    cartTotal = cartTotal + products[i].price * products[i].count;
-  }
+        // When comparing two _id values, they should be compared as objects, use Mongoose's equals method to compare ObjectId fields instead of using ===
+        const find = product.variant.find((v) => v._id.equals(item.variantId));
 
+        if (!find) {
+          throw new AppError("Variant not found", 404);
+        }
+
+        object.variant = item.variantId;
+        object.price = find.price;
+      } else {
+        object.price = product.price;
+      }
+
+      products.push(object);
+      // cartTotal += object.price * object.count;
+    })
+  );
+
+  products.map((prod) => {
+    cartTotal = cartTotal + prod.price * prod.count;
+  });
+
+  //delete other cart of user if exist
   await Cart.findOneAndDelete({ orderby: _id });
-
+  // create new cart for user
   const newCart = await Cart.create({ products, cartTotal, orderby: _id });
 
   res.status(201).json({
@@ -104,7 +126,9 @@ exports.createOrder = asyncHandler(async (req, res) => {
 
   const userCart = await Cart.findOne({ orderby: req.user._id });
 
-  if (couponApplied && userCart.totalAfterDiscount) {
+  if (!userCart) throw new AppError("User not found", 404);
+
+  if (couponApplied && userCart.totalAfterDiscount > 0) {
     finalAmount = userCart.totalAfterDiscount;
   } else {
     finalAmount = userCart.cartTotal;
@@ -117,7 +141,6 @@ exports.createOrder = asyncHandler(async (req, res) => {
       method: "COD",
       amount: finalAmount,
       status: "Cash on Delivery",
-
       currency: "usd",
     },
     orderby: req.user._id,
@@ -133,7 +156,7 @@ exports.createOrder = asyncHandler(async (req, res) => {
     };
   });
 
-  const updateProduct = await Product.bulkWrite(update, {});
+  await Product.bulkWrite(update, {});
 
   res.status(201).json({
     status: "success",
@@ -160,8 +183,10 @@ exports.getAllOrders = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     status: "success",
-    totalOrder: totalOrder.length,
-    orders,
+    data: {
+      total: totalOrder.length,
+      orders,
+    },
   });
 });
 
