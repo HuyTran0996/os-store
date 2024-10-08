@@ -321,6 +321,22 @@ exports.smartUserSearch = (action) =>
       };
     }
 
+    if (action === "orders") {
+      model = Order;
+      field = "orders";
+      searchArea = ["_id", "orderbyEmail"];
+
+      filedToShow = {
+        _id: 1,
+        orderby: 1,
+        orderbyEmail: 1,
+        orderStatus: 1,
+        paymentIntent: 1,
+        createdAt: 1,
+        score: { $meta: "searchScore" },
+      };
+    }
+
     const transformedMatch = [
       ...searchArea.map((field) => ({
         [field]: { $regex: searchField, $options: "i" },

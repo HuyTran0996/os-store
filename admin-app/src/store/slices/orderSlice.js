@@ -1,8 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getMonthlyOrders } from "../thunks/fetchOrders";
+import {
+  getMonthlyOrders,
+  getAllOrders,
+  smartOrderSearch,
+} from "../thunks/fetchOrders";
 
 const initialState = {
   dataOrderMonthly: [],
+  dataAllOrders: [],
 };
 
 const orderSlice = createSlice({
@@ -11,6 +16,12 @@ const orderSlice = createSlice({
   extraReducers(builder) {
     builder.addCase(getMonthlyOrders.fulfilled, (state, action) => {
       state.dataOrderMonthly = action.payload;
+    });
+    builder.addCase(getAllOrders.fulfilled, (state, action) => {
+      state.dataAllOrders = action.payload;
+    });
+    builder.addCase(smartOrderSearch.fulfilled, (state, action) => {
+      state.dataAllOrders = action.payload;
     });
   },
 });

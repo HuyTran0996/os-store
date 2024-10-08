@@ -15,6 +15,7 @@ import ProductDetail from "./pages/ProductDetail";
 import AddProduct from "./pages/AddProduct";
 import BrandList from "./pages/BrandList";
 import ProductCategoryList from "./pages/ProductCategoryList";
+import OrderList from "./pages/OrderList";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="addProduct" element={<AddProduct />} />
           <Route path="brandList" element={<BrandList />} />
           <Route path="productCategoryList" element={<ProductCategoryList />} />
+          <Route path="orders" element={<OrderList />} />
         </Route>
       </Routes>
     </BrowserRouter>

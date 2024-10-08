@@ -12,22 +12,30 @@ const orderSchema = new mongoose.Schema(
         color: String,
       },
     ],
-    paymentIntent: {},
+    paymentIntent: {
+      method: {
+        type: String,
+        enum: ["COD", "OBT"], //cash on delivery & Online Banking Transfer
+        default: "COD",
+      },
+      amount: Number,
+      status: {
+        type: String,
+        enum: ["Paid", "Unpaid"],
+        default: "Unpaid",
+        currency: "usd",
+      },
+    },
     orderStatus: {
       type: String,
-      default: "Not Processed",
-      enum: [
-        "Not Processed",
-        "Cash on Delivery",
-        "Processing",
-        "Dispatched",
-        "Cancelled",
-        "Delivered",
-      ],
+      enum: ["Processing", "Cancelled", "Delivered"],
     },
     orderby: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+    },
+    orderbyEmail: {
+      type: String,
     },
   },
   {

@@ -137,14 +137,12 @@ exports.createOrder = asyncHandler(async (req, res) => {
   const newOrder = await Order.create({
     products: userCart.products,
     paymentIntent: {
-      id: uniqId(),
       method: "COD",
       amount: finalAmount,
-      status: "Cash on Delivery",
-      currency: "usd",
     },
     orderby: req.user._id,
-    orderStatus: "Cash on Delivery",
+    orderbyEmail: req.user.email,
+    orderStatus: "Processing",
   });
 
   let update = userCart.products.map((item) => {
