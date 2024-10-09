@@ -155,7 +155,7 @@ const OrderList = () => {
             icon={<EditIcon />}
             label="Edit"
             className="textPrimary"
-            onClick={() => navigate(`/order/${params.row.id}`)}
+            onClick={() => navigate(`/order/${params.row.orderCode}`)}
             color="inherit"
           />,
         ];
