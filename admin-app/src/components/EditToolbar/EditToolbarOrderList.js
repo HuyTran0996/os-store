@@ -46,7 +46,7 @@ export const EditToolbarOrderList = (props) => {
           >
             <TextField
               className="input"
-              placeholder="Search Orders By ID or Email..."
+              placeholder="Search Orders By Order Code or Email..."
               type="text"
               fullWidth
               value={searchValue}

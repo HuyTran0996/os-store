@@ -74,7 +74,7 @@ const OrderList = () => {
   //////////////////////
 
   const columns = [
-    { field: "id", headerName: "ID", width: 220 },
+    { field: "orderCode", headerName: "Order Code", width: 220 },
 
     {
       field: "orderbyEmail",

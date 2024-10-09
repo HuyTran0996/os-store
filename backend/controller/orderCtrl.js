@@ -145,6 +145,15 @@ exports.createOrder = asyncHandler(async (req, res) => {
     orderStatus: "Processing",
   });
 
+  const orderIdCode = `${newOrder._id.toString()}`;
+
+  // Update the order with the generated code
+  await Order.findByIdAndUpdate(
+    newOrder._id,
+    { orderCode: orderIdCode },
+    { new: true }
+  );
+
   let update = userCart.products.map((item) => {
     return {
       updateOne: {

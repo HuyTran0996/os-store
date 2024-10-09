@@ -327,10 +327,11 @@ exports.smartUserSearch = (action) =>
     if (action === "orders") {
       model = Order;
       field = "orders";
-      searchArea = ["_id", "orderbyEmail"];
+      searchArea = ["orderCode", "orderbyEmail"];
 
       filedToShow = {
         _id: 1,
+        orderCode: 1,
         orderby: 1,
         orderbyEmail: 1,
         orderStatus: 1,
@@ -340,7 +341,7 @@ exports.smartUserSearch = (action) =>
       };
 
       if (filter) {
-        additionalMatch = { orderStatus: filter }; // Use $in operator to filter by multiple statuses
+        additionalMatch = { orderStatus: filter };
       }
     }
 
