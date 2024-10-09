@@ -14,14 +14,14 @@ import { GridToolbarContainer } from "@mui/x-data-grid";
 import SearchIcon from "@mui/icons-material/Search";
 
 export const EditToolbarOrderList = (props) => {
-  const { isLoading } = props;
+  const { isLoading, filter, setFilter } = props;
   const navigate = useNavigate();
-  const [filter, setFilter] = useState("all");
+
   const [searchValue, setSearchValue] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate(`/orders?search=${searchValue.trim()}&filter=${filter}&page=1`);
+    navigate(`/orders?search=${searchValue.trim()}&page=1`);
   };
 
   return (
@@ -74,9 +74,9 @@ export const EditToolbarOrderList = (props) => {
           <Select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            defaultValue=""
+            defaultValue="all"
           >
-            <MenuItem value="">Get All</MenuItem>
+            <MenuItem value="all">Get All</MenuItem>
             <MenuItem value="Processing">Processing</MenuItem>
             <MenuItem value="Delivered">Delivered</MenuItem>
             <MenuItem value="Cancelled">Cancelled</MenuItem>

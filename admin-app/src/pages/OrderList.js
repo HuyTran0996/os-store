@@ -18,11 +18,11 @@ const OrderList = () => {
   ///////////// declare///////////////
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [filter, setFilter] = useState("all");
   const [rows, setRows] = useState([]);
   let [searchParams] = useSearchParams();
   let page = parseInt(searchParams.get("page")) || 1;
   let search = String(searchParams.get("search"));
-  let filter = String(searchParams.get("filter"));
 
   const [getDataAllOrders] = useThunk(getAllOrders);
 
@@ -37,12 +37,18 @@ const OrderList = () => {
     try {
       setIsLoading(true);
       if (search.trim() === "" || search === "null") {
-        // await getDataAllOrders();
-        await getDataAllOrders(`
-orderStatus=${filter}&page=${page}`);
+        const params =
+          filter === "all"
+            ? `page=${page}`
+            : `orderStatus=${filter}&page=${page}`;
+
+        await getDataAllOrders(params);
       } else {
-        smartOrderSearching({ searchField: search.trim() });
-        // smartProductSearching({ sort, page, searchField: search.trim() });
+        await smartOrderSearching({
+          page,
+          searchField: search.trim(),
+          ...(filter !== "all" && { filter }),
+        });
       }
     } catch (err) {
       showToast(`${err.message}`, "error");
@@ -169,6 +175,8 @@ orderStatus=${filter}&page=${page}`);
           columns={columns}
           isLoading={isLoading}
           EditToolbar={EditToolbarOrderList}
+          filter={filter}
+          setFilter={setFilter}
         />
       </Box>
     </ContainerLayout>

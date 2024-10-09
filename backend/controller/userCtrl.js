@@ -247,11 +247,14 @@ exports.userProductOrderCompare = asyncHandler(async (req, res) => {
 exports.smartUserSearch = (action) =>
   asyncHandler(async (req, res) => {
     const { searchField } = req.body;
+    const { filter } = req.query;
     if (!searchField) throw new AppError("Please provide search text", 400);
     let model;
+    let field;
     let searchArea = [];
     let filedToShow = {};
-    let field;
+    let searchAreaForArrayFields = [];
+    let additionalMatch = {};
     if (action === "user") {
       model = User;
       field = "users";
@@ -335,6 +338,10 @@ exports.smartUserSearch = (action) =>
         createdAt: 1,
         score: { $meta: "searchScore" },
       };
+
+      if (filter) {
+        additionalMatch = { orderStatus: filter }; // Use $in operator to filter by multiple statuses
+      }
     }
 
     const transformedMatch = [
@@ -348,6 +355,7 @@ exports.smartUserSearch = (action) =>
       {
         $match: {
           $or: [...transformedMatch],
+          ...additionalMatch,
         },
       },
       {

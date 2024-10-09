@@ -16,27 +16,33 @@ export const getMonthlyOrders = createAsyncThunk(
 export const getAllOrders = createAsyncThunk(
   "orders/getAllOrders",
   async (queryString) => {
-    let res;
-    if (queryString) {
-      res = await apiService.get(
-        `/order/getAllOrder?${queryString}&limit=${limit}`
-      );
-    } else {
-      res = await apiService.get(`/order/getAllOrder`);
-    }
+    const res = await apiService.get(
+      `/order/getAllOrder?${queryString}&limit=${limit}`
+    );
+
     return res.data.data;
   }
 );
 
 export const smartOrderSearch = createAsyncThunk(
-  "products/smartOrderSearch",
-  async ({ sort, page, searchField }) => {
-    const res = await apiService.post(
-      `/product/smartOrderSearch?sort=${sort}&page=${page}&limit=${limit}`,
-      {
-        searchField,
-      }
-    );
+  "orders/smartOrderSearch",
+  async ({ filter, page, searchField }) => {
+    let res;
+    if (filter) {
+      res = await apiService.post(
+        `/order/smartOrderSearch?filter=${filter}&page=${page}&limit=${limit}`,
+        {
+          searchField,
+        }
+      );
+    } else {
+      res = await apiService.post(
+        `/order/smartOrderSearch?page=${page}&limit=${limit}`,
+        {
+          searchField,
+        }
+      );
+    }
     return res.data.data;
   }
 );

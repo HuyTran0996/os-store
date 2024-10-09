@@ -13,6 +13,8 @@ export default function DataGridTable({
   processRowUpdate,
   EditToolbar,
   rowHeight,
+  filter,
+  setFilter,
 }) {
   //////////////MUI DATA GRID functions, no need to care this//////////
 
@@ -56,6 +58,9 @@ export default function DataGridTable({
           toolbar: {
             isLoadingSelf,
             setIsLoadingSelf,
+            isLoading,
+            filter,
+            setFilter,
           },
 
           loadingOverlay: {
