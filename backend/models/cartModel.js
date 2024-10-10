@@ -9,7 +9,7 @@ const cartSchema = new mongoose.Schema(
           ref: "Product",
         },
         count: Number,
-        color: String,
+        variantSelected: String,
         price: Number,
       },
     ],

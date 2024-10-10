@@ -43,7 +43,7 @@ exports.userAddToCart = asyncHandler(async (req, res) => {
           throw new AppError("Variant not found", 404);
         }
 
-        object.variant = item.variantId;
+        object.variantSelected = item.variantId;
         object.price = find.price;
       } else {
         object.price = product.price;
@@ -194,6 +194,20 @@ exports.getAllOrders = asyncHandler(async (req, res) => {
       total: totalOrder.length,
       orders,
     },
+  });
+});
+
+exports.getOrder = asyncHandler(async (req, res) => {
+  const { orderId } = req.params;
+  validateMongodbId(orderId);
+  const order = await Order.findById(orderId)
+    .populate("products.product")
+    .populate("orderby");
+  if (!order) throw new AppError("order not found", 404);
+
+  res.status(200).json({
+    status: "success",
+    order,
   });
 });
 

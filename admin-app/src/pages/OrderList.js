@@ -9,6 +9,7 @@ import { getAllOrders, smartOrderSearch } from "../store/thunks/fetchOrders";
 import DataGridTable from "../components/DataGridTable";
 import { showToast } from "../components/ToastMessage";
 import ContainerLayout from "../components/ContainerLayout";
+import Paginate from "../components/Pagination";
 
 import EditIcon from "@mui/icons-material/Edit";
 
@@ -58,7 +59,7 @@ const OrderList = () => {
   };
   useEffect(() => {
     getData();
-  }, [search, filter]);
+  }, [search, filter, page]);
 
   //convert data to for table//////
   useEffect(() => {
@@ -178,6 +179,17 @@ const OrderList = () => {
           filter={filter}
           setFilter={setFilter}
         />
+
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20px",
+          }}
+        >
+          <Paginate data={dataAllOrders} />
+        </Box>
       </Box>
     </ContainerLayout>
   );

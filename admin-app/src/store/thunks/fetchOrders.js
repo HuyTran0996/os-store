@@ -23,6 +23,13 @@ export const getAllOrders = createAsyncThunk(
     return res.data.data;
   }
 );
+export const getOrderById = createAsyncThunk(
+  "orders/getOrderById",
+  async (orderId) => {
+    const res = await apiService.get(`/order/getOrderById/${orderId}`);
+    return res.data.order;
+  }
+);
 
 export const smartOrderSearch = createAsyncThunk(
   "orders/smartOrderSearch",

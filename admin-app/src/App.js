@@ -16,6 +16,7 @@ import AddProduct from "./pages/AddProduct";
 import BrandList from "./pages/BrandList";
 import ProductCategoryList from "./pages/ProductCategoryList";
 import OrderList from "./pages/OrderList";
+import OrderDetail from "./pages/OrderDetail";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="brandList" element={<BrandList />} />
           <Route path="productCategoryList" element={<ProductCategoryList />} />
           <Route path="orders" element={<OrderList />} />
+          <Route path="order/:id" element={<OrderDetail />} />
         </Route>
       </Routes>
     </BrowserRouter>

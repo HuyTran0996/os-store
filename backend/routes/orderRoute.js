@@ -26,6 +26,12 @@ router.get(
   orderCtrl.getMonthlyOrders
 );
 router.get(
+  "/getOrderById/:orderId",
+  authMiddleware,
+  isAdmin,
+  orderCtrl.getOrder
+);
+router.get(
   "/getOrderByUser/:id",
   authMiddleware,
   isAdmin,

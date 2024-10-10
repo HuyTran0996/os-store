@@ -10,7 +10,8 @@ const orderSchema = new mongoose.Schema(
           ref: "Product",
         },
         count: Number,
-        color: String,
+        price: Number,
+        variantSelected: String,
       },
     ],
     paymentIntent: {

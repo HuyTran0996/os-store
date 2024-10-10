@@ -3,11 +3,13 @@ import {
   getMonthlyOrders,
   getAllOrders,
   smartOrderSearch,
+  getOrderById,
 } from "../thunks/fetchOrders";
 
 const initialState = {
   dataOrderMonthly: [],
   dataAllOrders: [],
+  dataOrder: [],
 };
 
 const orderSlice = createSlice({
@@ -22,6 +24,9 @@ const orderSlice = createSlice({
     });
     builder.addCase(smartOrderSearch.fulfilled, (state, action) => {
       state.dataAllOrders = action.payload;
+    });
+    builder.addCase(getOrderById.fulfilled, (state, action) => {
+      state.dataOrder = action.payload;
     });
   },
 });
