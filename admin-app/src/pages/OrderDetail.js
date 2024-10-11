@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Select, MenuItem } from "@mui/material";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 
 import { useThunk } from "../hook/use-thunk";
@@ -22,6 +22,7 @@ const OrderDetail = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [rows, setRows] = useState([]);
+  const [orderStatus, setOrderStatus] = useState("");
   const [getDataOrder] = useThunk(getOrderById);
 
   const { dataOrder } = useSelector((state) => {
@@ -31,7 +32,8 @@ const OrderDetail = () => {
   const getData = async () => {
     try {
       setIsLoading(true);
-      await getDataOrder(params.id);
+      const data = await getDataOrder(params.id);
+      setOrderStatus(data.orderStatus);
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
@@ -101,7 +103,7 @@ const OrderDetail = () => {
     },
     {
       headerName: "Product Brand",
-      width: 200,
+      width: 150,
       renderCell: (params) => {
         let brand = params.row.product.brand;
         return <div>{brand}</div>;
@@ -113,7 +115,7 @@ const OrderDetail = () => {
     },
     {
       field: "price",
-      headerName: "Price",
+      headerName: "Unit Price",
       width: 150,
       renderCell: (params) => {
         let amount = params.row.price;
@@ -127,23 +129,21 @@ const OrderDetail = () => {
         );
       },
     },
-
     {
-      field: "actions",
-      type: "actions",
-      headerName: "Actions",
-      width: 100,
-      cellClassName: "actions",
-      getActions: (params) => {
-        return [
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            // onClick={() => navigate(`/order/${params.row.orderCode}`)}
-            color="inherit"
-          />,
-        ];
+      headerName: "Total",
+      flex: 1,
+      renderCell: (params) => {
+        let amount = params.row.price;
+        let quantity = params.row.count;
+        let total = amount * quantity;
+        return (
+          <div>
+            {new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+            }).format(total)}
+          </div>
+        );
       },
     },
   ];
@@ -152,16 +152,86 @@ const OrderDetail = () => {
     <ContainerLayout>
       <Box sx={{ margin: "20px" }}>
         <Typography variant="h3" sx={{ marginBottom: "20px" }}>
-          Order {dataOrder._id}
+          Order Detail
         </Typography>
 
-        <DataGridTable
-          rows={rows}
-          columns={columns}
-          isLoading={isLoading}
-          rowHeight={80}
-          // EditToolbar={EditToolbarOrderList}
-        />
+        <Box>
+          {/* order info */}
+          <Box sx={{ marginBottom: "10px" }}>
+            <Typography variant="h7">
+              Order by: {dataOrder.orderby?.name} - Email:{" "}
+              {dataOrder.orderby?.email} - role: {dataOrder.orderby?.role}{" "}
+              <br /> Phone: {dataOrder.orderby?.phone}
+              <br />
+              Order Code: {dataOrder._id}
+              <br />
+              Order date:{" "}
+              {new Date(dataOrder.createdAt).toLocaleDateString("en-CA", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                timeZone: "Asia/Bangkok",
+              })}{" "}
+              (GMT+7)
+            </Typography>
+
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography variant="h6">Order Status:</Typography>
+
+              <Select
+                required
+                value={orderStatus}
+                // onChange={handleChange}
+                name="brand"
+                // sx={{ ...style.input, minWidth: "120px" }}
+              >
+                <MenuItem value="Processing">Processing</MenuItem>
+                <MenuItem value="Delivered">Delivered</MenuItem>
+                <MenuItem value="Cancelled">Cancelled</MenuItem>
+              </Select>
+            </Box>
+          </Box>
+          {/* product list */}
+          <Box style={{ display: "flex", flexDirection: "column" }}>
+            <DataGridTable
+              rows={rows}
+              columns={columns}
+              isLoading={isLoading}
+              rowHeight={80}
+            />
+
+            <Typography
+              variant="p"
+              sx={{ textAlign: "right", marginRight: "15px" }}
+            >
+              Subtotal:{" "}
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(dataOrder.paymentIntent?.subtotal)}
+              <br />
+              Coupon: {dataOrder.paymentIntent?.couponName} - Discount:{" "}
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(dataOrder.paymentIntent?.discount)}
+            </Typography>
+
+            <Typography
+              variant="h6"
+              sx={{ textAlign: "right", marginRight: "15px" }}
+            >
+              Total Order:{" "}
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(dataOrder.paymentIntent?.totalAfterDiscount)}
+            </Typography>
+          </Box>
+        </Box>
       </Box>
     </ContainerLayout>
   );

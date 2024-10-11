@@ -20,7 +20,10 @@ const orderSchema = new mongoose.Schema(
         enum: ["COD", "OBT"], //cash on delivery & Online Banking Transfer
         default: "COD",
       },
-      amount: Number,
+      subtotal: Number,
+      couponName: String,
+      discount: Number,
+      totalAfterDiscount: Number,
       status: {
         type: String,
         enum: ["Paid", "Unpaid"],

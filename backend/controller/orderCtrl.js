@@ -61,7 +61,14 @@ exports.userAddToCart = asyncHandler(async (req, res) => {
   //delete other cart of user if exist
   await Cart.findOneAndDelete({ orderby: _id });
   // create new cart for user
-  const newCart = await Cart.create({ products, cartTotal, orderby: _id });
+  const newCart = await Cart.create({
+    products,
+    cartTotal,
+    orderby: _id,
+    totalAfterDiscount: cartTotal,
+    couponName: "no coupon",
+    discount: 0,
+  });
 
   res.status(201).json({
     status: "success",
@@ -102,14 +109,19 @@ exports.applyCoupon = asyncHandler(async (req, res) => {
   );
   if (!cart) throw new AppError("Cart not found", 404);
 
-  let totalAfterDiscount = (
-    cart.cartTotal -
-    (cart.cartTotal * findCoupon.discount) / 100
-  ).toFixed(2);
+  let totalAfterDiscount = (cart.cartTotal - findCoupon.discount).toFixed(2);
+  // let totalAfterDiscount = (
+  //   cart.cartTotal -
+  //   (cart.cartTotal * findCoupon.discount) / 100
+  // ).toFixed(2);
 
   await Cart.findOneAndUpdate(
     { orderby: req.user._id },
-    { totalAfterDiscount },
+    {
+      totalAfterDiscount,
+      couponName: findCoupon.name,
+      discount: findCoupon.discount,
+    },
     { new: true }
   );
   res.status(200).json({
@@ -120,7 +132,6 @@ exports.applyCoupon = asyncHandler(async (req, res) => {
 
 exports.createOrder = asyncHandler(async (req, res) => {
   const { COD, couponApplied } = req.body;
-  let finalAmount = 0;
 
   if (!COD) throw new AppError("Create cash order failed", 409);
 
@@ -128,17 +139,14 @@ exports.createOrder = asyncHandler(async (req, res) => {
 
   if (!userCart) throw new AppError("User not found", 404);
 
-  if (couponApplied && userCart.totalAfterDiscount > 0) {
-    finalAmount = userCart.totalAfterDiscount;
-  } else {
-    finalAmount = userCart.cartTotal;
-  }
-
   const newOrder = await Order.create({
     products: userCart.products,
     paymentIntent: {
       method: "COD",
-      amount: finalAmount,
+      subtotal: userCart.cartTotal,
+      couponName: userCart.couponName,
+      discount: userCart.discount,
+      totalAfterDiscount: userCart.totalAfterDiscount,
     },
     orderby: req.user._id,
     orderbyEmail: req.user.email,

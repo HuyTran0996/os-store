@@ -95,7 +95,7 @@ const OrderList = () => {
       headerName: "Order Value",
       width: 200,
       renderCell: (params) => {
-        let amount = params.row.paymentIntent.amount;
+        let amount = params.row.paymentIntent.totalAfterDiscount;
         return (
           <div>
             {new Intl.NumberFormat("en-US", {
