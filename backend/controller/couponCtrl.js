@@ -11,7 +11,12 @@ exports.createCoupon = asyncHandler(async (req, res) => {
   if (!name || !expiry || !discount)
     throw new AppError("Please provide all information", 400);
 
-  const newCoupon = await Coupon.create(req.body);
+  const expiryDate = new Date(expiry);
+  if (isNaN(expiryDate.getTime())) {
+    throw new AppError("Invalid expiry date", 400);
+  }
+
+  const newCoupon = await Coupon.create({ name, expiry: expiryDate, discount });
   res.status(201).json({
     status: "success",
     newCoupon,

@@ -104,16 +104,17 @@ exports.applyCoupon = asyncHandler(async (req, res) => {
   const findCoupon = await Coupon.findOne({ name: coupon });
   if (!findCoupon) throw new AppError("Coupon not found", 404);
 
+  const currentDate = new Date();
+  if (currentDate > new Date(findCoupon.expiry)) {
+    throw new AppError("Coupon is expired", 400);
+  }
+
   const cart = await Cart.findOne({ orderby: req.user._id }).populate(
     "products.product"
   );
   if (!cart) throw new AppError("Cart not found", 404);
 
   let totalAfterDiscount = (cart.cartTotal - findCoupon.discount).toFixed(2);
-  // let totalAfterDiscount = (
-  //   cart.cartTotal -
-  //   (cart.cartTotal * findCoupon.discount) / 100
-  // ).toFixed(2);
 
   await Cart.findOneAndUpdate(
     { orderby: req.user._id },
