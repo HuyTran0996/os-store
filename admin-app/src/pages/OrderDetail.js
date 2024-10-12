@@ -1,21 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Typography, Box, Select, MenuItem } from "@mui/material";
-import { GridActionsCellItem } from "@mui/x-data-grid";
+import { Typography, Box, Select, MenuItem, Button } from "@mui/material";
 
 import { useThunk } from "../hook/use-thunk";
-import { getOrderById } from "../store/thunks/fetchOrders";
+import { getOrderById, updateOrder } from "../store/thunks/fetchOrders";
 
 import { showToast } from "../components/ToastMessage";
-
 import DataGridTable from "../components/DataGridTable";
-
 import ContainerLayout from "../components/ContainerLayout";
-
-import EditIcon from "@mui/icons-material/Edit";
-
-import { EditToolbarOrderList } from "../components/EditToolbar/EditToolbarOrderList";
 
 const OrderDetail = () => {
   const params = useParams();
@@ -23,7 +16,9 @@ const OrderDetail = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [orderStatus, setOrderStatus] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("");
   const [getDataOrder] = useThunk(getOrderById);
+  const [updateOrderById] = useThunk(updateOrder);
 
   const { dataOrder } = useSelector((state) => {
     return state.orders;
@@ -34,6 +29,7 @@ const OrderDetail = () => {
       setIsLoading(true);
       const data = await getDataOrder(params.id);
       setOrderStatus(data.orderStatus);
+      setPaymentStatus(data.paymentIntent.status);
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
@@ -97,7 +93,6 @@ const OrderDetail = () => {
       renderCell: (params) => {
         let id = params.row.variantSelected;
         const prodName = params.row.product.variant.find((v) => v._id === id);
-        console.log("aaaa", prodName);
         return <div>{prodName?.variantName || "No variant"}</div>;
       },
     },
@@ -148,6 +143,18 @@ const OrderDetail = () => {
     },
   ];
 
+  const handleUpdateStatus = async () => {
+    try {
+      setIsLoading(true);
+      await updateOrderById({ orderId: params.id, orderStatus, paymentStatus });
+      await getData();
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <ContainerLayout>
       <Box sx={{ margin: "20px" }}>
@@ -156,14 +163,26 @@ const OrderDetail = () => {
         </Typography>
 
         <Box>
-          {/* order info */}
-          <Box sx={{ marginBottom: "10px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "10px",
+              border: "0.5px solid",
+              borderRadius: "7px",
+              padding: "10px",
+            }}
+          >
+            {/* order info */}
             <Typography variant="h7">
+              Order Code: {dataOrder._id} <br />
               Order by: {dataOrder.orderby?.name} - Email:{" "}
               {dataOrder.orderby?.email} - role: {dataOrder.orderby?.role}{" "}
               <br /> Phone: {dataOrder.orderby?.phone}
               <br />
-              Order Code: {dataOrder._id}
+              Shipping Address: {dataOrder.shippingAddress}
               <br />
               Order date:{" "}
               {new Date(dataOrder.createdAt).toLocaleDateString("en-CA", {
@@ -177,21 +196,51 @@ const OrderDetail = () => {
               })}{" "}
               (GMT+7)
             </Typography>
-
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Typography variant="h6">Order Status:</Typography>
-
-              <Select
-                required
-                value={orderStatus}
-                // onChange={handleChange}
-                name="brand"
-                // sx={{ ...style.input, minWidth: "120px" }}
+            {/* Status */}
+            <Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
               >
-                <MenuItem value="Processing">Processing</MenuItem>
-                <MenuItem value="Delivered">Delivered</MenuItem>
-                <MenuItem value="Cancelled">Cancelled</MenuItem>
-              </Select>
+                <Typography variant="p">Order Status:</Typography>
+
+                <Select
+                  required
+                  value={orderStatus}
+                  onChange={(e) => setOrderStatus(e.target.value)}
+                  sx={{
+                    margin: "10px",
+                  }}
+                >
+                  <MenuItem value="Processing">Processing</MenuItem>
+                  <MenuItem value="Delivered">Delivered</MenuItem>
+                  <MenuItem value="Cancelled">Cancelled</MenuItem>
+                </Select>
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Typography variant="p">Payment Status:</Typography>
+                <Select
+                  required
+                  value={paymentStatus}
+                  onChange={(e) => setPaymentStatus(e.target.value)}
+                  sx={{
+                    margin: "10px",
+                  }}
+                >
+                  <MenuItem value="Unpaid">Unpaid</MenuItem>
+                  <MenuItem value="Paid">Paid</MenuItem>
+                </Select>
+              </Box>
+              <Button
+                sx={{ width: "100%" }}
+                variant="contained"
+                disabled={isLoading}
+                onClick={handleUpdateStatus}
+              >
+                Update Status
+              </Button>
             </Box>
           </Box>
           {/* product list */}
@@ -205,7 +254,7 @@ const OrderDetail = () => {
 
             <Typography
               variant="p"
-              sx={{ textAlign: "right", marginRight: "15px" }}
+              sx={{ textAlign: "right", margin: "10px 15px 0 0" }}
             >
               Subtotal:{" "}
               {new Intl.NumberFormat("en-US", {

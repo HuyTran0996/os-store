@@ -42,6 +42,9 @@ const orderSchema = new mongoose.Schema(
     orderbyEmail: {
       type: String,
     },
+    shippingAddress: {
+      type: String,
+    },
   },
   {
     timestamps: true,

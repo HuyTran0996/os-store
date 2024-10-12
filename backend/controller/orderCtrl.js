@@ -131,7 +131,7 @@ exports.applyCoupon = asyncHandler(async (req, res) => {
 });
 
 exports.createOrder = asyncHandler(async (req, res) => {
-  const { COD, couponApplied } = req.body;
+  const { COD, couponApplied, shippingAddress } = req.body;
 
   if (!COD) throw new AppError("Create cash order failed", 409);
 
@@ -151,6 +151,7 @@ exports.createOrder = asyncHandler(async (req, res) => {
     orderby: req.user._id,
     orderbyEmail: req.user.email,
     orderStatus: "Processing",
+    shippingAddress,
   });
 
   const orderIdCode = `${newOrder._id.toString()}`;
@@ -249,19 +250,19 @@ exports.getOrderByUserId = (action) =>
   });
 
 exports.updateOrderStatus = asyncHandler(async (req, res) => {
-  const { status } = req.body;
+  const { orderStatus, paymentStatus } = req.body;
   const { id } = req.params;
   validateMongodbId(id);
 
   const updateOrderStatus = await Order.findByIdAndUpdate(
     id,
     {
-      orderStatus: status,
-      paymentIntent: {
-        status: status,
+      $set: {
+        orderStatus: orderStatus,
+        "paymentIntent.status": paymentStatus,
       },
     },
-    { new: true, runValidators: true }
+    { new: true }
   );
   if (!updateOrderStatus) throw new AppError("Order not found", 404);
 
