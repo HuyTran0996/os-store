@@ -103,6 +103,8 @@ exports.applyCoupon = asyncHandler(async (req, res) => {
 
   const findCoupon = await Coupon.findOne({ name: coupon });
   if (!findCoupon) throw new AppError("Coupon not found", 404);
+  if (findCoupon.isActive === false)
+    throw new AppError("Coupon is not valid", 404);
 
   const currentDate = new Date();
   if (currentDate > new Date(findCoupon.expiry)) {

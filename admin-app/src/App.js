@@ -17,6 +17,7 @@ import BrandList from "./pages/BrandList";
 import ProductCategoryList from "./pages/ProductCategoryList";
 import OrderList from "./pages/OrderList";
 import OrderDetail from "./pages/OrderDetail";
+import CouponList from "./pages/CouponList";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="productCategoryList" element={<ProductCategoryList />} />
           <Route path="orders" element={<OrderList />} />
           <Route path="order/:id" element={<OrderDetail />} />
+          <Route path="couponList" element={<CouponList />} />
         </Route>
       </Routes>
     </BrowserRouter>

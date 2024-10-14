@@ -148,7 +148,7 @@ const OrderList = () => {
       field: "actions",
       type: "actions",
       headerName: "Actions",
-      width: 100,
+      flex: 1,
       cellClassName: "actions",
       getActions: (params) => {
         return [

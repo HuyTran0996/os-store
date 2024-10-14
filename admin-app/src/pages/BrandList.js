@@ -440,7 +440,6 @@ const BrandList = () => {
       field: "tag",
       headerName: "Tag",
       flex: 1,
-      width: 200,
       renderCell: (params) => {
         const arrayTag = params.row.tag;
         return (
@@ -517,16 +516,6 @@ const BrandList = () => {
           EditToolbar={EditToolbarBrandList}
           rowHeight={120}
         />
-        {/* <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "20px",
-          }}
-        >
-          <Paginate data={dataAllBrand} />
-        </Box> */}
       </Box>
       {modalParams && (
         <BasicModal

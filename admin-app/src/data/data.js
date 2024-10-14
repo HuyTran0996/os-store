@@ -203,13 +203,13 @@ export const NAVIGATION = [
     title: "Marketing",
     icon: <LocalActivityIcon />,
     children: [
+      // {
+      //   segment: "coupon",
+      //   title: "Add Coupon",
+      //   icon: <AddCircleIcon />,
+      // },
       {
-        segment: "coupon",
-        title: "Add Coupon",
-        icon: <AddCircleIcon />,
-      },
-      {
-        segment: "coupon-list",
+        segment: "couponList",
         title: "Coupon List",
         icon: <SellIcon />,
       },

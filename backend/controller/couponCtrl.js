@@ -42,15 +42,6 @@ exports.updateCoupon = asyncHandler(async (req, res) => {
   });
 });
 
-exports.deleteCoupon = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  validateMongoDbId(id);
-
-  const deletecoupon = await Coupon.findByIdAndDelete(id);
-  if (!deletecoupon) throw new AppError("Coupon not found", 404);
-  res.status(204).json();
-});
-
 exports.getCoupon = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -80,7 +71,48 @@ exports.getAllCoupons = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     status: "success",
-    totalCoupon: totalCoupons.length,
-    coupons,
+    data: {
+      total: totalCoupons.length,
+      coupons,
+    },
   });
+});
+
+exports.blockCoupon = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoDbId(id);
+
+  const blockCoupon = await Coupon.findByIdAndUpdate(
+    id,
+    { isActive: false },
+    { new: true }
+  );
+  res.status(204).json({
+    status: "success",
+    blockCoupon,
+  });
+});
+
+exports.unblockCoupon = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoDbId(id);
+
+  const unblockCoupon = await Coupon.findByIdAndUpdate(
+    id,
+    { isActive: true },
+    { new: true }
+  );
+  res.status(204).json({
+    status: "success",
+    unblockCoupon,
+  });
+});
+
+exports.deleteCoupon = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoDbId(id);
+
+  const deletecoupon = await Coupon.findByIdAndDelete(id);
+  if (!deletecoupon) throw new AppError("Coupon not found", 404);
+  res.status(204).json();
 });
