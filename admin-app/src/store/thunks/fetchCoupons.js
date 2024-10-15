@@ -13,6 +13,41 @@ export const getAllCoupons = createAsyncThunk(
   }
 );
 
+export const updateCoupon = createAsyncThunk(
+  "coupons/updateCoupon",
+  async ({ couponId, name, expiry, discount }) => {
+    const res = await apiService.put(`/coupon/${couponId}`, {
+      name,
+      expiry,
+      discount,
+    });
+    return res.data.updateOrderStatus;
+  }
+);
+export const createCoupon = createAsyncThunk(
+  "coupons/createCoupon",
+  async ({ name, expiry, discount }) => {
+    const res = await apiService.post(`/coupon`, {
+      name,
+      expiry,
+      discount,
+    });
+    return res.data;
+  }
+);
+export const smartCouponSearch = createAsyncThunk(
+  "coupons/smartCouponSearch",
+  async ({ page, searchField }) => {
+    const res = await apiService.post(
+      `/coupon/smartCouponSearch?page=${page}&limit=${limit}`,
+      {
+        searchField,
+      }
+    );
+    return res.data.data;
+  }
+);
+
 export const blockCoupon = createAsyncThunk(
   "coupons/blockCoupon",
   async (couponId) => {
@@ -40,16 +75,6 @@ export const deleteCoupon = createAsyncThunk(
 //   async (orderId) => {
 //     const res = await apiService.get(`/order/getOrderById/${orderId}`);
 //     return res.data.order;
-//   }
-// );
-// export const updateOrder = createAsyncThunk(
-//   "orders/updateOrder",
-//   async ({ orderId, orderStatus, paymentStatus }) => {
-//     const res = await apiService.put(`/order/updateOrder/${orderId}`, {
-//       orderStatus,
-//       paymentStatus,
-//     });
-//     return res.data.updateOrderStatus;
 //   }
 // );
 

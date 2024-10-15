@@ -2,20 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { Typography, Box } from "@mui/material";
 import { GridRowModes, GridActionsCellItem } from "@mui/x-data-grid";
 import { useThunk } from "../hook/use-thunk";
-import {
-  getAllUser,
-  smartUserSearch,
-  blockUser,
-  unblockUser,
-  updateNameEmail,
-  deleteUser,
-  changeRole,
-} from "../store/thunks/fetchUsers";
+
 import {
   getAllCoupons,
+  updateCoupon,
+  smartCouponSearch,
   blockCoupon,
   unblockCoupon,
   deleteCoupon,
@@ -30,20 +27,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-import PersonIcon from "@mui/icons-material/Person";
-import PersonOffIcon from "@mui/icons-material/PersonOff";
 import AirplanemodeActiveIcon from "@mui/icons-material/AirplanemodeActive";
 import AirplanemodeInactiveIcon from "@mui/icons-material/AirplanemodeInactive";
-import SupportAgentIcon from "@mui/icons-material/SupportAgent";
-import { GiSharkBite } from "react-icons/gi";
 
-import { EditToolbarCustomer } from "../components/EditToolbar/EditToolbarCustomer";
-
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { EditToolbarCoupon } from "../components/EditToolbar/EditToolbarCoupon";
 
 const CouponList = () => {
   ///////////// declare///////////////
@@ -56,11 +43,10 @@ const CouponList = () => {
   let search = String(searchParams.get("search"));
 
   const [getDataAllCoupon] = useThunk(getAllCoupons);
-  const [smartUserSearching] = useThunk(smartUserSearch);
+  const [smartCouponSearching] = useThunk(smartCouponSearch);
   const [block] = useThunk(blockCoupon);
   const [unblock] = useThunk(unblockCoupon);
-  const [updateUserNameEmail] = useThunk(updateNameEmail);
-  const [changeRoleUser] = useThunk(changeRole);
+  const [update] = useThunk(updateCoupon);
   const [deleteACoupon] = useThunk(deleteCoupon);
 
   const { dataAllCoupon } = useSelector((state) => {
@@ -74,7 +60,7 @@ const CouponList = () => {
       if (search.trim() === "" || search === "null") {
         await getDataAllCoupon(`page=${page}`);
       } else {
-        smartUserSearching({ page, searchField: search.trim() });
+        smartCouponSearching({ page, searchField: search.trim() });
       }
     } catch (err) {
       showToast(`${err.message}`, "error");
@@ -133,14 +119,14 @@ const CouponList = () => {
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-    console.log("eeee", newRow);
-    // action(
-    //   updateUserNameEmail({
-    //     id: newRow.id,
-    //     name: newRow.name,
-    //     phone: newRow.phone.toString(),
-    //   })
-    // );
+    action(
+      update({
+        couponId: newRow.id,
+        name: newRow.name,
+        expiry: newRow.expiry,
+        discount: newRow.discount,
+      })
+    );
 
     return updatedRow;
   };
@@ -153,7 +139,6 @@ const CouponList = () => {
   const handleEditClick = (id) => () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
   };
-
   const handleSaveClick = (id) => () => {
     setRowModesModel({
       ...rowModesModel,
@@ -174,7 +159,7 @@ const CouponList = () => {
   ///////////////////////////
 
   const columns = [
-    { field: "id", headerName: "ID", width: 220 },
+    { field: "id", headerName: "ID", width: 120 },
     { field: "name", headerName: "Name", width: 200, editable: true },
     {
       field: "discount",
@@ -222,12 +207,11 @@ const CouponList = () => {
         );
       },
     },
-
     {
       field: "isActive",
       headerName: "Status",
       type: "actions",
-      width: 120,
+      width: 170,
       getActions: ({ id, row }) => {
         return [
           <GridActionsCellItem
@@ -243,7 +227,6 @@ const CouponList = () => {
         ];
       },
     },
-
     {
       field: "actions",
       type: "actions",
@@ -304,10 +287,11 @@ const CouponList = () => {
           columns={columns}
           isLoading={isLoading}
           isLoadingSelf={isLoadingSelf}
+          setIsLoadingSelf={setIsLoadingSelf}
           rowModesModel={rowModesModel}
           handleRowModesModelChange={handleRowModesModelChange}
           processRowUpdate={processRowUpdate}
-          // EditToolbar={EditToolbarCustomer}
+          EditToolbar={EditToolbarCoupon}
         />
         <Box
           sx={{

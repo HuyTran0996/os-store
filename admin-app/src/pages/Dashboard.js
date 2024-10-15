@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  Grid2,
-  Typography,
-  Container,
-  Box,
-  CircularProgress,
-} from "@mui/material";
-
+import { Grid2, Typography, Box, CircularProgress } from "@mui/material";
 import { useSelector } from "react-redux";
+
 import { useThunk } from "../hook/use-thunk";
 import { userTotalCompare } from "../store/thunks/fetchUsers";
 import { getMonthlyOrders } from "../store/thunks/fetchOrders";
@@ -37,7 +31,6 @@ const Dashboard = () => {
       await doFetchUsers();
       await doFetchMonthlyOrders();
     } catch (err) {
-      console.log("error", err);
       showToast("something goes wrong", "error", 3000);
     } finally {
       setIsLoading(false);

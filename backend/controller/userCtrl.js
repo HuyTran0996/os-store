@@ -6,6 +6,7 @@ const Product = require("../models/productModel");
 const Order = require("../models/orderModel");
 const Brand = require("../models/brandModel");
 const ProdCategory = require("../models/prodcategoryModel");
+const Coupon = require("../models/couponModel");
 const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const validateMongodbId = require("../utils/validateMongodbId");
@@ -336,6 +337,26 @@ exports.smartUserSearch = (action) =>
         orderbyEmail: 1,
         orderStatus: 1,
         paymentIntent: 1,
+        createdAt: 1,
+        score: { $meta: "searchScore" },
+      };
+
+      if (filter) {
+        additionalMatch = { orderStatus: filter };
+      }
+    }
+
+    if (action === "coupons") {
+      model = Coupon;
+      field = "coupons";
+      searchArea = ["name"];
+
+      filedToShow = {
+        _id: 1,
+        name: 1,
+        expiry: 1,
+        isActive: 1,
+        updatedAt: 1,
         createdAt: 1,
         score: { $meta: "searchScore" },
       };

@@ -1,6 +1,7 @@
 const express = require("express");
 
 const couponCtrl = require("../controller/couponCtrl");
+const userCtrl = require("../controller/userCtrl");
 const {
   authMiddleware,
   isAdmin,
@@ -10,6 +11,7 @@ const {
 const router = express.Router();
 
 router.post("/", authMiddleware, isAdmin, couponCtrl.createCoupon);
+router.post("/smartCouponSearch", userCtrl.smartUserSearch("coupons"));
 
 router.put("/blockCoupon/:id", authMiddleware, isAdmin, couponCtrl.blockCoupon);
 router.put(
