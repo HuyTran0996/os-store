@@ -3,6 +3,7 @@ import { NavLink, Link } from "react-router-dom";
 
 import "../styles/Header.scss";
 import { BsSearch } from "react-icons/bs";
+// import logo from "../../public/images/logo.png";
 
 const Header = () => {
   return (
@@ -29,15 +30,25 @@ const Header = () => {
 
       <header className="header-upper py-3">
         <div className="container-xxl">
-          <div className="row align-items-center">
-            <div className="col-2">
-              <h2>
-                <Link to="/" className="text-white">
-                  OS Store
-                </Link>
-              </h2>
-            </div>
-            <div className="col-5">
+          <div className="d-flex align-items-center justify-content-between">
+            {/* logo */}
+
+            <Link to="/">
+              <h3 className="text-white d-flex align-items-center">
+                <img
+                  style={{
+                    width: "50px",
+                    marginRight: "5px",
+                  }}
+                  src="/images/logo.png"
+                  alt="logo"
+                />
+                <span className="d-none d-lg-inline">OS Store</span>
+              </h3>
+            </Link>
+
+            {/* search box */}
+            <div className="d-none d-lg-inline">
               <div className="input-group">
                 <input
                   type="text"
@@ -51,59 +62,54 @@ const Header = () => {
                 </span>
               </div>
             </div>
-            <div className="col-5">
-              <div className="header-upper-links d-flex align-items-center justify-content-between">
-                <div className="">
-                  <Link
-                    to="/compare-product"
-                    className="d-flex align-items-center gap-10 text-white"
-                  >
-                    <img src="/images/compare.svg" alt="compare" />
-                    <p className="mb-0">
-                      Compare <br />
-                      Products
-                    </p>
-                  </Link>
-                </div>
 
-                <div className="">
-                  <Link
-                    to="/wishlist"
-                    className="d-flex align-items-center gap-10 text-white"
-                  >
-                    <img src="/images/wishlist.svg" alt="wishlist" />
-                    <p className="mb-0">
-                      Favorite <br />
-                      Wishlist
-                    </p>
-                  </Link>
-                </div>
-                <div className="">
-                  <Link
-                    to="/login"
-                    className="d-flex align-items-center gap-10 text-white"
-                  >
-                    <img src="/images/user.svg" alt="user" />
-                    <p className="mb-0">
-                      Log in <br />
-                      My Account
-                    </p>
-                  </Link>
-                </div>
+            {/* other */}
 
-                <div className="">
-                  <Link
-                    to="/cart"
-                    className="d-flex align-items-center gap-10 text-white"
-                  >
-                    <img src="/images/cart.svg" alt="cart" />
-                    <div className="d-flex flex-column gap-10">
-                      <span className="badge bg-white text-dark">0</span>
-                      <p className="mb-0">$ 500</p>
-                    </div>
-                  </Link>
+            <div className="header-upper-links d-flex align-items-center justify-content-between">
+              <Link
+                to="/compare-product"
+                className="d-flex align-items-center gap-10 text-white"
+              >
+                <img src="/images/compare.svg" alt="compare" />
+
+                <p className="mb-0 d-none d-lg-inline">
+                  Compare <br />
+                  Products
+                </p>
+              </Link>
+
+              <Link
+                to="/wishlist"
+                className="d-flex align-items-center gap-10 text-white"
+              >
+                <img src="/images/wishlist.svg" alt="wishlist" />
+                <p className="mb-0 d-none d-lg-inline">
+                  Favorite <br />
+                  Wishlist
+                </p>
+              </Link>
+
+              <Link
+                to="/login"
+                className="d-flex align-items-center gap-10 text-white"
+              >
+                <img src="/images/user.svg" alt="user" />
+                <p className="mb-0 d-none d-lg-inline">
+                  Log in <br />
+                  My Account
+                </p>
+              </Link>
+
+              <Link
+                to="/cart"
+                className="d-flex align-items-center gap-10 text-white"
+              >
+                <img src="/images/cart.svg" alt="cart" />
+                <div className="d-flex flex-column gap-10">
+                  <span className="badge bg-white text-dark">0</span>
+                  <p className="mb-0">$ 500</p>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
