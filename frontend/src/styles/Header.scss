@@ -1,61 +1,89 @@
 @import "./stylesStore/variables.scss";
+@import "./stylesStore/breakpoints.scss";
 
-.header-top-strip {
+.header {
   background-color: $color-131921;
-  border-bottom: 1px solid $color-3b4149;
-}
-
-.header-upper {
-  background-color: $color-131921;
-  border-bottom: 1px solid $color-3b4149;
-  .input-group-text {
-    background-color: $color-febd69;
+  p {
+    color: white;
+    margin-bottom: 0;
   }
-  .header-upper-links {
-    img {
-      width: 35px;
-      height: 35px;
+  a {
+    color: white;
+  }
+
+  .headerUpper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 50px;
+    border-bottom: 1px solid $color-3b4149;
+    h4 {
+      display: flex;
+      align-items: center;
+      margin: 0;
     }
   }
-}
 
-.header-bottom {
-  background-color: $color-232f3e;
-  .menu-links {
+  .search {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    align-items: center;
+    background-color: white;
+    border-radius: 7px;
+  }
+
+  .upperLink {
+    display: flex;
+    align-items: center;
+    gap: 30px;
     a {
-      color: white;
-      font-size: 14px;
-      line-height: 18px;
-      font-weight: 400;
-      letter-spacing: 0.3;
-      text-transform: uppercase;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    svg {
+      font-size: 40px;
+      @include sm {
+        font-size: 25px;
+      }
+    }
+
+    .cartCount {
+      position: absolute;
+      top: -15px;
+      right: -10px;
+      background: white;
+      color: black;
+      padding: 0 3px;
+      border-radius: 5px;
     }
   }
-  .dropdown {
-    button {
-      color: white;
-      font-size: 14px;
-      line-height: 18px;
-      font-weight: 400;
-      letter-spacing: 0.3;
-      text-transform: uppercase;
-      &:focus {
-        box-shadow: none;
-      }
+
+  .headerBottom {
+    padding: 10px 50px;
+    align-items: center;
+    gap: 30px;
+    background-color: $color-232f3e;
+  }
+
+  .smallScreenShow {
+    display: none;
+    @include sm {
+      display: flex;
     }
-    .dropdown-menu {
-      background-color: $color-131921;
-      width: 100%;
-      transform: translate3d(0px, 57px, 0px) !important;
-      .dropdown-item {
-        padding: 20px;
-        margin-bottom: 3px;
-        border-bottom: 1px solid $color-3b4149;
-        &:hover {
-          background-color: transparent;
-          color: $color-febd69 !important;
-        }
-      }
+  }
+  .smallScreenHide {
+    display: flex;
+    @include sm {
+      display: none;
+    }
+  }
+  .smallerLGhide {
+    display: flex;
+    @include lg {
+      display: none;
     }
   }
 }

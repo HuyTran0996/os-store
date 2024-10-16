@@ -15,7 +15,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-
+import "../styles/Header.scss";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import SearchIcon from "@mui/icons-material/Search";
@@ -28,54 +28,8 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import MenuIcon from "@mui/icons-material/Menu";
 
 const style = {
-  header: {
-    backgroundColor: "#131921",
-    "& p": { color: "white", marginBottom: "0" },
-    "& a": { color: "white" },
-  },
-
-  headerUpper: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "20px 50px",
-    borderBottom: "1px solid #3b4149",
-  },
-  search: {
-    position: "relative",
-    alignItems: "center",
-    width: "100%",
-    height: "50px",
-    backgroundColor: "white",
-    borderRadius: "7px",
-    display: { xs: "none", sm: "flex" },
-  },
-
-  upperLink: {
-    display: "flex",
-    alignItems: "center",
-    gap: "30px",
-    "& a": { display: "flex", alignItems: "center", gap: "10px" },
-  },
-
-  cartCount: {
-    position: "absolute",
-    top: "-15px",
-    right: "-10px",
-    background: "white",
-    color: "black",
-    padding: "0px 3px",
-    borderRadius: "5px",
-  },
-  headerBottom: {
-    padding: "10px 50px",
-    backgroundColor: "#232f3e",
-    alignItems: "center",
-    gap: "30px",
-    display: { xs: "none", sm: "flex" },
-  },
   menuCategories: {
-    "& .css-1tktgsa-MuiPaper-root-MuiPopover-paper-MuiMenu-paper": {
+    "& .MuiPaper-root": {
       backgroundColor: "#131921",
       color: "white",
       "& li:not(:last-child)": {
@@ -136,18 +90,12 @@ const Header = () => {
     </Box>
   );
   return (
-    <Box sx={style.header}>
+    <Box className="header">
       {/* header upper */}
-      <Box sx={style.headerUpper}>
+      <Box className="headerUpper">
         {/* logo */}
         <Link to="/">
-          <h4
-            style={{
-              display: "flex",
-              alignItems: "center",
-              margin: 0,
-            }}
-          >
+          <h4>
             <MenuIcon
               fontSize="large"
               onClick={toggleDrawer(true)}
@@ -175,7 +123,7 @@ const Header = () => {
 
         {/* search box */}
         <form onSubmit={handleSubmit} style={{ width: "42%" }}>
-          <Box sx={style.search}>
+          <Box className="search smallScreenHide">
             <TextField
               placeholder="Search Product..."
               type="text"
@@ -202,60 +150,42 @@ const Header = () => {
         </form>
 
         {/* header-upper-links */}
-        <Box sx={style.upperLink}>
+        <Box className="upperLink">
           <Link to="/compare-product">
-            <CompareIcon fontSize="large" />
-            <Box
-              component="p"
-              sx={{
-                display: { xs: "none", lg: "inline" },
-                whiteSpace: "nowrap",
-              }}
-            >
+            <CompareIcon />
+            <Box className="smallerLGhide" component="p">
               Compare <br />
               Products
             </Box>
           </Link>
 
           <Link to="/wishlist">
-            <VolunteerActivismIcon fontSize="large" sx={{ color: "pink" }} />
-            <Box
-              component="p"
-              sx={{
-                display: { xs: "none", lg: "inline" },
-                whiteSpace: "nowrap",
-              }}
-            >
+            <VolunteerActivismIcon sx={{ color: "pink" }} />
+            <Box className="smallerLGhide" component="p">
               Favorite <br />
               Wishlist
             </Box>
           </Link>
 
           <Link to="/login">
-            <LoginIcon fontSize="large" />
-            <Box
-              component="p"
-              sx={{
-                display: { xs: "none", lg: "inline" },
-                whiteSpace: "nowrap",
-              }}
-            >
+            <LoginIcon />
+            <Box className="smallerLGhide" component="p">
               Log <br /> In
             </Box>
           </Link>
 
-          <Link style={{ position: "relative" }} to="/cart">
-            <LocalMallIcon fontSize="large" sx={{ color: "orange" }} />
-            <Box sx={style.cartCount}>0</Box>
+          <Link to="/cart">
+            <LocalMallIcon sx={{ color: "orange" }} />
+            <Box className="cartCount">0</Box>
           </Link>
         </Box>
       </Box>
 
       {/* search box small screen */}
-      <Box sx={{ ...style.headerUpper, display: { sm: "none", xs: "flex" } }}>
+      <Box className="headerUpper smallScreenShow">
         {/* search box */}
         <form onSubmit={handleSubmit} style={{ width: "100%" }}>
-          <Box sx={{ ...style.search, display: { sm: "none", xs: "flex" } }}>
+          <Box className="search smallScreenShow">
             <TextField
               placeholder="Search Product..."
               type="text"
@@ -283,7 +213,7 @@ const Header = () => {
       </Box>
 
       {/* header bottom */}
-      <Box sx={style.headerBottom}>
+      <Box className="headerBottom smallScreenHide">
         <Box sx={{ borderRight: "1px solid white" }}>
           <Button
             id="fade-button"
