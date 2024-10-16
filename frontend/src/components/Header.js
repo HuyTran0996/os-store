@@ -1,169 +1,330 @@
-import React from "react";
-import { NavLink, Link } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink, Link, useNavigate } from "react-router-dom";
+import {
+  Box,
+  TextField,
+  Button,
+  MenuItem,
+  Menu,
+  Fade,
+  Drawer,
+  List,
+  Divider,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 
-import "../styles/Header.scss";
-import { BsSearch } from "react-icons/bs";
-// import logo from "../../public/images/logo.png";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
+import SearchIcon from "@mui/icons-material/Search";
+import CompareIcon from "@mui/icons-material/Compare";
+import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
+import LoginIcon from "@mui/icons-material/Login";
+import LocalMallIcon from "@mui/icons-material/LocalMall";
+import DialpadIcon from "@mui/icons-material/Dialpad";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import MenuIcon from "@mui/icons-material/Menu";
+
+const style = {
+  header: {
+    backgroundColor: "#131921",
+    "& p": { color: "white", marginBottom: "0" },
+    "& a": { color: "white" },
+  },
+
+  headerUpper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "20px 50px",
+    borderBottom: "1px solid #3b4149",
+  },
+  search: {
+    position: "relative",
+    alignItems: "center",
+    width: "100%",
+    height: "50px",
+    backgroundColor: "white",
+    borderRadius: "7px",
+    display: { xs: "none", sm: "flex" },
+  },
+
+  upperLink: {
+    display: "flex",
+    alignItems: "center",
+    gap: "30px",
+    "& a": { display: "flex", alignItems: "center", gap: "10px" },
+  },
+
+  cartCount: {
+    position: "absolute",
+    top: "-15px",
+    right: "-10px",
+    background: "white",
+    color: "black",
+    padding: "0px 3px",
+    borderRadius: "5px",
+  },
+  headerBottom: {
+    padding: "10px 50px",
+    backgroundColor: "#232f3e",
+    alignItems: "center",
+    gap: "30px",
+    display: { xs: "none", sm: "flex" },
+  },
+  menuCategories: {
+    "& .css-1tktgsa-MuiPaper-root-MuiPopover-paper-MuiMenu-paper": {
+      backgroundColor: "#131921",
+      color: "white",
+      "& li:not(:last-child)": {
+        borderBottom: "1px solid #3b4149",
+      },
+      "& li:hover": { color: "orange" },
+    },
+  },
+};
 
 const Header = () => {
+  const navigate = useNavigate();
+  const [searchValue, setSearchValue] = useState("");
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [openMenu, setOpenMenu] = React.useState(false);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const toggleDrawer = (newOpen) => () => {
+    setOpenMenu(newOpen);
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    navigate(`/product?search=${searchValue.trim()}`);
+  };
+
+  const DrawerList = (
+    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+      <List>
+        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+              </ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+      <List>
+        {["All mail", "Trash", "Spam"].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+              </ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
   return (
-    <>
-      <header className="header-top-strip py-3">
-        <div className="container-xxl">
-          <div className="row">
-            <div className="col-6">
-              <p className="text-white mb-0">
-                Free Shipping Over $100 & Free Return
-              </p>
-            </div>
-            <div className="col-6">
-              <p className="text-white text-end mb-0">
-                Hotline:{" "}
-                <a className="text-white" href="tel:+84123456789">
-                  (+84) 123 456 789
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
+    <Box sx={style.header}>
+      {/* header upper */}
+      <Box sx={style.headerUpper}>
+        {/* logo */}
+        <Link to="/">
+          <h4
+            style={{
+              display: "flex",
+              alignItems: "center",
+              margin: 0,
+            }}
+          >
+            <MenuIcon
+              fontSize="large"
+              onClick={toggleDrawer(true)}
+              sx={{ display: { sm: "none", xs: "flex" } }}
+            />
+            <img
+              src="images/logo.png"
+              alt="logo"
+              style={{
+                width: "40px",
+                margin: "0 5px",
+              }}
+            />
+            <Box
+              component="span"
+              sx={{
+                display: { xs: "none", md: "inline" },
+                whiteSpace: "nowrap",
+              }}
+            >
+              OS Store
+            </Box>
+          </h4>
+        </Link>
 
-      <header className="header-upper py-3">
-        <div className="container-xxl">
-          <div className="d-flex align-items-center justify-content-between">
-            {/* logo */}
+        {/* search box */}
+        <form onSubmit={handleSubmit} style={{ width: "42%" }}>
+          <Box sx={style.search}>
+            <TextField
+              placeholder="Search Product..."
+              type="text"
+              fullWidth
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              sx={{ "& .MuiOutlinedInput-notchedOutline": { border: "none" } }}
+            />
 
-            <Link to="/">
-              <h3 className="text-white d-flex align-items-center">
-                <img
-                  style={{
-                    width: "50px",
-                    marginRight: "5px",
-                  }}
-                  src="/images/logo.png"
-                  alt="logo"
-                />
-                <span className="d-none d-lg-inline">OS Store</span>
-              </h3>
-            </Link>
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              // disabled={isLoadingSelf}
+              sx={{
+                position: "absolute",
+                right: "0px",
+                height: "100%",
+              }}
+            >
+              <SearchIcon />
+            </Button>
+          </Box>
+        </form>
 
-            {/* search box */}
-            <div className="d-none d-lg-inline">
-              <div className="input-group">
-                <input
-                  type="text"
-                  className="form-control py-2"
-                  placeholder="Search Product Here..."
-                  aria-label="Search Product Here..."
-                  aria-describedby="basic-addon2"
-                />
-                <span className="input-group-text p-3" id="basic-addon2">
-                  <BsSearch className="fs-6" />
-                </span>
-              </div>
-            </div>
+        {/* header-upper-links */}
+        <Box sx={style.upperLink}>
+          <Link to="/compare-product">
+            <CompareIcon fontSize="large" />
+            <Box
+              component="p"
+              sx={{
+                display: { xs: "none", lg: "inline" },
+                whiteSpace: "nowrap",
+              }}
+            >
+              Compare <br />
+              Products
+            </Box>
+          </Link>
 
-            {/* other */}
+          <Link to="/wishlist">
+            <VolunteerActivismIcon fontSize="large" sx={{ color: "pink" }} />
+            <Box
+              component="p"
+              sx={{
+                display: { xs: "none", lg: "inline" },
+                whiteSpace: "nowrap",
+              }}
+            >
+              Favorite <br />
+              Wishlist
+            </Box>
+          </Link>
 
-            <div className="header-upper-links d-flex align-items-center justify-content-between">
-              <Link
-                to="/compare-product"
-                className="d-flex align-items-center gap-10 text-white"
-              >
-                <img src="/images/compare.svg" alt="compare" />
+          <Link to="/login">
+            <LoginIcon fontSize="large" />
+            <Box
+              component="p"
+              sx={{
+                display: { xs: "none", lg: "inline" },
+                whiteSpace: "nowrap",
+              }}
+            >
+              Log <br /> In
+            </Box>
+          </Link>
 
-                <p className="mb-0 d-none d-lg-inline">
-                  Compare <br />
-                  Products
-                </p>
-              </Link>
+          <Link style={{ position: "relative" }} to="/cart">
+            <LocalMallIcon fontSize="large" sx={{ color: "orange" }} />
+            <Box sx={style.cartCount}>0</Box>
+          </Link>
+        </Box>
+      </Box>
 
-              <Link
-                to="/wishlist"
-                className="d-flex align-items-center gap-10 text-white"
-              >
-                <img src="/images/wishlist.svg" alt="wishlist" />
-                <p className="mb-0 d-none d-lg-inline">
-                  Favorite <br />
-                  Wishlist
-                </p>
-              </Link>
+      {/* search box small screen */}
+      <Box sx={{ ...style.headerUpper, display: { sm: "none", xs: "flex" } }}>
+        {/* search box */}
+        <form onSubmit={handleSubmit} style={{ width: "100%" }}>
+          <Box sx={{ ...style.search, display: { sm: "none", xs: "flex" } }}>
+            <TextField
+              placeholder="Search Product..."
+              type="text"
+              fullWidth
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              sx={{ "& .MuiOutlinedInput-notchedOutline": { border: "none" } }}
+            />
 
-              <Link
-                to="/login"
-                className="d-flex align-items-center gap-10 text-white"
-              >
-                <img src="/images/user.svg" alt="user" />
-                <p className="mb-0 d-none d-lg-inline">
-                  Log in <br />
-                  My Account
-                </p>
-              </Link>
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              // disabled={isLoadingSelf}
+              sx={{
+                position: "absolute",
+                right: "0px",
+                height: "100%",
+              }}
+            >
+              <SearchIcon />
+            </Button>
+          </Box>
+        </form>
+      </Box>
 
-              <Link
-                to="/cart"
-                className="d-flex align-items-center gap-10 text-white"
-              >
-                <img src="/images/cart.svg" alt="cart" />
-                <div className="d-flex flex-column gap-10">
-                  <span className="badge bg-white text-dark">0</span>
-                  <p className="mb-0">$ 500</p>
-                </div>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* header bottom */}
+      <Box sx={style.headerBottom}>
+        <Box sx={{ borderRight: "1px solid white" }}>
+          <Button
+            id="fade-button"
+            aria-controls={open ? "fade-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+            sx={{ color: "white" }}
+          >
+            <DialpadIcon sx={{ marginRight: "5px" }} /> SHOP CATEGORIES{" "}
+            <ArrowDropDownIcon />
+          </Button>
+          <Menu
+            id="fade-menu"
+            MenuListProps={{
+              "aria-labelledby": "fade-button",
+            }}
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            TransitionComponent={Fade}
+            sx={style.menuCategories}
+          >
+            <MenuItem onClick={handleClose}>Profile</MenuItem>
+            <MenuItem onClick={handleClose}>My account</MenuItem>
+            <MenuItem onClick={handleClose}>Logout</MenuItem>
+          </Menu>
+        </Box>
 
-      <header className="header-bottom py-3">
-        <div className="container-xxl">
-          <div className="row">
-            <div className="col-12">
-              <div className="menu-bottom d-flex align-items-center gap-30">
-                <div className="dropdown">
-                  <button
-                    className="btn btn-secondary dropdown-toggle bg-transparent border-0 gap-15 d-flex align-items-center"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <img src="/images/menu.svg" alt="menu" />
-                    <span className="d-inline-block">Shop Categories</span>
-                  </button>
-
-                  <ul className="dropdown-menu">
-                    <li>
-                      <Link className="dropdown-item text-white" to="">
-                        Action
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className="dropdown-item text-white" to="">
-                        Another action
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className="dropdown-item text-white" to="">
-                        Something else here
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="menu-links">
-                  <div className="d-flex align-items-center gap-30">
-                    <NavLink to="/">Home</NavLink>
-                    <NavLink to="/product">Our Store</NavLink>
-                    <NavLink to="/blogs">Blogs</NavLink>
-                    <NavLink to="/contact">Contact</NavLink>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-    </>
+        <Box sx={{ display: "flex", alignItems: "center", gap: "30px" }}>
+          <NavLink to="/">Home</NavLink>
+          <NavLink to="/product">Our Store</NavLink>
+          <NavLink to="/blogs">Blogs</NavLink>
+          <NavLink to="/contact">Contact</NavLink>
+        </Box>
+      </Box>
+      {/* menu list small screen */}
+      <Drawer open={openMenu} onClose={toggleDrawer(false)}>
+        {DrawerList}
+      </Drawer>
+    </Box>
   );
 };
 
