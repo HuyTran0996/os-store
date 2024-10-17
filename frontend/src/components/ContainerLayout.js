@@ -10,7 +10,6 @@ const ContainerLayout = ({ children }) => {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        minHeight: "90vh", // header height is 10vh, check in Header AppBar
         padding: "0px 30px",
       }}
     >
