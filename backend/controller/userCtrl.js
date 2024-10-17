@@ -7,6 +7,7 @@ const Order = require("../models/orderModel");
 const Brand = require("../models/brandModel");
 const ProdCategory = require("../models/prodcategoryModel");
 const Coupon = require("../models/couponModel");
+const Banner = require("../models/bannerModel");
 const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const validateMongodbId = require("../utils/validateMongodbId");
@@ -364,6 +365,21 @@ exports.smartUserSearch = (action) =>
       if (filter) {
         additionalMatch = { orderStatus: filter };
       }
+    }
+
+    if (action === "banner") {
+      model = Banner;
+      field = "banners";
+      searchArea = ["title", "prodName", "description"];
+      filedToShow = {
+        _id: 1,
+        images: 1,
+        title: 1,
+        prodName: 1,
+        description: 1,
+        createdAt: 1,
+        score: { $meta: "searchScore" },
+      };
     }
 
     const transformedMatch = [

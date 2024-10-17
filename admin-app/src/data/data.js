@@ -16,6 +16,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import SellIcon from "@mui/icons-material/Sell";
 import CreateIcon from "@mui/icons-material/Create";
 import SubjectIcon from "@mui/icons-material/Subject";
+import PhotoIcon from "@mui/icons-material/Photo";
 
 ////////////Dash board///////////
 export const monthMap = {
@@ -203,11 +204,11 @@ export const NAVIGATION = [
     title: "Marketing",
     icon: <LocalActivityIcon />,
     children: [
-      // {
-      //   segment: "coupon",
-      //   title: "Add Coupon",
-      //   icon: <AddCircleIcon />,
-      // },
+      {
+        segment: "banner",
+        title: "Banner List",
+        icon: <PhotoIcon />,
+      },
       {
         segment: "couponList",
         title: "Coupon List",
