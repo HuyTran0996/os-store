@@ -6,9 +6,14 @@
   p {
     color: white;
     margin-bottom: 0;
+    transition: 0.3s;
   }
   a {
     color: white;
+    transition: 0.3s;
+    &:hover {
+      color: orange;
+    }
   }
 
   .headerUpper {
@@ -44,25 +49,32 @@
       gap: 10px;
     }
     svg {
-      font-size: 40px;
-      @include sm {
+      font-size: 35px;
+      @include md {
         font-size: 25px;
       }
     }
 
     .cartCount {
       position: absolute;
-      top: -15px;
-      right: -10px;
-      background: white;
+      top: -5px;
+      right: -5px;
+      background: aquamarine;
       color: black;
       padding: 0 3px;
       border-radius: 5px;
+      font-size: 16px;
+      font-weight: 600;
+      @include md {
+        font-size: 12px;
+      }
     }
   }
 
   .headerBottom {
+    display: flex;
     padding: 10px 50px;
+    justify-content: center;
     align-items: center;
     gap: 30px;
     background-color: $color-232f3e;
