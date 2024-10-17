@@ -19,6 +19,7 @@ const couponRouter = require("./routes/couponRoute");
 const orderRouter = require("./routes/orderRoute");
 const colorRouter = require("./routes/colorRoute");
 const enqRouter = require("./routes/enqRoute");
+const bannerRouter = require("./routes/bannerRoute");
 // const uploadRouter = require('./routes/uploadRoute');
 
 dbConnect();
@@ -43,6 +44,7 @@ app.use("/api/coupon", couponRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/color", colorRouter);
 app.use("/api/enquiry", enqRouter);
+app.use("/api/banner", bannerRouter);
 
 // app.use('/api/upload', uploadRouter);
 
