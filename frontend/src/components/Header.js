@@ -1,34 +1,15 @@
 import React, { useState } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
-import {
-  Box,
-  TextField,
-  Button,
-  MenuItem,
-  Menu,
-  Fade,
-  Drawer,
-  List,
-  Divider,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
+import { Box, TextField, Button } from "@mui/material";
 import "../styles/Header.scss";
 import { showToast } from "./ToastMessage";
 import MenuList from "./Sidebar/MenuList";
 
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import SearchIcon from "@mui/icons-material/Search";
 import CompareIcon from "@mui/icons-material/Compare";
 import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
 import LoginIcon from "@mui/icons-material/Login";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
-import DialpadIcon from "@mui/icons-material/Dialpad";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import MenuIcon from "@mui/icons-material/Menu";
 
 const Header = () => {
   const navigate = useNavigate();

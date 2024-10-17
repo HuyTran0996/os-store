@@ -1,14 +1,45 @@
 @import "./stylesStore/variables.scss";
 
-footer {
+.footer {
   background-color: $color-232f3e;
-  &:not(:first-child) {
-    border-top: 1px solid rgba(225, 225, 225, 0.1);
+  color: white;
+
+  .footerUpper {
+    padding: 20px 50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    font-size: 16px;
+    .title {
+      margin: 8px 8px 8px 0;
+    }
+    a {
+      color: white;
+      margin: 10px 0px;
+    }
+
+    .social {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 20px;
+      svg {
+        font-size: 22px;
+      }
+    }
+
+    .link {
+      display: flex;
+      flex-direction: column;
+    }
   }
 
-  .input-group-text {
-    background-color: $color-232f3e;
-    color: white;
-    padding: 8px 17px;
+  .footerBottom {
+    border-top: 1px solid rgba(225, 225, 225, 0.1);
+    padding: 20px 50px;
+    p {
+      text-align: center;
+      margin-bottom: 0;
+    }
   }
 }
