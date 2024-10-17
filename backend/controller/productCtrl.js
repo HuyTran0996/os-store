@@ -58,7 +58,7 @@ exports.createProduct = asyncHandler(async (req, res) => {
 
 exports.addVariant = asyncHandler(async (req, res) => {
   const { prodId } = req.params;
-  const { variantName, colorName, price, colorCode } = req.body;
+  const { tag, variantName, colorName, price, colorCode } = req.body;
 
   const files = req.files;
   const imgUrl = [];
@@ -84,7 +84,14 @@ exports.addVariant = asyncHandler(async (req, res) => {
     prodId,
     {
       $addToSet: {
-        variant: { variantName, colorName, price, colorCode, images: imgUrl },
+        variant: {
+          tag,
+          variantName,
+          colorName,
+          price,
+          colorCode,
+          images: imgUrl,
+        },
       },
     },
     { new: true }

@@ -10,6 +10,8 @@ import {
   CardMedia,
   CardActions,
   Card,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import CarouselShow from "./CarouselShow";
 
@@ -149,10 +151,25 @@ const AddProductVariant = ({
           }}
         >
           <Box sx={styleAddProductVariant.boxThreeInput}>
+            <Box
+              sx={{ display: "flex", flexWrap: "wrap", alignItems: "center" }}
+            >
+              <Typography variant="h6">Tag:</Typography>
+
+              <Select
+                value={state.tag}
+                onChange={handleChange}
+                name="tag"
+                sx={{ ...style.input }}
+              >
+                <MenuItem value="color">Color</MenuItem>
+                <MenuItem value="size">Size</MenuItem>
+                <MenuItem value="variant">Variant</MenuItem>
+              </Select>
+            </Box>
             <TextField
               placeholder="Variant Name..."
               type="text"
-              required
               name="variantName"
               multiline
               value={state.variantName}
@@ -162,7 +179,6 @@ const AddProductVariant = ({
             <TextField
               placeholder="Color Name..."
               type="text"
-              required
               name="colorName"
               value={state.colorName}
               onChange={handleChange}
@@ -172,7 +188,6 @@ const AddProductVariant = ({
             <TextField
               placeholder="Price..."
               type="number"
-              required
               name="colorPrice"
               value={state.colorPrice}
               onChange={handleChange}
@@ -212,7 +227,8 @@ const AddProductVariant = ({
                 disabled={
                   isLoading ||
                   state.colorName.trim() === "" ||
-                  state.colorPrice === ""
+                  state.colorPrice === "" ||
+                  state.tag.trim() === ""
                 }
               >
                 Add Images &<br /> Create Color
@@ -229,7 +245,6 @@ const AddProductVariant = ({
                       onChange: (e) => handleFileChange(e, "variantDetail"),
                     },
                   }}
-                  required
                 />
               </Button>
             </Box>
@@ -258,8 +273,8 @@ const AddProductVariant = ({
                       }}
                     >
                       <Box sx={styleAddProductVariant.boxInfo}>
-                        {color.variantName} - {color.colorName} - {color.price}{" "}
-                        $ -{color.colorCode}
+                        {color.tag} - {color.variantName} - {color.colorName} -{" "}
+                        {color.price} $ -{color.colorCode}
                       </Box>
                     </Box>
 

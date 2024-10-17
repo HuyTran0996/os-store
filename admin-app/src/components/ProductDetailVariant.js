@@ -10,6 +10,8 @@ import {
   CardMedia,
   CardActions,
   Card,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import CarouselShow from "./CarouselShow";
 
@@ -176,6 +178,20 @@ const ProductDetailVariant = ({
           }}
         >
           <Box sx={styleProductDetailVariant.boxThreeInput}>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography variant="h6">Tag:</Typography>
+
+              <Select
+                value={state.tag}
+                onChange={handleChange}
+                name="tag"
+                sx={{ ...style.input }}
+              >
+                <MenuItem value="color">Color</MenuItem>
+                <MenuItem value="size">Size</MenuItem>
+                <MenuItem value="variant">Variant</MenuItem>
+              </Select>
+            </Box>
             <TextField
               placeholder="Variant Name..."
               type="text"
@@ -235,7 +251,8 @@ const ProductDetailVariant = ({
                 disabled={
                   isLoading ||
                   state.colorName.trim() === "" ||
-                  state.colorPrice === ""
+                  state.colorPrice === "" ||
+                  state.tag.trim() === ""
                 }
               >
                 Add Images &<br /> Create Color
@@ -280,8 +297,8 @@ const ProductDetailVariant = ({
                       }}
                     >
                       <Box sx={styleProductDetailVariant.boxInfo}>
-                        {color.variantName} - {color.colorName} - {color.price}{" "}
-                        $ -{color.colorCode}
+                        {color.tag} - {color.variantName} - {color.colorName} -{" "}
+                        {color.price} $ -{color.colorCode}
                       </Box>
                     </Box>
 
@@ -327,8 +344,8 @@ const ProductDetailVariant = ({
                   }}
                 >
                   <Box sx={styleProductDetailVariant.boxInfo}>
-                    {color.variantName} - {color.colorName} - {color.price} $ -
-                    {color.colorCode}
+                    {color.tag} - {color.variantName} - {color.colorName} -{" "}
+                    {color.price} $ -{color.colorCode}
                   </Box>
                 </Box>
 

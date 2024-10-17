@@ -11,6 +11,7 @@ import ProductCard from "../components/ProductCard";
 import SpecialProduct from "../components/SpecialProduct";
 import Container from "../components/Container";
 import ContainerLayout from "../components/ContainerLayout";
+import { Loading } from "../components/Loading/Loading";
 import { services } from "../data/data";
 
 const Home = () => {

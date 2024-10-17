@@ -38,6 +38,7 @@ const initialState = {
   category: "",
   brand: "",
   variantName: "",
+  tag: "",
   colorName: "",
   colorPrice: "",
   images: [],
@@ -161,6 +162,7 @@ const ProductDetail = () => {
             [array]: [
               ...prevState[array],
               {
+                tag: state.tag.toLowerCase(),
                 variantName: state.variantName.toLowerCase(),
                 colorName: state.colorName.toLowerCase(),
                 price: state.colorPrice,
@@ -221,6 +223,7 @@ const ProductDetail = () => {
       if (state.variantDetail.length > 0) {
         const variantPromises = state.variantDetail.map(async (variant) => {
           const formData1 = new FormData();
+          formData1.append("tag", variant.tag);
           formData1.append("variantName", variant.variantName);
           formData1.append("colorName", variant.colorName);
           formData1.append("price", variant.price);
@@ -256,12 +259,15 @@ const ProductDetail = () => {
         await Promise.all(promises);
       }
 
+      await getData();
       showToast("Update Product Successfully", "success");
     } catch (err) {
+      await getData();
       showToast(`${err.message}`, "error");
     } finally {
-      await getData();
       setIsLoading(false);
+      setVariantsToDelete([]);
+      setImagesToDelete([]);
     }
   };
 

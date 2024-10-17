@@ -41,6 +41,10 @@ const productSchema = new mongoose.Schema(
     images: [{ url: String, asset_id: String, public_id: String }],
     variant: [
       {
+        tag: {
+          type: String,
+          enum: ["color", "size", "variant"],
+        },
         variantName: { type: String, lowercase: true },
         colorName: { type: String, lowercase: true },
         colorCode: String,
