@@ -54,7 +54,7 @@ const resizeImg = async (file) => {
 
     // Resize the image
     const resizedImageBuffer = await sharp(fileBuffer)
-      .resize(300, 300)
+      .resize(1280, 720) //note: image smaller than this is bad at large screen
       .toFormat("jpeg")
       .jpeg({ quality: 90 })
       .toBuffer();

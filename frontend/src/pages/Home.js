@@ -1,84 +1,89 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import Marquee from "react-fast-marquee";
 import { Link } from "react-router-dom";
 import { Box, TextField, Button } from "@mui/material";
 
 import "../styles/Home.scss";
 import { showToast } from "../components/ToastMessage";
+import ContainerLayout from "../components/ContainerLayout";
 import Meta from "../components/Meta";
 import BlogCard from "../components/BlogCard";
 import ProductCard from "../components/ProductCard";
 import SpecialProduct from "../components/SpecialProduct";
 import Container from "../components/Container";
-import ContainerLayout from "../components/ContainerLayout";
 import { Loading } from "../components/Loading/Loading";
 import { services } from "../data/data";
 
+import { getAllBanner } from "../store/thunks/fetchBanners";
+import { useThunk } from "../hook/use-thunk";
+
 const Home = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [getDataAllBanner] = useThunk(getAllBanner);
+  const { dataAllBanner } = useSelector((state) => {
+    return state.banner;
+  });
+  const getData = async () => {
+    try {
+      setIsLoading(true);
+      await getDataAllBanner();
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const banners = dataAllBanner?.banners || [];
+  const mainBanner =
+    banners.length > 0 ? banners[0].images[0]?.url : "images/imageNotFound.png";
+
   return (
     <ContainerLayout>
-      <Box className="homePage">
-        <Box className="banner">
-          <div className="main-banner">
-            <img src="/images/main-banner-1.jpg" alt="main-banner" />
-            <div className="main-banner-content">
-              <h4>SUPERCHARGED FOR PROS</h4>
-              <h5>iPad S13+ Pro.</h5>
-              <p>From $999.00 or $41.62/mo.</p>
-              <Link className="button">Buy Now</Link>
-            </div>
-          </div>
-
-          <div className="subBanner">
-            <div className="small-banner">
-              <img src="/images/catbanner-01.jpg" alt="main-banner" />
-              <div className="small-banner-content">
-                <h4>Best Sake</h4>
-                <h5>iPad S13+ Pro.</h5>
-                <p>
-                  From $999.00 <br /> or $41.62/mo.
-                </p>
+      <Meta title="OS Store" />
+      {isLoading ? (
+        <Loading message="Loading..." />
+      ) : (
+        <Box className="homePage">
+          <Box className="banner">
+            <div className="main-banner">
+              <img src={mainBanner} alt="main-banner" />
+              <div className="main-banner-content">
+                <h4>{banners[0]?.title}</h4>
+                <h5>{banners[0]?.prodName}</h5>
+                <p>{banners[0]?.description}</p>
+                <Link
+                  to={`/product/${banners[0]?.productID}`}
+                  className="button"
+                >
+                  Buy Now
+                </Link>
               </div>
             </div>
 
-            <div className="small-banner">
-              <img src="/images/catbanner-02.jpg" alt="main-banner" />
-              <div className="small-banner-content">
-                <h4>New Arrival</h4>
-                <h5>Buy Ipad Air.</h5>
-                <p>
-                  From $999.00 <br />
-                  or $41.62/mo.
-                </p>
-              </div>
+            <div className="subBanner">
+              {banners.slice(1).map((banner, index) => (
+                <Link
+                  key={`${index}-banner`}
+                  className={`small-banner cl-${index}`}
+                  to={`/product/${banner.productID}`}
+                >
+                  <img src={banner.images[0]?.url} alt="main-banner" />
+                  <div className="small-banner-content">
+                    <h4>{banner.title}</h4>
+                    <h5>{banner.prodName}</h5>
+                    <p>{banner.description}</p>
+                  </div>
+                </Link>
+              ))}
             </div>
-
-            <div className="small-banner">
-              <img src="/images/catbanner-03.jpg" alt="main-banner" />
-              <div className="small-banner-content">
-                <h4>SUPERCHARGED FOR PROS</h4>
-                <h5>iPad S13+ Pro.</h5>
-                <p>
-                  From $999.00 <br />
-                  or $41.62/mo.
-                </p>
-              </div>
-            </div>
-
-            <div className="small-banner">
-              <img src="/images/catbanner-04.jpg" alt="main-banner" />
-              <div className="small-banner-content">
-                <h4>SUPERCHARGED FOR PROS</h4>
-                <h5>iPad S13+ Pro.</h5>
-                <p>
-                  From $999.00 <br />
-                  or $41.62/mo.
-                </p>
-              </div>
-            </div>
-          </div>
+          </Box>
         </Box>
-      </Box>
+      )}
     </ContainerLayout>
   );
 };

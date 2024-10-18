@@ -7,19 +7,30 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+
     @include md {
       flex-direction: column;
       gap: 10px;
     }
     img {
       width: 100%;
-      height: auto;
       border-radius: 6px;
-      object-fit: contain;
+      object-fit: cover;
+      &:hover {
+        transition: transform 0.3s ease-in-out;
+        transform: scale(1.05);
+
+        img {
+          transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
+          filter: brightness(110%) contrast(120%);
+        }
+      }
     }
+
     .main-banner {
       position: relative;
       width: 49%;
+
       @include md {
         width: 100%;
       }
@@ -61,9 +72,16 @@
       width: 49%;
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
       justify-content: space-between;
-      align-items: center;
+
+      .cl-1,
+      .cl-4 {
+        align-self: flex-start;
+      }
+      .cl-2,
+      .cl-3 {
+        align-self: flex-end;
+      }
 
       @include md {
         width: 100%;
@@ -75,7 +93,7 @@
       .small-banner {
         position: relative;
         width: 48%;
-
+        transition: 0.3s;
         @include sm {
           width: 100%;
         }

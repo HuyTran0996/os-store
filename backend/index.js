@@ -24,8 +24,8 @@ const bannerRouter = require("./routes/bannerRoute");
 
 dbConnect();
 app.use(morgan("dev"));
-
-const allowedOrigins = ["http://localhost:3000"];
+//note: admin app:3000 & user app:3006
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3006"];
 
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 
