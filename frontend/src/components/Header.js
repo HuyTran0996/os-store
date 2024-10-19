@@ -11,6 +11,8 @@ import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
 import LoginIcon from "@mui/icons-material/Login";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
 
+import logo from "../images/logo.png";
+
 const Header = () => {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
@@ -34,7 +36,8 @@ const Header = () => {
         <Link to="/">
           <h4>
             <img
-              src="images/logo.png"
+              // src="images/logo.png"
+              src={logo}
               alt="logo"
               style={{
                 width: "40px",

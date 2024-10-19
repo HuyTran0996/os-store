@@ -7,10 +7,7 @@ const ContainerLayout = ({ children }) => {
       sx={{
         width: "100%",
         position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        padding: "0px 30px",
+        padding: "0px 50px",
       }}
     >
       {children}

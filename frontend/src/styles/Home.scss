@@ -2,7 +2,11 @@
 @import "./stylesStore/breakpoints.scss";
 
 .homePage {
-  padding: 50px 20px;
+  padding: 50px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
   .banner {
     display: flex;
     flex-wrap: wrap;
@@ -16,14 +20,12 @@
       width: 100%;
       border-radius: 6px;
       object-fit: cover;
+      transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
+
       &:hover {
         transition: transform 0.3s ease-in-out;
         transform: scale(1.05);
-
-        img {
-          transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
-          filter: brightness(110%) contrast(120%);
-        }
+        filter: brightness(110%) contrast(120%);
       }
     }
 
@@ -73,7 +75,7 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-
+      gap: 10px;
       .cl-1,
       .cl-4 {
         align-self: flex-start;
@@ -130,68 +132,110 @@
     }
   }
 
-  .home-wrapper-2 {
+  .contents {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
     background-color: $color-f5f5f7;
-    .section-heading {
-      font-size: 26px;
-      line-height: 32px;
-      font-weight: 500;
-      margin-bottom: 30px;
-    }
-    .famous-card {
-      img {
-        border-radius: 10px;
-      }
-      .famous-content {
-        top: 10%;
-        left: 5%;
+    padding: 30px 0;
 
-        h5 {
-          font-size: 13px;
-          line-height: 20px;
-          font-weight: 400;
-          color: white;
-          margin-bottom: 7px;
-          text-transform: uppercase;
-        }
-        h6 {
-          font-size: 24px;
-          line-height: 38px;
-          font-weight: 500;
-          color: white;
-        }
-        p {
-          font-size: 16px;
-          line-height: 24px;
-          font-weight: 100;
-          color: white;
-        }
-      }
-    }
-  }
+    .services {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
 
-  .home-wrapper-3 {
-    background-color: $color-f5f5f7;
+      .item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      // .section-heading {
+      //   font-size: 26px;
+      //   line-height: 32px;
+      //   font-weight: 500;
+      //   margin-bottom: 30px;
+      // }
+      // .famous-card {
+      //   img {
+      //     border-radius: 10px;
+      //   }
+      //   .famous-content {
+      //     top: 10%;
+      //     left: 5%;
+
+      //     h5 {
+      //       font-size: 13px;
+      //       line-height: 20px;
+      //       font-weight: 400;
+      //       color: white;
+      //       margin-bottom: 7px;
+      //       text-transform: uppercase;
+      //     }
+      //     h6 {
+      //       font-size: 24px;
+      //       line-height: 38px;
+      //       font-weight: 500;
+      //       color: white;
+      //     }
+      //     p {
+      //       font-size: 16px;
+      //       line-height: 24px;
+      //       font-weight: 100;
+      //       color: white;
+      //     }
+      //   }
+      // }
+    }
+
     .categories {
-      background-color: white;
-      box-shadow: 0 0 10px $color-0000001a;
-      padding: 15px;
-      // The > symbol in CSS is used to select DIRECT children of an element.
-      > div {
-        width: 25%;
-        padding: 10px 10px 20px 10px;
-        border: 1px solid $color-ededed;
+      // background-color: $color-f5f5f7;
+      .wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        align-items: center;
+        gap: 10px;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 0 10px $color-0000001a;
+        padding: 10px;
+        > a {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          width: 250px;
+          height: 120px;
+          padding: 10px;
+          transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
 
-        > div {
-          width: 60%;
+          &:not(:last-of-type) {
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+          }
+          &:hover {
+            p {
+              color: orange;
+            }
+            img {
+              transform: scale(1.05);
+              transition: transform 0.3s ease-in-out;
+              filter: brightness(110%) contrast(120%);
+            }
+          }
+
+          img {
+            width: 60%;
+            height: auto;
+            object-fit: contain;
+          }
         }
       }
     }
-  }
 
-  .marque-wrapper {
-    // background-color: $color-f5f5f7;
-    .card-wrapper {
+    .brand {
       background-color: white;
       box-shadow: 0 0 10px $color-0000001a;
       padding: 15px;

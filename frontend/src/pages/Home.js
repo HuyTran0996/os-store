@@ -16,18 +16,26 @@ import { Loading } from "../components/Loading/Loading";
 import { services } from "../data/data";
 
 import { getAllBanner } from "../store/thunks/fetchBanners";
+import { getAllCategory } from "../store/thunks/fetchProductCategories";
 import { useThunk } from "../hook/use-thunk";
+
+import imageNotFound from "../images/imageNotFound.png";
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [getDataAllBanner] = useThunk(getAllBanner);
+  const [getDataAllCategory] = useThunk(getAllCategory);
   const { dataAllBanner } = useSelector((state) => {
     return state.banner;
+  });
+  const { dataAllProductCategory } = useSelector((state) => {
+    return state.productCategories;
   });
   const getData = async () => {
     try {
       setIsLoading(true);
       await getDataAllBanner();
+      await getDataAllCategory();
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
@@ -39,17 +47,18 @@ const Home = () => {
   }, []);
 
   const banners = dataAllBanner?.banners || [];
+  const categories = dataAllProductCategory?.categories || [];
   const mainBanner =
-    banners.length > 0 ? banners[0].images[0]?.url : "images/imageNotFound.png";
+    banners.length > 0 ? banners[0].images[0]?.url : imageNotFound;
 
   return (
-    <ContainerLayout>
+    <>
       <Meta title="OS Store" />
       {isLoading ? (
         <Loading message="Loading..." />
       ) : (
         <Box className="homePage">
-          <Box className="banner">
+          <Box className="banner px">
             <div className="main-banner">
               <img src={mainBanner} alt="main-banner" />
               <div className="main-banner-content">
@@ -82,9 +91,71 @@ const Home = () => {
               ))}
             </div>
           </Box>
+
+          <Box className="contents">
+            <Box className="services px">
+              {services.map((item, index) => {
+                return (
+                  <div className="item" key={index}>
+                    <img src={item.image} alt="services" />
+                    <div>
+                      <h6>{item.title}</h6>
+                      <p className="mb-0">{item.tagline}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </Box>
+
+            <Box className="categories px">
+              <div className="wrapper">
+                {categories.map((category, index) => (
+                  <Link
+                    to={`/product?category=${category.title}`}
+                    key={`category-${index}`}
+                  >
+                    <div>
+                      <h5 className="title">{category.title}</h5>
+                      <p>view all</p>
+                    </div>
+                    <img src={category.images[0].url} alt="category" />
+                  </Link>
+                ))}
+              </div>
+            </Box>
+
+            <Box className="brand">
+              <Marquee className="marquee">
+                <div className="mx-4 w-25">
+                  <img src="images/brand-01.png" alt="brand" />
+                </div>
+                <div className="mx-4 w-25">
+                  <img src="images/brand-02.png" alt="brand" />
+                </div>
+                <div className="mx-4 w-25">
+                  <img src="images/brand-03.png" alt="brand" />
+                </div>
+                <div className="mx-4 w-25">
+                  <img src="images/brand-04.png" alt="brand" />
+                </div>
+                <div className="mx-4 w-25">
+                  <img src="images/brand-05.png" alt="brand" />
+                </div>
+                <div className="mx-4 w-25">
+                  <img src="images/brand-06.png" alt="brand" />
+                </div>
+                <div className="mx-4 w-25">
+                  <img src="images/brand-07.png" alt="brand" />
+                </div>
+                <div className="mx-4 w-25">
+                  <img src="images/brand-08.png" alt="brand" />
+                </div>
+              </Marquee>
+            </Box>
+          </Box>
         </Box>
       )}
-    </ContainerLayout>
+    </>
   );
 };
 
