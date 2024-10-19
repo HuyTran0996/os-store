@@ -17,25 +17,37 @@ import { services } from "../data/data";
 
 import { getAllBanner } from "../store/thunks/fetchBanners";
 import { getAllCategory } from "../store/thunks/fetchProductCategories";
+import { getAllBrand } from "../store/thunks/fetchBrands";
 import { useThunk } from "../hook/use-thunk";
 
 import imageNotFound from "../images/imageNotFound.png";
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
+  /////////// thunk////////////
   const [getDataAllBanner] = useThunk(getAllBanner);
   const [getDataAllCategory] = useThunk(getAllCategory);
+  const [getDataAllBrand] = useThunk(getAllBrand);
+  ////////////////////
+
+  ////////////data////////////
   const { dataAllBanner } = useSelector((state) => {
     return state.banner;
   });
   const { dataAllProductCategory } = useSelector((state) => {
     return state.productCategories;
   });
+  const { dataAllBrand } = useSelector((state) => {
+    return state.brands;
+  });
+  ////////////////
+
   const getData = async () => {
     try {
       setIsLoading(true);
       await getDataAllBanner();
       await getDataAllCategory();
+      await getDataAllBrand();
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
@@ -48,6 +60,7 @@ const Home = () => {
 
   const banners = dataAllBanner?.banners || [];
   const categories = dataAllProductCategory?.categories || [];
+  const brands = dataAllBrand?.brands || [];
   const mainBanner =
     banners.length > 0 ? banners[0].images[0]?.url : imageNotFound;
 
@@ -126,30 +139,15 @@ const Home = () => {
 
             <Box className="brand">
               <Marquee className="marquee">
-                <div className="mx-4 w-25">
-                  <img src="images/brand-01.png" alt="brand" />
-                </div>
-                <div className="mx-4 w-25">
-                  <img src="images/brand-02.png" alt="brand" />
-                </div>
-                <div className="mx-4 w-25">
-                  <img src="images/brand-03.png" alt="brand" />
-                </div>
-                <div className="mx-4 w-25">
-                  <img src="images/brand-04.png" alt="brand" />
-                </div>
-                <div className="mx-4 w-25">
-                  <img src="images/brand-05.png" alt="brand" />
-                </div>
-                <div className="mx-4 w-25">
-                  <img src="images/brand-06.png" alt="brand" />
-                </div>
-                <div className="mx-4 w-25">
-                  <img src="images/brand-07.png" alt="brand" />
-                </div>
-                <div className="mx-4 w-25">
-                  <img src="images/brand-08.png" alt="brand" />
-                </div>
+                {brands.map((brand, index) => (
+                  <Link
+                    to={`/product?category=${brand.title}`}
+                    key={`brand-${index}`}
+                    className="element"
+                  >
+                    <img src={brand.images[0].url} alt="brand" />
+                  </Link>
+                ))}
               </Marquee>
             </Box>
           </Box>

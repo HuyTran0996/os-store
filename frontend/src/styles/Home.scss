@@ -239,6 +239,22 @@
       background-color: white;
       box-shadow: 0 0 10px $color-0000001a;
       padding: 15px;
+      .element {
+        margin-left: 24px;
+        margin-right: 24px;
+        width: 25%;
+        img {
+          width: 150px;
+          object-fit: contain;
+          transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
+
+          &:hover {
+            transition: transform 0.3s ease-in-out;
+            transform: scale(0.9);
+            filter: brightness(110%) contrast(120%);
+          }
+        }
+      }
     }
   }
 }
