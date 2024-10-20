@@ -109,7 +109,7 @@ const ProductListFilter = ({
       queryString += `price[gte]=${filter.priceFrom}&price[lte]=${filter.priceTo}`;
     }
     setFilterString(queryString);
-    navigate(`/productList?&page=${1}`);
+    navigate(`/product?&page=${1}`);
   };
 
   const handleClearFilter = () => {

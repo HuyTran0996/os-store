@@ -43,7 +43,7 @@ const initialState = {
 
 const style = {
   bigBox: {
-    margin: "20px",
+    padding: "50px 0",
     display: "flex",
     justifyContent: "space-between",
     gap: 2,
