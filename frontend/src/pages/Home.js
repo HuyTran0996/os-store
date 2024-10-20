@@ -12,22 +12,27 @@ import BlogCard from "../components/BlogCard";
 import ProductCard from "../components/ProductCard";
 import SpecialProduct from "../components/SpecialProduct";
 import Container from "../components/Container";
+import CarouselShow from "../components/CarouselShow";
 import { Loading } from "../components/Loading/Loading";
 import { services } from "../data/data";
 
 import { getAllBanner } from "../store/thunks/fetchBanners";
 import { getAllCategory } from "../store/thunks/fetchProductCategories";
 import { getAllBrand } from "../store/thunks/fetchBrands";
+import { getAllProduct } from "../store/thunks/fetchProduct";
 import { useThunk } from "../hook/use-thunk";
 
 import imageNotFound from "../images/imageNotFound.png";
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [bestProduct, setBestProduct] = useState([]);
+  const [newProduct, setNewProduct] = useState([]);
   /////////// thunk////////////
   const [getDataAllBanner] = useThunk(getAllBanner);
   const [getDataAllCategory] = useThunk(getAllCategory);
   const [getDataAllBrand] = useThunk(getAllBrand);
+  const [getDataAllProduct] = useThunk(getAllProduct);
   ////////////////////
 
   ////////////data////////////
@@ -40,6 +45,9 @@ const Home = () => {
   const { dataAllBrand } = useSelector((state) => {
     return state.brands;
   });
+  const { dataAllProduct } = useSelector((state) => {
+    return state.products;
+  });
   ////////////////
 
   const getData = async () => {
@@ -48,6 +56,8 @@ const Home = () => {
       await getDataAllBanner();
       await getDataAllCategory();
       await getDataAllBrand();
+      setBestProduct(await getDataAllProduct(`sort=-sold&page=1`));
+      setNewProduct(await getDataAllProduct(`sort=-createdAt&page=1`));
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
@@ -120,7 +130,42 @@ const Home = () => {
               })}
             </Box>
 
+            <Box className="bestSeller px">
+              <h3 className="section-heading">Best Sellers</h3>
+              <CarouselShow>
+                {bestProduct.products?.length > 0 &&
+                  bestProduct.products?.map((prod, index) => (
+                    <ProductCard key={`best-${index}`} prod={prod} />
+                  ))}
+              </CarouselShow>
+            </Box>
+
+            <Box className="brands">
+              <Marquee autoFill={true} className="marquee">
+                {brands.map((brand, index) => (
+                  <Link
+                    to={`/product?category=${brand.title}`}
+                    key={`brand-${index}`}
+                    className="element"
+                  >
+                    <img src={brand.images[0].url} alt="brand" />
+                  </Link>
+                ))}
+              </Marquee>
+            </Box>
+
+            <Box className="newArrivals px">
+              <h3 className="section-heading">New Arrivals</h3>
+              <CarouselShow>
+                {newProduct.products?.length > 0 &&
+                  newProduct.products?.map((prod, index) => (
+                    <ProductCard key={`best-${index}`} prod={prod} />
+                  ))}
+              </CarouselShow>
+            </Box>
+
             <Box className="categories px">
+              <h3 className="section-heading">Categories</h3>
               <div className="wrapper">
                 {categories.map((category, index) => (
                   <Link
@@ -135,20 +180,6 @@ const Home = () => {
                   </Link>
                 ))}
               </div>
-            </Box>
-
-            <Box className="brand">
-              <Marquee className="marquee">
-                {brands.map((brand, index) => (
-                  <Link
-                    to={`/product?category=${brand.title}`}
-                    key={`brand-${index}`}
-                    className="element"
-                  >
-                    <img src={brand.images[0].url} alt="brand" />
-                  </Link>
-                ))}
-              </Marquee>
             </Box>
           </Box>
         </Box>

@@ -36,7 +36,7 @@ exports.createBanner = asyncHandler(async (req, res) => {
   if (!title) throw new AppError("A banner must has a title", 400);
 
   for (const file of files) {
-    const info = await resizeImg(file);
+    const info = await resizeImg(file, "banner");
     imgUrl.push(info);
   }
   const newBanner = await Banner.create({
@@ -69,7 +69,7 @@ exports.updateBanner = asyncHandler(async (req, res) => {
 
   if (files.length > 0) {
     for (const file of files) {
-      const info = await resizeImg(file);
+      const info = await resizeImg(file, "banner");
       imgUrl.push(info);
     }
     object = {

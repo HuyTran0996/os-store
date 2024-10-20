@@ -1,4 +1,5 @@
 @import "./stylesStore/variables.scss";
+@import "./stylesStore/breakpoints.scss";
 
 .gr-12 {
   width: 100%;
@@ -31,6 +32,16 @@
 }
 .gr-3 {
   width: 24%;
+  min-width: 155px;
+}
+.forCarousel {
+  width: 250px;
+  @include md {
+    width: 180px;
+  }
+  @include sm {
+    width: 155px;
+  }
 }
 
 .product-card {
@@ -39,6 +50,7 @@
   border-radius: 10px;
   overflow: hidden;
   width: 100%;
+
   &:hover {
     .product-image {
       > img:nth-child(1) {
@@ -53,21 +65,34 @@
     }
   }
   .wishlist-icon {
+    position: absolute;
     top: 2%;
     right: 15px;
+    button {
+      border: 0;
+      background: transparent;
+      &:hover {
+        img {
+          background-color: orange;
+          border-radius: 50%;
+        }
+      }
+    }
   }
 
   .product-image {
-    height: 270px;
+    padding: 0 20px;
     img {
+      width: 100%;
+      height: auto;
       object-fit: contain;
     }
     > img:last-child {
       display: none;
     }
   }
-
   .product-details {
+    margin-top: 15px;
     .brand {
       color: $color-bf4800;
       font-size: 13px;
@@ -75,6 +100,9 @@
     .product-title {
       font-size: 15px;
       color: $color-1c1c1b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .price {
       font-size: 16px;
@@ -88,8 +116,23 @@
   }
 
   .action-bar {
+    position: absolute;
     top: 10%;
     right: -23px;
     transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: 0.3s;
+    button {
+      border: 0;
+      background: transparent;
+      &:hover {
+        img {
+          background-color: orange;
+          border-radius: 50%;
+        }
+      }
+    }
   }
 }

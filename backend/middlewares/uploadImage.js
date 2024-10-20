@@ -42,9 +42,9 @@ const uploadPhoto = multer({
 });
 
 //NOTE: the whole process of an array of image from resizeImg is very tricky, do not change anything in this function
-const resizeImg = async (file) => {
+const resizeImg = async (file, action) => {
   const originalPath = file.path;
-
+  let resizedImageBuffer;
   try {
     // Check if the file exists
     await fs.promises.access(originalPath);
@@ -53,11 +53,19 @@ const resizeImg = async (file) => {
     const fileBuffer = await fs.promises.readFile(originalPath);
 
     // Resize the image
-    const resizedImageBuffer = await sharp(fileBuffer)
-      .resize(1280, 720) //note: image smaller than this is bad at large screen
-      .toFormat("jpeg")
-      .jpeg({ quality: 90 })
-      .toBuffer();
+    if (action === "banner") {
+      resizedImageBuffer = await sharp(fileBuffer)
+        .resize(1280, 720) //note: image smaller than this is bad at large screen
+        .toFormat("jpeg")
+        .jpeg({ quality: 90 })
+        .toBuffer();
+    } else {
+      resizedImageBuffer = await sharp(fileBuffer)
+        .resize(720, 720) //note: image smaller than this is bad at large screen
+        .toFormat("jpeg")
+        .jpeg({ quality: 90 })
+        .toBuffer();
+    }
 
     // Convert the buffer to a base64 encoded string for Cloudinary
     const base64Image = `data:image/jpeg;base64,${resizedImageBuffer.toString(
