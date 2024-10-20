@@ -1,269 +1,403 @@
-import React, { useState } from "react";
-import ReactStars from "react-rating-stars-component";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import {
+  Box,
+  Typography,
+  Paper,
+  Select,
+  MenuItem,
+  IconButton,
+  Drawer,
+} from "@mui/material";
+
+import { useThunk } from "../hook/use-thunk";
+import { getAllCategory } from "../store/thunks/fetchProductCategories";
+import { getAllBrand } from "../store/thunks/fetchBrands";
+import {
+  getAllProduct,
+  smartProductSearch,
+} from "../store/thunks/fetchProduct";
 
 import "../styles/OurStore.scss";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
-
+import { showToast } from "../components/ToastMessage";
+import { Loading } from "../components/Loading/Loading";
+import ProductListFilter from "../components/Sidebar/ProductListFilter";
 import ProductCard from "../components/ProductCard";
-import Color from "../components/Color";
-import Container from "../components/Container";
+import Paginate from "../components/Pagination";
+
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import gr4 from "../images/gr4.svg";
+import gr3 from "../images/gr3.svg";
+import gr2 from "../images/gr2.svg";
+import gr from "../images/gr.svg";
+
+const initialState = {
+  category: [],
+  brand: [],
+  priceFrom: 0,
+  priceTo: 0,
+};
+
+const style = {
+  bigBox: {
+    margin: "20px",
+    display: "flex",
+    justifyContent: "space-between",
+    gap: 2,
+  },
+  paper: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "10px",
+  },
+  boxSort: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    width: "300px",
+  },
+  boxGrid: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  select: {
+    height: "38px",
+    padding: "6px 36px 6px 12px",
+    fontSize: "1rem",
+    fontWeight: "400",
+    lineHeight: "1.5",
+  },
+
+  icon: {
+    display: "block",
+    objectFit: "contain",
+    width: "25px",
+    height: "25px",
+    padding: "4px",
+  },
+
+  boxProduct: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    margin: "20px 0",
+    width: "100%",
+    position: "relative",
+  },
+
+  boxPagination: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    marginTop: "20px",
+  },
+};
 
 const OurStore = () => {
-  const [grid, setGrid] = useState(4);
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [grid, setGrid] = useState(6);
+  const [filterString, setFilterString] = useState("");
+  const [filter, setFilter] = useState(initialState);
+  const [sort, setSort] = useState("created");
+
+  let [searchParams] = useSearchParams();
+  let page = parseInt(searchParams.get("page")) || 1;
+  let search = String(searchParams.get("search"));
+
+  const [getDataAllCategory] = useThunk(getAllCategory);
+  const [getDataAllBrand] = useThunk(getAllBrand);
+  const [getDataAllProduct] = useThunk(getAllProduct);
+  const [smartProductSearching] = useThunk(smartProductSearch);
+
+  const { dataAllProductCategory } = useSelector((state) => {
+    return state.productCategories;
+  });
+  const { dataAllBrand } = useSelector((state) => {
+    return state.brands;
+  });
+  const { dataAllProduct } = useSelector((state) => {
+    return state.products;
+  });
+
+  // get category and brand for sidebar
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        setIsLoading(true);
+        await getDataAllCategory();
+        await getDataAllBrand();
+      } catch (err) {
+        showToast(`${err.message}`, "error");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getData();
+  }, []);
+  /////
+
+  useEffect(() => {
+    const getProduct = async () => {
+      try {
+        setIsLoading(true);
+
+        if (search.trim() === "" || search === "null") {
+          await getDataAllProduct(`${filterString}&sort=${sort}&page=${page}`);
+        } else {
+          smartProductSearching({ sort, page, searchField: search.trim() });
+        }
+      } catch (err) {
+        showToast(`${err.message}`, "error");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getProduct();
+  }, [filterString, sort, page, search]);
+
+  // Set grid size based on screen width
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.matchMedia("(max-width: 600px)").matches) {
+        setGrid(6); // show 2 items
+      } else if (window.matchMedia("(max-width: 900px)").matches) {
+        setGrid(6); // show 2 items
+      } else if (window.matchMedia("(max-width: 1200px)").matches) {
+        setGrid(4); // show 3 items
+      } else if (window.matchMedia("(max-width: 1536px)").matches) {
+        setGrid(3); // show 4 items
+      }
+    };
+
+    handleResize(); // Set initial grid size
+    window.addEventListener("resize", handleResize); // Update grid size on resize
+
+    return () => {
+      window.removeEventListener("resize", handleResize); // Cleanup listener on unmount
+    };
+  }, []);
+
+  const toggleDrawer = (newOpen) => () => {
+    setOpen(newOpen);
+  };
 
   return (
     <div className="ourStorePage">
       <Meta title="Our Store" />
       <BreadCrumb title="Our Store" />
+      <Box className="px">
+        {isLoading ? (
+          <Loading message="Loading..." />
+        ) : (
+          <Box sx={style.bigBox}>
+            {/* Filter sidebar */}
+            <Box sx={{ display: { xs: "none", sm: "none", md: "block" } }}>
+              <ProductListFilter
+                dataAllProductCategory={dataAllProductCategory}
+                dataAllBrand={dataAllBrand}
+                setFilterString={setFilterString}
+                filter={filter}
+                setFilter={setFilter}
+                initialState={initialState}
+              />
+            </Box>
 
-      <Container class1="store-wrapper py-5">
-        <div className="row">
-          <div className="col-3">
-            <div className="filter-card mb-3">
-              <h3 className="filter-title">Shop By Categories</h3>
-              <div>
-                <ul className="ps-0">
-                  <li>Watch</li>
-                  <li>TV</li>
-                  <li>Camera</li>
-                  <li>Laptop</li>
-                </ul>
-              </div>
-            </div>
+            {/* Main */}
+            <Box sx={{ width: "100%", position: "relative" }}>
+              {/* Sort and Grid bar */}
+              <Paper elevation={5} sx={style.paper}>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  {/* ToggleFilter menu for small screen */}
+                  <Box>
+                    <IconButton
+                      onClick={toggleDrawer(true)}
+                      sx={{ display: { xs: "block", sm: "block", md: "none" } }}
+                    >
+                      <FilterAltIcon fontSize="large" />
+                    </IconButton>
 
-            <div className="filter-card mb-3">
-              <h3 className="filter-title">Filter By</h3>
-              <div>
-                <h5 className="sub-title">Availability</h5>
-                <div>
-                  <div className="form-check">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      value=""
-                      id=""
-                    />
-                    <label className="form-check-label" htmlFor="">
-                      In stock (1)
-                    </label>
-                  </div>
+                    <Drawer
+                      open={open}
+                      onClose={toggleDrawer(false)}
+                      anchor="right"
+                    >
+                      <Box
+                        sx={{
+                          width: 370,
+                          height: "100vh",
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-evenly",
+                          alignItems: "center",
+                        }}
+                        role="presentation"
+                      >
+                        <Box sx={style.boxSort}>
+                          <Typography
+                            variant="p"
+                            sx={{ margin: "0 5px", fontSize: "16px" }}
+                          >
+                            Sort By:
+                          </Typography>
+                          <Select
+                            sx={style.select}
+                            value={sort}
+                            onChange={(e) => setSort(e.target.value)}
+                            defaultValue="created"
+                          >
+                            <MenuItem value="-sold">Best selling</MenuItem>
+                            <MenuItem value="title">
+                              Alphabetically, A-Z
+                            </MenuItem>
+                            <MenuItem value="-title">
+                              Alphabetically, Z-A
+                            </MenuItem>
+                            <MenuItem value="price">
+                              Price, low to high
+                            </MenuItem>
+                            <MenuItem value="-price">
+                              Price, high to low
+                            </MenuItem>
+                            <MenuItem value="-created">
+                              Date, old to new
+                            </MenuItem>
+                            <MenuItem value="created">
+                              Date, new to old
+                            </MenuItem>
+                          </Select>
+                        </Box>
 
-                  <div className="form-check">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      value=""
-                      id=""
-                    />
-                    <label className="form-check-label" htmlFor="">
-                      Out of stock (0)
-                    </label>
-                  </div>
-                </div>
+                        <ProductListFilter
+                          dataAllProductCategory={dataAllProductCategory}
+                          dataAllBrand={dataAllBrand}
+                          setFilterString={setFilterString}
+                          filter={filter}
+                          setFilter={setFilter}
+                          initialState={initialState}
+                        />
+                      </Box>
+                    </Drawer>
+                  </Box>
 
-                <h5 className="sub-title">Price</h5>
-                <div className="d-flex align-items-center gap-10">
-                  <div className="form-floating">
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="floatingInput"
-                      placeholder="From"
-                    />
-                    <label htmlFor="floatingInput">From</label>
-                  </div>
-
-                  <div className="form-floating">
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="floatingInput1"
-                      placeholder="To"
-                    />
-                    <label htmlFor="floatingInput1">To</label>
-                  </div>
-                </div>
-
-                <h5 className="sub-title">Color</h5>
-                <div>
-                  <Color />
-                </div>
-
-                <h5 className="sub-title">Size</h5>
-                <div>
-                  <div className="form-check">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      value=""
-                      id="size-1"
-                    />
-                    <label className="form-check-label" htmlFor="size-1">
-                      S (2)
-                    </label>
-                  </div>
-
-                  <div className="form-check">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      value=""
-                      id="size-2"
-                    />
-                    <label className="form-check-label" htmlFor="size-2">
-                      M (0)
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="filter-card mb-3">
-              <h3 className="filter-title">Product Tags</h3>
-              <div>
-                <div className="product-tags d-flex flex-wrap align-items-center gap-10">
-                  <span className="badge bg-light text-secondary rounded-3 py-2 px-3">
-                    Headphone
-                  </span>
-                  <span className="badge bg-light text-secondary rounded-3 py-2 px-3">
-                    Laptop
-                  </span>
-                  <span className="badge bg-light text-secondary rounded-3 py-2 px-3">
-                    Mobile
-                  </span>
-                  <span className="badge bg-light text-secondary rounded-3 py-2 px-3">
-                    Wire
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="filter-card mb-3">
-              <h3 className="filter-title">Random Product</h3>
-              <div>
-                <div className="random-products mb-3 d-flex">
-                  <div className="w-50">
-                    <img
-                      className="img-fluid"
-                      src="images/watch.jpg"
-                      alt="watch"
-                    />
-                  </div>
-
-                  <div className="w-50">
-                    <h5>
-                      Kids headphones bulk 10 pack multi colored for students
-                    </h5>
-                    <ReactStars
-                      count={5}
-                      // onChange={ratingChanged}
-                      value={3}
-                      edit={false}
-                      size={24}
-                      activeColor="#ffd700"
-                    />
-                    <b className="price">$ 300</b>
-                  </div>
-                </div>
-
-                <div className="random-products d-flex">
-                  <div className="w-50">
-                    <img
-                      className="img-fluid"
-                      src="images/watch.jpg"
-                      alt="watch"
-                    />
-                  </div>
-
-                  <div className="w-50">
-                    <h5>
-                      Kids headphones bulk 10 pack multi colored for students
-                    </h5>
-                    <ReactStars
-                      count={5}
-                      // onChange={ratingChanged}
-                      value={3}
-                      edit={false}
-                      size={24}
-                      activeColor="#ffd700"
-                    />
-                    <b className="price">$ 300</b>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-9">
-            <div className="filter-sort-grid mb-4">
-              <div className="d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center gap-10">
-                  <p className="mb-0 d-block" style={{ width: "100px" }}>
-                    Sort By:
-                  </p>
-                  <select
-                    name=""
-                    className="form-control form-select"
-                    id=""
-                    defaultValue="best-selling"
+                  {/* Sort */}
+                  <Box
+                    sx={{
+                      ...style.boxSort,
+                      display: { xs: "none", sm: "none", md: "flex" },
+                    }}
                   >
-                    <option value="manual">Featured</option>
-                    <option value="best-selling">Best selling</option>
-                    <option value="title-ascending">Alphabetically, A-Z</option>
-                    <option value="title-descending">
-                      Alphabetically, Z-A
-                    </option>
-                    <option value="price-ascending">Price, low to high</option>
-                    <option value="price-descending">Price, high to low</option>
-                    <option value="created-ascending">Date, old to new</option>
-                    <option value="created-descending">Date, new to old</option>
-                  </select>
-                </div>
+                    <Typography
+                      variant="p"
+                      sx={{ margin: "0 5px", fontSize: "16px" }}
+                    >
+                      Sort By:
+                    </Typography>
+                    <Select
+                      sx={style.select}
+                      value={sort}
+                      onChange={(e) => setSort(e.target.value)}
+                      defaultValue="created"
+                    >
+                      <MenuItem value="-sold">Best selling</MenuItem>
+                      <MenuItem value="title">Alphabetically, A-Z</MenuItem>
+                      <MenuItem value="-title">Alphabetically, Z-A</MenuItem>
+                      <MenuItem value="price">Price, low to high</MenuItem>
+                      <MenuItem value="-price">Price, high to low</MenuItem>
+                      <MenuItem value="-created">Date, old to new</MenuItem>
+                      <MenuItem value="created">Date, new to old</MenuItem>
+                    </Select>
+                  </Box>
+                </Box>
 
-                <div className="d-flex align-items-center gap-10 grid">
-                  <p className="totalProducts mb-0">21 Products</p>
-                  <div className="d-flex gap-10 align-items-center">
-                    <img
+                {/* Grid */}
+                <Box sx={style.boxGrid}>
+                  <Typography
+                    variant="p"
+                    sx={{ margin: "0 5px", fontSize: "16px" }}
+                  >
+                    {dataAllProduct?.total} Products
+                  </Typography>
+
+                  <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                    <IconButton
                       onClick={() => setGrid(3)}
-                      className="d-block img-fluid"
-                      src="images/gr4.svg"
-                      alt="grid"
-                    />
-                    <img
-                      onClick={() => setGrid(4)}
-                      className="d-block img-fluid"
-                      src="images/gr3.svg"
-                      alt="grid"
-                    />
-                    <img
-                      onClick={() => setGrid(6)}
-                      className="d-block img-fluid"
-                      src="images/gr2.svg"
-                      alt="grid"
-                    />
-                    <img
-                      onClick={() => setGrid(12)}
-                      className="d-block img-fluid"
-                      src="images/gr.svg"
-                      alt="grid"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+                      sx={{
+                        backgroundColor: grid === 3 ? "aqua" : "none",
+                        display: {
+                          xs: "none",
+                          sm: "none",
+                          md: "none",
+                          lg: "block",
+                          xl: "block",
+                        },
+                      }}
+                    >
+                      <img style={style.icon} src={gr4} alt="grid" />
+                    </IconButton>
 
-            <div className="product-list pb-5">
-              <div className="d-flex gap-10 flex-wrap">
-                <ProductCard grid={grid} />
-                <ProductCard grid={grid} />
-                <ProductCard grid={grid} />
-                <ProductCard grid={grid} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </Container>
+                    <IconButton
+                      onClick={() => setGrid(4)}
+                      sx={{
+                        backgroundColor: grid === 4 ? "aqua" : "none",
+                        display: {
+                          xs: "none",
+                          sm: "none",
+                          md: "block",
+                          lg: "block",
+                          xl: "block",
+                        },
+                      }}
+                    >
+                      <img style={style.icon} src={gr3} alt="grid" />
+                    </IconButton>
+
+                    <IconButton
+                      onClick={() => setGrid(6)}
+                      sx={{
+                        backgroundColor: grid === 6 ? "aqua" : "none",
+                        display: "block",
+                      }}
+                    >
+                      <img style={style.icon} src={gr2} alt="grid" />
+                    </IconButton>
+
+                    <IconButton
+                      onClick={() => setGrid(12)}
+                      sx={{
+                        backgroundColor: grid === 12 ? "aqua" : "none",
+                        display: "block",
+                      }}
+                    >
+                      <img style={style.icon} src={gr} alt="grid" />
+                    </IconButton>
+                  </Box>
+                </Box>
+              </Paper>
+
+              {/* Product */}
+              <Box sx={style.boxProduct}>
+                {dataAllProduct?.products?.map((product) => (
+                  <ProductCard grid={grid} prod={product} />
+                ))}
+              </Box>
+
+              {/* Pagination */}
+              <Box sx={style.boxPagination}>
+                <Paginate data={dataAllProduct} />
+              </Box>
+            </Box>
+          </Box>
+        )}
+      </Box>
     </div>
   );
 };

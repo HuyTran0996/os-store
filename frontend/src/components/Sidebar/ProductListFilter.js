@@ -126,7 +126,7 @@ const ProductListFilter = ({
           flexDirection: "column",
           gap: 2,
           maxWidth: "350px",
-          padding: "10px",
+          padding: "20px",
         }}
       >
         <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
