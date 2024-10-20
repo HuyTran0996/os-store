@@ -190,6 +190,28 @@ const OurStore = () => {
     setOpen(newOpen);
   };
 
+  const sortBox = (addStyle = {}) => (
+    <Box sx={{ ...style.boxSort, ...addStyle }}>
+      <Typography variant="p" sx={{ margin: "0 5px", fontSize: "16px" }}>
+        Sort By:
+      </Typography>
+      <Select
+        sx={style.select}
+        value={sort}
+        onChange={(e) => setSort(e.target.value)}
+        defaultValue="created"
+      >
+        <MenuItem value="-sold">Best selling</MenuItem>
+        <MenuItem value="title">Alphabetically, A-Z</MenuItem>
+        <MenuItem value="-title">Alphabetically, Z-A</MenuItem>
+        <MenuItem value="price">Price, low to high</MenuItem>
+        <MenuItem value="-price">Price, high to low</MenuItem>
+        <MenuItem value="-created">Date, old to new</MenuItem>
+        <MenuItem value="created">Date, new to old</MenuItem>
+      </Select>
+    </Box>
+  );
+
   return (
     <div className="ourStorePage">
       <Meta title="Our Store" />
@@ -241,40 +263,7 @@ const OurStore = () => {
                         }}
                         role="presentation"
                       >
-                        <Box sx={style.boxSort}>
-                          <Typography
-                            variant="p"
-                            sx={{ margin: "0 5px", fontSize: "16px" }}
-                          >
-                            Sort By:
-                          </Typography>
-                          <Select
-                            sx={style.select}
-                            value={sort}
-                            onChange={(e) => setSort(e.target.value)}
-                            defaultValue="created"
-                          >
-                            <MenuItem value="-sold">Best selling</MenuItem>
-                            <MenuItem value="title">
-                              Alphabetically, A-Z
-                            </MenuItem>
-                            <MenuItem value="-title">
-                              Alphabetically, Z-A
-                            </MenuItem>
-                            <MenuItem value="price">
-                              Price, low to high
-                            </MenuItem>
-                            <MenuItem value="-price">
-                              Price, high to low
-                            </MenuItem>
-                            <MenuItem value="-created">
-                              Date, old to new
-                            </MenuItem>
-                            <MenuItem value="created">
-                              Date, new to old
-                            </MenuItem>
-                          </Select>
-                        </Box>
+                        {sortBox()}
 
                         <ProductListFilter
                           dataAllProductCategory={dataAllProductCategory}
@@ -289,33 +278,7 @@ const OurStore = () => {
                   </Box>
 
                   {/* Sort */}
-                  <Box
-                    sx={{
-                      ...style.boxSort,
-                      display: { xs: "none", sm: "none", md: "flex" },
-                    }}
-                  >
-                    <Typography
-                      variant="p"
-                      sx={{ margin: "0 5px", fontSize: "16px" }}
-                    >
-                      Sort By:
-                    </Typography>
-                    <Select
-                      sx={style.select}
-                      value={sort}
-                      onChange={(e) => setSort(e.target.value)}
-                      defaultValue="created"
-                    >
-                      <MenuItem value="-sold">Best selling</MenuItem>
-                      <MenuItem value="title">Alphabetically, A-Z</MenuItem>
-                      <MenuItem value="-title">Alphabetically, Z-A</MenuItem>
-                      <MenuItem value="price">Price, low to high</MenuItem>
-                      <MenuItem value="-price">Price, high to low</MenuItem>
-                      <MenuItem value="-created">Date, old to new</MenuItem>
-                      <MenuItem value="created">Date, new to old</MenuItem>
-                    </Select>
-                  </Box>
+                  {sortBox({ display: { xs: "none", sm: "none", md: "flex" } })}
                 </Box>
 
                 {/* Grid */}
