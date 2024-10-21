@@ -1,191 +1,213 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import { Box, TextField, Button } from "@mui/material";
 import ReactStars from "react-rating-stars-component";
 import ReactImageZoom from "react-image-zoom";
+import { useSelector } from "react-redux";
 
 import "../styles/SingleProduct.scss";
+import { useThunk } from "../hook/use-thunk";
+import { getAllProduct, getAProduct } from "../store/thunks/fetchProduct";
+import { showToast } from "../components/ToastMessage";
+import { Loading } from "../components/Loading/Loading";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import ProductCard from "../components/ProductCard";
-import Color from "../components/Color";
+
 import Container from "../components/Container";
+import CarouselShow from "../components/CarouselShow";
 
 import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart } from "react-icons/ai";
+import imageNotFound from "../images/imageNotFound.png";
 
 const SingleProduct = () => {
-  const props = {
-    // width: 400,
-    height: 600,
-    zoomWidth: 600,
-    // zoomPosition: "original",
-    img: "https://media.wired.com/photos/61bd571ff6b645152a4dc4ad/master/pass/Evolution-Luxury-Watches-Oris.jpg",
-  };
+  const params = useParams();
   const [orderedProduct, setOrderedProduct] = useState(!false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [bestProduct, setBestProduct] = useState([]);
+  const [img, setImg] = useState(imageNotFound);
+  const [getAProductById] = useThunk(getAProduct);
+  const [getDataAllProduct] = useThunk(getAllProduct);
 
-  const copyToClipboard = (text) => {
-    var textField = document.createElement("textarea");
-    textField.innerText = text;
-    document.body.appendChild(textField);
-    textField.select();
-    document.execCommand("copy");
-    textField.remove();
+  const { dataAllProduct, dataProduct } = useSelector((state) => {
+    return state.products;
+  });
+
+  const getData = async () => {
+    try {
+      setIsLoading(true);
+      await getAProductById(params.id);
+      setBestProduct(await getDataAllProduct(`sort=-sold&page=1`));
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  useEffect(() => {
+    getData();
+  }, []);
+  useEffect(() => {
+    setImg(dataProduct?.images?.[0].url || imageNotFound);
+  }, [dataProduct]);
+
+  const product = Object.keys(dataProduct).length > 0 ? dataProduct : [];
+  const props = {
+    zoomWidth: 300,
+    zoomHeight: 300,
+    zoomPosition: "original",
+    img: img,
+  };
+  const sizes = product.variant?.filter((v) => {
+    return v.tag === "size";
+  });
+  const colors = product.variant?.filter((v) => {
+    return v.tag === "color";
+  });
 
   return (
-    <div className="singleProductPage">
-      <Meta title="Dynamic Product Name" />
-      <BreadCrumb title="Dynamic Product Name" />
+    <>
+      {isLoading ? (
+        <Loading message="Loading..." />
+      ) : (
+        <div className="singleProductPage">
+          <Meta title={product?.title} />
+          <BreadCrumb title={product?.title} />
 
-      <Container class1="main-product-wrapper py-5">
-        <div className="row">
-          <div className="col-6">
-            <div className="main-product-image">
+          <Box className="main-product-wrapper">
+            <div className="images">
               <div className="imageZoom">
                 <ReactImageZoom {...props} />
               </div>
+
+              <div className="other-product-images">
+                {product.images && (
+                  <CarouselShow addStyle={"prodPage"}>
+                    {product?.images?.map((img, index) => (
+                      <div
+                        key={`prod-${index}`}
+                        onClick={() => setImg(img.url)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <img src={img.url} alt="watch" className="img-fluid" />
+                      </div>
+                    ))}
+                  </CarouselShow>
+                )}
+              </div>
             </div>
 
-            <div className="other-product-images d-flex flex-wrap gap-15">
-              <div>
-                <img
-                  src="/images/watch.jpg"
-                  alt="watch"
-                  className="img-fluid"
-                />
-              </div>
-              <div>
-                <img
-                  src="/images/watch.jpg"
-                  alt="watch"
-                  className="img-fluid"
-                />
-              </div>
-              <div>
-                <img
-                  src="/images/watch.jpg"
-                  alt="watch"
-                  className="img-fluid"
-                />
-              </div>
-              <div>
-                <img
-                  src="/images/watch.jpg"
-                  alt="watch"
-                  className="img-fluid"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="col-6">
             <div className="main-product-detail">
-              <div className="border-bottom">
-                <h3 className="title">
-                  SwapME Braided Nylon Woven Smart Watch
-                </h3>
+              <div className="title">
+                <h3>{product?.title}</h3>
               </div>
 
-              <div className="border-bottom py-3">
-                <p className="price">$ 100</p>
-                <div className="d-flex align-items-center gap-10">
+              <div className="price">
+                <p>
+                  {new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  }).format(product?.price)}
+                </p>
+
+                <div className="rating">
                   <ReactStars
                     count={5}
                     // onChange={ratingChanged}
-                    value={3}
+                    value={product?.totalrating}
                     edit={false}
                     size={24}
                     activeColor="#ffd700"
                   />
-                  <p className="mb-0 t-review">(2 reviews)</p>
+
+                  <p className="t-review">
+                    ({product?.ratings?.length} reviews)
+                  </p>
                 </div>
                 <a className="review-btn" href="#review">
                   Write a review
                 </a>
               </div>
 
-              <div className="border-bottom py-3">
-                <div className="d-flex gap-10 align-items-center my-2">
-                  <h3 className="product-heading">Type:</h3>
-                  <p className="product-data">Watch</p>
-                </div>
-                <div className="d-flex gap-10 align-items-center my-2">
+              <div className="bottom">
+                <div className="items">
                   <h3 className="product-heading">Brand:</h3>
-                  <p className="product-data">Havels</p>
+                  <p className="product-data">{product?.brand}</p>
                 </div>
-                <div className="d-flex gap-10 align-items-center my-2">
+
+                <div className="items">
                   <h3 className="product-heading">Category:</h3>
-                  <p className="product-data">Watch</p>
+                  <p className="product-data">{product?.category}</p>
                 </div>
-                <div className="d-flex gap-10 align-items-center my-2">
-                  <h3 className="product-heading">Tag:</h3>
-                  <p className="product-data">Watch</p>
-                </div>
-                <div className="d-flex gap-10 align-items-center my-2">
+
+                <div className="items">
                   <h3 className="product-heading">Availability:</h3>
-                  <p className="product-data">In Stock</p>
+                  <p className="product-data">{product?.quantity}</p>
                 </div>
 
-                <div className="d-flex gap-10 flex-column mt-2 mb-3">
+                {/* variant */}
+                <div className="variants">
                   <h3 className="product-heading">Size:</h3>
-                  <div className="d-flex flex-wrap gap-15">
-                    <span className="badge border border-1 bg-white text-dark border-secondary">
-                      S
-                    </span>
-                    <span className="badge border border-1 bg-white text-dark border-secondary">
-                      M
-                    </span>
-                    <span className="badge border border-1 bg-white text-dark border-secondary">
-                      XL
-                    </span>
-                    <span className="badge border border-1 bg-white text-dark border-secondary">
-                      XXL
-                    </span>
+
+                  <div className="wrapper">
+                    {sizes?.map((s, index) => {
+                      return (
+                        <span key={`size-${index}`} className="size">
+                          {s.variantName}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
-                <div className="d-flex gap-10 flex-column mt-2 mb-3">
+
+                <div className="variants">
                   <h3 className="product-heading">Color:</h3>
-                  <Color />
+                  {/* <Color /> */}
+                  <div className="wrapper">
+                    {colors?.map((c) => {
+                      return (
+                        <div
+                          onClick={() => setImg(c.images[0].url)}
+                          className="color"
+                          style={{
+                            backgroundColor: c.colorCode,
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
 
-                <div className="d-flex align-items-center gap-15 flex-row mt-2 mb-3">
-                  <h3 className="product-heading">Quantity:</h3>
-                  <div>
-                    <input
-                      type="number"
-                      name=""
-                      min={1}
-                      max={10}
-                      style={{ width: "70px" }}
-                      id=""
-                      className="form-control"
-                    />
+                <div className="function">
+                  <div className="quantity">
+                    <h3 className="product-heading">Quantity:</h3>
+
+                    <input type="number" min={1} max={10} defaultValue={1} />
                   </div>
 
-                  <div className="d-flex align-items-center gap-30 ms-5">
-                    <button className="button border-0" type="submit">
+                  <div className="buttonGroup">
+                    <button className="button" type="submit">
                       Add To Cart
                     </button>
-                    <button className="button signup">Buy It Now</button>
+                    <button className="button buyNow">Buy It Now</button>
                   </div>
                 </div>
 
-                <div className="d-flex align-items-center gap-15">
-                  <div>
-                    <a href="">
-                      <TbGitCompare className="fs-5 me-2" />
-                      Add To Compare
-                    </a>
-                  </div>
-                  <div>
-                    <a href="">
-                      <AiOutlineHeart className="fs-5 me-2" />
-                      Add To Wishlist
-                    </a>
-                  </div>
+                <div className="compareWish">
+                  <a href="">
+                    <TbGitCompare className="icon" />
+                    Add To Compare
+                  </a>
+
+                  <a href="">
+                    <AiOutlineHeart className="icon" />
+                    Add To Wishlist
+                  </a>
                 </div>
 
-                <div className="d-flex gap-10 flex-column my-3">
+                <div className="policy">
                   <h3 className="product-heading">Shipping & Return:</h3>
                   <p className="product-data">
                     Free shipping and returns available on all orders! <br />
@@ -193,146 +215,83 @@ const SingleProduct = () => {
                     <b>5-10 business days!</b>
                   </p>
                 </div>
-
-                <div className="d-flex gap-10 align-items-center my-3">
-                  <h3 className="product-heading">Product Link:</h3>
-                  <a
-                    href="javascript:void(0);"
-                    onClick={() => {
-                      copyToClipboard(
-                        "https://media.wired.com/photos/61bd571ff6b645152a4dc4ad/master/pass/Evolution-Luxury-Watches-Oris.jpg"
-                      );
-                      alert("link is copied");
-                    }}
-                  >
-                    Copy Product Link
-                  </a>
-                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </Container>
+          </Box>
 
-      <Container class1="description-wrapper py-5">
-        <div className="row">
-          <div className="col-12">
+          {/* Description */}
+
+          <Box className="description-wrapper px">
             <h4>Description:</h4>
-            <div className="bg-white p-3">
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Non, at
-                accusamus et facere maxime ullam! Assumenda, mollitia neque
-                laboriosam modi repellat odit deserunt sapiente esse! Provident
-                magnam eos enim temporibus.
-              </p>
+            <div>
+              <p>{product?.description}</p>
             </div>
-          </div>
-        </div>
-      </Container>
+          </Box>
 
-      <Container class1="review-wrapper">
-        <div className="row">
-          <div className="col-12">
+          {/* review */}
+
+          <Box className="review-wrapper px">
             <h4 id="review">Reviews:</h4>
             <div className="review-inner-wrapper">
-              <div className="review-head d-flex justify-content-between align-items-end">
-                <div>
-                  <h4 className="mb-2">Customer Reviews</h4>
-                  <div className="d-flex gap-10 align-items-center">
-                    <ReactStars
-                      count={5}
-                      // onChange={ratingChanged}
-                      value={3}
-                      edit={false}
-                      size={24}
-                      activeColor="#ffd700"
-                    />
-                    <p className="mb-0">Based on 2 reviews</p>
-                  </div>
-                </div>
-
-                {orderedProduct && (
-                  <div>
-                    <a
-                      className="text-dark text-decoration-underline"
-                      href="/#"
-                    >
-                      Write a review
-                    </a>
-                  </div>
-                )}
-              </div>
-
-              <div className="review-form py-4">
+              <div className="review-form">
                 <h4>Write a review</h4>
-                <form action="" className="d-flex flex-column gap-15">
-                  <div>
-                    <ReactStars
-                      count={5}
-                      // onChange={ratingChanged}
-                      value={3}
-                      edit={true}
-                      size={24}
-                      activeColor="#ffd700"
-                    />
-                  </div>
-                  <div>
-                    <textarea
-                      name=""
-                      id=""
-                      className="w-100 form-control"
-                      cols={30}
-                      rows={4}
-                      placeholder="Comment..."
-                    ></textarea>
-                  </div>
-                  <div className="d-flex justify-content-end">
-                    <button className="button border-0">Submit Review</button>
+                <form action="">
+                  <ReactStars
+                    count={5}
+                    // onChange={ratingChanged}
+                    value={3}
+                    edit={true}
+                    size={24}
+                    activeColor="#ffd700"
+                  />
+
+                  <textarea cols={30} rows={4} placeholder="Comment..." />
+
+                  <div className="submitButton">
+                    <p className="button"> Submit Review</p>
                   </div>
                 </form>
               </div>
 
-              <div className="reviews mt-4">
+              <div className="reviews">
+                <h4>Customer Reviews</h4>
                 <div className="review">
-                  <div className="d-flex gap-10 align-items-center">
-                    <h6 className="mb-0">Navdeep</h6>
-                    <ReactStars
-                      count={5}
-                      // onChange={ratingChanged}
-                      value={3}
-                      edit={false}
-                      size={24}
-                      activeColor="#ffd700"
-                    />
-                  </div>
-                  <p className="mt-3">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Soluta doloremque hic facere aliquam. Unde excepturi, quia
-                    vitae iure nihil facere vero sed, itaque delectus repellat
-                    earum aspernatur, saepe minus facilis?
-                  </p>
+                  {product.ratings?.map((rating, index) => (
+                    <div key={`review-${index}`}>
+                      <div className="nameAndStar">
+                        <h6 className="name">{rating.postedby.name}</h6>
+                        <ReactStars
+                          count={5}
+                          // onChange={ratingChanged}
+                          value={rating.star}
+                          edit={false}
+                          size={24}
+                          activeColor="#ffd700"
+                        />
+                      </div>
+
+                      <p className="comment">{rating.comment}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </Container>
+          </Box>
 
-      <Container class1="popular-wrapper py-5 home-wrapper-2">
-        <div className="row">
-          <div className="col-12">
+          {/* Popular Products */}
+          <Box className="popular-wrapper">
             <h3 className="section-heading">Our Popular Products</h3>
-          </div>
-        </div>
 
-        <div className="row">
-          <ProductCard />
-          <ProductCard />
-          <ProductCard />
-          <ProductCard />
+            <CarouselShow>
+              {bestProduct.products?.length > 0 &&
+                bestProduct.products?.map((prod, index) => (
+                  <ProductCard key={`best-${index}`} prod={prod} />
+                ))}
+            </CarouselShow>
+          </Box>
         </div>
-      </Container>
-    </div>
+      )}
+    </>
   );
 };
 

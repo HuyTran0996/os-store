@@ -24,11 +24,39 @@ const responsive = {
     slidesToSlide: 2, // optional, default to 1.
   },
 };
+const prodPage = {
+  xl: {
+    breakpoint: { max: 1536, min: 1300 },
+    items: 3,
+    slidesToSlide: 3, // optional, default to 1.
+  },
+  lg: {
+    breakpoint: { max: 1300, min: 1150 },
+    items: 3,
+    slidesToSlide: 3, // optional, default to 1.
+  },
+  md: {
+    breakpoint: { max: 1150, min: 660 },
+    items: 3,
+    slidesToSlide: 3, // optional, default to 1.
+  },
+  sm: {
+    breakpoint: { max: 660, min: 0 },
+    items: 3,
+    slidesToSlide: 3, // optional, default to 1.
+  },
+};
 
-const CarouselShow = ({ children }) => {
+const CarouselShow = ({ children, addStyle }) => {
+  let res;
+  if (addStyle === "prodPage") {
+    res = prodPage;
+  } else {
+    res = responsive;
+  }
   return (
     <Carousel
-      responsive={responsive}
+      responsive={res}
       removeArrowOnDeviceType={["tablet", "mobile"]}
       transitionDuration={500}
       infinite={true}

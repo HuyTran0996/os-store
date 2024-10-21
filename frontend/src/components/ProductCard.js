@@ -18,7 +18,10 @@ const ProductCard = (props) => {
         location.pathname === "/product" ? `gr-${grid}` : "forCarousel"
       }`}
     >
-      <Link to="/product/:id" className="product-card position-relative">
+      <Link
+        to={`/product/${prod?._id}`}
+        className="product-card position-relative"
+      >
         <div className="wishlist-icon">
           <button>
             <img src={wish} alt="wishlist" />
@@ -26,32 +29,32 @@ const ProductCard = (props) => {
         </div>
 
         <div className="product-image">
-          <img src={prod.images[0].url} alt="product-image" />
-          <img src={prod.images[1].url} alt="product-image" />
+          <img src={prod?.images[0].url} alt="product-image" />
+          <img src={prod?.images[1].url} alt="product-image" />
         </div>
 
         <div className="product-details">
-          <h6 className="brand">{prod.brand}</h6>
-          <h5 className="product-title">{prod.title}</h5>
+          <h6 className="brand">{prod?.brand}</h6>
+          <h5 className="product-title">{prod?.title}</h5>
           <div style={{ display: "flex", alignItems: "center" }}>
             <ReactStars
               count={5}
               // onChange={ratingChanged}
-              value={prod.totalrating}
+              value={prod?.totalrating}
               edit={false}
               size={24}
               activeColor="#ffd700"
             />
-            ({prod.ratings?.length})
+            ({prod?.ratings?.length})
           </div>
           <p className={`description ${grid === 12 ? "d-block" : "d-none"}`}>
-            {prod.description}
+            {prod?.description}
           </p>
           <p className="price">
             {new Intl.NumberFormat("en-US", {
               style: "currency",
               currency: "USD",
-            }).format(prod.price)}
+            }).format(prod?.price)}
           </p>
         </div>
 

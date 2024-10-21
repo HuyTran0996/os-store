@@ -141,7 +141,11 @@ exports.updateProduct = asyncHandler(async (req, res) => {
 exports.getAProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongodbId(id);
-  const product = await Product.findById(id);
+  // const product = await Product.findById(id).populate("ratings.postedby");
+  const product = await Product.findById(id).populate(
+    "ratings.postedby",
+    "email name phone _id"
+  );
   if (!product) throw new AppError("Product not found", 404);
   res.status(200).json({
     status: "success",

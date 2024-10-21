@@ -1,15 +1,17 @@
 import React from "react";
 
-import "../styles/Color.scss";
+// import "../styles/Color.scss";
 
-const Color = () => {
+const Color = (colorCode) => {
   return (
-    <ul className="color ps-0">
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-    </ul>
+    <div
+      style={{
+        width: "20px",
+        height: "20px",
+        borderRadius: "50%",
+        backgroundColor: colorCode,
+      }}
+    ></div>
   );
 };
 
