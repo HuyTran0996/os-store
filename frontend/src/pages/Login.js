@@ -1,48 +1,119 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useThunk } from "../hook/use-thunk";
+import { loginUser } from "../store/thunks/fetchUsers";
 
-import "../styles/Login.scss";
+import { Paper, TextField, IconButton, Box } from "@mui/material";
+import { showToast } from "../components/ToastMessage";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
-import Container from "../components/Container";
-import CustomInput from "../components/CustomInput";
+
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import logo from "../images/logo.png";
+
+import "../styles/Login.scss";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [login, isLoading] = useThunk(loginUser);
+  const userInfo = localStorage.getItem("userData");
+  const parsedUserData = JSON.parse(userInfo);
+
+  useEffect(() => {
+    if (!parsedUserData?.note) return;
+    if (parsedUserData.note === "Your Section Is Expired")
+      showToast("Your Section Is Expired", "error");
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const userData = await login({ email, password });
+      showToast("Successfully Login", "success");
+
+      const dataToStore = { email: userData.email, name: userData.name };
+      const stringifiedUserData = JSON.stringify(dataToStore);
+      if (!localStorage.getItem("userData")) {
+        localStorage.setItem("userData", stringifiedUserData);
+      }
+      if (localStorage.getItem("userData")) {
+        localStorage.setItem("userData", stringifiedUserData);
+      }
+      setEmail("");
+      setPassword("");
+      navigate("/");
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    }
+  };
+
   return (
-    <div className="loginPage">
+    <>
       <Meta title="Login" />
       <BreadCrumb title="Login" />
-      <Container class1="login-wrapper py-5">
-        <div className="row">
-          <div className="col-12">
-            <div className="auth-card">
-              <h3 className="text-center mb-3">Login</h3>
-              <form action="" className="d-flex flex-column gap-15">
-                <CustomInput type="email" name="email" placeholder="Email..." />
-                <CustomInput
-                  type="password"
-                  name="password"
-                  placeholder="Password..."
-                />
 
-                <div>
-                  <Link to="/forgot-password">Forgot Password?</Link>
+      <Box size={12} className="loginPage">
+        <Paper elevation={10} className="paper">
+          <Box align="center">
+            <img src={logo} alt="logo" />
+            <h2>Login</h2>
+            <p>Login to your account to continue.</p>
+          </Box>
 
-                  <div className="mt-3 d-flex justify-content-center gap-15 align-items-center">
-                    <button className="button border-0" type="submit">
-                      Login
-                    </button>
-                    <Link to="/signup" className="button signup">
-                      Signup
-                    </Link>
-                  </div>
-                </div>
-              </form>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              className="input"
+              placeholder="Email..."
+              type="email"
+              fullWidth
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <TextField
+              className="input"
+              placeholder="Enter password"
+              type={showPassword ? "text" : "password"}
+              fullWidth
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <IconButton
+                      edge="end"
+                      onClick={() => setShowPassword((show) => !show)}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  ),
+                },
+              }}
+            />
+
+            <Link to="/forgot-password">Forgot password ?</Link>
+
+            <div className="function">
+              <Link to="/signup" className="button">
+                Signup
+              </Link>
+              <button className="button" type="submit" disabled={isLoading}>
+                {isLoading ? "Loading..." : "Login"}
+              </button>
             </div>
-          </div>
-        </div>
-      </Container>
-    </div>
+          </form>
+        </Paper>
+      </Box>
+    </>
   );
 };
 

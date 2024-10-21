@@ -36,3 +36,14 @@ export const getAProduct = createAsyncThunk(
     return res.data.product;
   }
 );
+export const rating = createAsyncThunk(
+  "products/rating",
+  async ({ star, prodId, comment }) => {
+    const res = await apiService.post(`/product/rating`, {
+      star,
+      prodId,
+      comment,
+    });
+    return res.data.product;
+  }
+);

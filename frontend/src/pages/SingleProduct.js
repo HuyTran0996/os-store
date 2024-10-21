@@ -7,7 +7,11 @@ import { useSelector } from "react-redux";
 
 import "../styles/SingleProduct.scss";
 import { useThunk } from "../hook/use-thunk";
-import { getAllProduct, getAProduct } from "../store/thunks/fetchProduct";
+import {
+  getAllProduct,
+  getAProduct,
+  rating,
+} from "../store/thunks/fetchProduct";
 import { showToast } from "../components/ToastMessage";
 import { Loading } from "../components/Loading/Loading";
 import BreadCrumb from "../components/BreadCrumb";
@@ -23,20 +27,23 @@ import imageNotFound from "../images/imageNotFound.png";
 
 const SingleProduct = () => {
   const params = useParams();
-  const [orderedProduct, setOrderedProduct] = useState(!false);
+  const [star, setStar] = useState(3);
+  const [comment, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [bestProduct, setBestProduct] = useState([]);
   const [img, setImg] = useState(imageNotFound);
   const [getAProductById] = useThunk(getAProduct);
   const [getDataAllProduct] = useThunk(getAllProduct);
+  const [ratingProduct] = useThunk(rating);
 
   const { dataAllProduct, dataProduct } = useSelector((state) => {
     return state.products;
   });
 
-  const getData = async () => {
+  const getData = async (action) => {
     try {
       setIsLoading(true);
+      await action;
       await getAProductById(params.id);
       setBestProduct(await getDataAllProduct(`sort=-sold&page=1`));
     } catch (err) {
@@ -66,6 +73,15 @@ const SingleProduct = () => {
   const colors = product.variant?.filter((v) => {
     return v.tag === "color";
   });
+
+  const ratingChanged = (newRating) => {
+    console.log(newRating);
+    setStar(newRating);
+  };
+  const sendComment = (e) => {
+    e.preventDefault();
+    getData(ratingProduct({ star, prodId: params.id, comment }));
+  };
 
   return (
     <>
@@ -115,7 +131,6 @@ const SingleProduct = () => {
                 <div className="rating">
                   <ReactStars
                     count={5}
-                    // onChange={ratingChanged}
                     value={product?.totalrating}
                     edit={false}
                     size={24}
@@ -235,20 +250,27 @@ const SingleProduct = () => {
             <div className="review-inner-wrapper">
               <div className="review-form">
                 <h4>Write a review</h4>
-                <form action="">
+                <form onSubmit={sendComment}>
                   <ReactStars
                     count={5}
-                    // onChange={ratingChanged}
-                    value={3}
+                    onChange={ratingChanged}
+                    value={star}
                     edit={true}
                     size={24}
                     activeColor="#ffd700"
                   />
 
-                  <textarea cols={30} rows={4} placeholder="Comment..." />
+                  <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Comment..."
+                    rows={4}
+                  />
 
                   <div className="submitButton">
-                    <p className="button"> Submit Review</p>
+                    <button className="button" type="submit">
+                      Submit Review
+                    </button>
                   </div>
                 </form>
               </div>
@@ -262,7 +284,6 @@ const SingleProduct = () => {
                         <h6 className="name">{rating.postedby.name}</h6>
                         <ReactStars
                           count={5}
-                          // onChange={ratingChanged}
                           value={rating.star}
                           edit={false}
                           size={24}

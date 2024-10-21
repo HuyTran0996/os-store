@@ -22,12 +22,12 @@ router.post(
   productCtrl.addVariant
 );
 router.post("/smartProductSearch", userCtrl.smartUserSearch("product"));
+router.post("/rating", authMiddleware, productCtrl.rating);
 
 router.get("/", productCtrl.getAllProduct);
 router.get("/:id", productCtrl.getAProduct);
 
 router.put("/wishlist", authMiddleware, productCtrl.toggleWishlist);
-router.put("/rating", authMiddleware, productCtrl.rating);
 
 router.put(
   "/upload/:id",
