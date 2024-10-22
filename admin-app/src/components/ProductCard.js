@@ -18,7 +18,7 @@ const ProductCard = (props) => {
           <h6 className="brand">{product.brand}</h6>
           <h5 className="product-title">{product.title}</h5>
 
-          <Rating value={product.totalrating} precision={0.5} readOnly />
+          <Rating value={product.totalrating * 1} precision={0.5} readOnly />
           <p
             className="description"
             style={{ display: grid === 12 ? "block" : "none" }}

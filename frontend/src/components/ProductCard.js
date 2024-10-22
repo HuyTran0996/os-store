@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -7,7 +7,6 @@ import "../styles/ProductCard.scss";
 
 import { useThunk } from "../hook/use-thunk";
 import { toggleWishlist } from "../store/thunks/fetchProduct";
-import { userWishList } from "../store/thunks/fetchUsers";
 import { showToast } from "../components/ToastMessage";
 
 import { FaHeart } from "react-icons/fa";
@@ -22,32 +21,14 @@ const ProductCard = (props) => {
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const [toggleUserWishlist] = useThunk(toggleWishlist);
-  const [getUserWishList] = useThunk(userWishList);
+
   const userInfo = localStorage.getItem("userData");
   const parsedUserData = JSON.parse(userInfo);
 
+  //note: get the wishlist on main page, don't get wishlist here (Unnecessary API Calls for every single card)
   const { dataUserWishList } = useSelector((state) => {
     return state.users;
   });
-
-  const getData = async (action) => {
-    try {
-      setIsLoading(true);
-      await action;
-
-      if (parsedUserData && !parsedUserData.note) {
-        await getUserWishList();
-      }
-    } catch (err) {
-      showToast(`${err.message}`, "error");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
 
   const handelUserWishList = async () => {
     if (!parsedUserData) {
@@ -60,7 +41,6 @@ const ProductCard = (props) => {
       try {
         setIsLoading(true);
         await toggleUserWishlist({ prodId: prod._id });
-        await getUserWishList();
       } catch (err) {
         showToast(`${err.message}`, "error");
       } finally {
@@ -82,10 +62,6 @@ const ProductCard = (props) => {
         className="product-card position-relative"
       >
         <div className="wishlist-icon">
-          {/* <button>
-            <img src={wish} alt="wishlist" />
-          </button> */}
-
           <button disabled={isLoading} onClick={handelUserWishList}>
             {checkIfWish ? (
               <FaHeart style={{ color: "red" }} className="icon" />
@@ -104,7 +80,7 @@ const ProductCard = (props) => {
           <h6 className="brand">{prod?.brand}</h6>
           <h5 className="product-title">{prod?.title}</h5>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <Rating value={prod?.totalrating} precision={0.5} readOnly />(
+            <Rating value={prod?.totalrating * 1} precision={0.5} readOnly />(
             {prod?.ratings?.length})
           </div>
           <p className={`description ${grid === 12 ? "d-block" : "d-none"}`}>

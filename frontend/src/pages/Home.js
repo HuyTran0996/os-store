@@ -20,6 +20,7 @@ import { getAllBanner } from "../store/thunks/fetchBanners";
 import { getAllCategory } from "../store/thunks/fetchProductCategories";
 import { getAllBrand } from "../store/thunks/fetchBrands";
 import { getAllProduct } from "../store/thunks/fetchProduct";
+import { userWishList } from "../store/thunks/fetchUsers";
 import { useThunk } from "../hook/use-thunk";
 
 import imageNotFound from "../images/imageNotFound.png";
@@ -33,6 +34,7 @@ const Home = () => {
   const [getDataAllCategory] = useThunk(getAllCategory);
   const [getDataAllBrand] = useThunk(getAllBrand);
   const [getDataAllProduct] = useThunk(getAllProduct);
+  const [getUserWishList] = useThunk(userWishList);
   ////////////////////
 
   ////////////data////////////
@@ -49,6 +51,8 @@ const Home = () => {
     return state.products;
   });
   ////////////////
+  const userInfo = localStorage.getItem("userData");
+  const parsedUserData = JSON.parse(userInfo);
 
   const getData = async () => {
     try {
@@ -58,6 +62,9 @@ const Home = () => {
       await getDataAllBrand();
       setBestProduct(await getDataAllProduct(`sort=-sold&page=1`));
       setNewProduct(await getDataAllProduct(`sort=-createdAt&page=1`));
+      if (parsedUserData && !parsedUserData.note) {
+        await getUserWishList();
+      }
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
