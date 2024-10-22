@@ -47,3 +47,12 @@ export const rating = createAsyncThunk(
     return res.data.product;
   }
 );
+export const toggleWishlist = createAsyncThunk(
+  "products/toggleWishlist",
+  async ({ prodId }) => {
+    const res = await apiService.put(`/product/wishlist`, {
+      prodId,
+    });
+    return res.data.product;
+  }
+);

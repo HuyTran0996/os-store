@@ -25,6 +25,12 @@ apiService.interceptors.response.use(
   },
   (err) => {
     console.log("Response Error", err);
+    if (err.response?.data?.message === "Please log in to get access") {
+      localStorage.setItem(
+        "adminData",
+        JSON.stringify({ note: "Your Section Is Expired" })
+      );
+    }
 
     return Promise.reject(err.response.data);
   }

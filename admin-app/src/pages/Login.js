@@ -39,12 +39,13 @@ const Login = () => {
 
       const dataToStore = { email: adminData.email, name: adminData.name };
       const stringifiedAdminData = JSON.stringify(dataToStore);
-      if (!localStorage.getItem("adminData")) {
-        localStorage.setItem("adminData", stringifiedAdminData);
-      }
-      if (localStorage.getItem("adminData")) {
-        localStorage.setItem("adminData", stringifiedAdminData);
-      }
+      localStorage.setItem("adminData", stringifiedAdminData);
+      // if (!localStorage.getItem("adminData")) {
+      //   localStorage.setItem("adminData", stringifiedAdminData);
+      // }
+      // if (localStorage.getItem("adminData")) {
+      //   localStorage.setItem("adminData", stringifiedAdminData);
+      // }
       setEmail("");
       setPassword("");
       navigate("/");

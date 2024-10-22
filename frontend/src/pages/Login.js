@@ -40,12 +40,13 @@ const Login = () => {
 
       const dataToStore = { email: userData.email, name: userData.name };
       const stringifiedUserData = JSON.stringify(dataToStore);
-      if (!localStorage.getItem("userData")) {
-        localStorage.setItem("userData", stringifiedUserData);
-      }
-      if (localStorage.getItem("userData")) {
-        localStorage.setItem("userData", stringifiedUserData);
-      }
+      localStorage.setItem("userData", stringifiedUserData);
+      // if (!localStorage.getItem("userData")) {
+      //   localStorage.setItem("userData", stringifiedUserData);
+      // }
+      // if (localStorage.getItem("userData")) {
+      //   localStorage.setItem("userData", stringifiedUserData);
+      // }
       setEmail("");
       setPassword("");
       navigate("/");

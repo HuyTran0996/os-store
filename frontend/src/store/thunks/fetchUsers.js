@@ -4,6 +4,12 @@ import { apiService } from "../../app/apiService";
 
 const limit = process.env.REACT_APP_LIMIT_PAGINATION;
 
+export const userWishList = createAsyncThunk("users/userWishList", async () => {
+  const wishlist = await apiService.get("/user/wishlist");
+
+  return wishlist.data.wishlist;
+});
+
 export const loginUser = createAsyncThunk(
   "users/loginUser",
   async ({ email, password }) => {
@@ -15,6 +21,7 @@ export const loginUser = createAsyncThunk(
     return admin.data.user;
   }
 );
+
 export const logoutAdmin = createAsyncThunk("users/logout", async () => {
   const admin = await apiService.get("/auth/logout");
   localStorage.removeItem("adminData");
@@ -46,31 +53,10 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
-export const userTotalCompare = createAsyncThunk(
-  "users/userTotalCompare",
-  async () => {
-    const res = await apiService.get(`/user/userTotalCompare`);
-    return res.data.data;
-  }
-);
-
-export const getAllUser = createAsyncThunk("users/getAllUser", async (page) => {
-  const res = await apiService.get(
-    `/user/allUsers?page=${page || 1}&limit=${limit}`
-  );
-  return res.data.data;
-});
 export const updateNameEmail = createAsyncThunk(
   "users/updateNameEmail",
   async ({ id, name, phone }) => {
     const res = await apiService.put(`/user/editUser`, { id, name, phone });
-    return res.data.data;
-  }
-);
-export const changeRole = createAsyncThunk(
-  "users/changeRole",
-  async ({ userId, role }) => {
-    const res = await apiService.put(`/user/changeRole`, { userId, role });
     return res.data.data;
   }
 );
@@ -84,23 +70,6 @@ export const unblockUser = createAsyncThunk(
   "users/unblockUser",
   async (userId) => {
     const res = await apiService.put(`/user/unblockUser/${userId}`);
-    return res.data.data;
-  }
-);
-export const deleteUser = createAsyncThunk(
-  "users/deleteUser",
-  async (userId) => {
-    const res = await apiService.delete(`/user/${userId}`);
-    return res.data.data;
-  }
-);
-export const smartUserSearch = createAsyncThunk(
-  "users/smartUserSearch",
-  async ({ page, searchField }) => {
-    const res = await apiService.post(
-      `/user/smartUserSearch?page=${page}&limit=${limit}`,
-      { searchField }
-    );
     return res.data.data;
   }
 );
