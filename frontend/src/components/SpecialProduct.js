@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import ReactStars from "react-rating-stars-component";
+import { Rating } from "@mui/material";
 
 import "../styles/SpecialProduct.scss";
 
@@ -18,14 +18,8 @@ const SpecialProduct = () => {
             <h6 className="title">
               Samsung Galaxy Note10+ Mobile Phone; Sim...
             </h6>
-            <ReactStars
-              count={5}
-              // onChange={ratingChanged}
-              value={4}
-              edit={false}
-              size={24}
-              activeColor="#ffd700"
-            />
+
+            <Rating value={4.5} precision={0.5} readOnly />
             <p className="price">
               <span className="red-p">$100</span> &nbsp;
               <strike>$150</strike>

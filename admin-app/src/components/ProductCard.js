@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import ReactStars from "react-rating-stars-component";
-import { Box, Paper } from "@mui/material";
+import { Box, Paper, Rating } from "@mui/material";
 import "../styles/ProductCard.scss";
 
 const ProductCard = (props) => {
@@ -18,13 +17,8 @@ const ProductCard = (props) => {
         <Box className="product-details">
           <h6 className="brand">{product.brand}</h6>
           <h5 className="product-title">{product.title}</h5>
-          <ReactStars
-            count={5}
-            value={product.totalrating}
-            edit={false}
-            size={24}
-            activeColor="#ffd700"
-          />
+
+          <Rating value={product.totalrating} precision={0.5} readOnly />
           <p
             className="description"
             style={{ display: grid === 12 ? "block" : "none" }}

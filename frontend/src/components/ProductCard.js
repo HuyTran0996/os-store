@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import ReactStars from "react-rating-stars-component";
+import { useSelector } from "react-redux";
 
+import { Rating } from "@mui/material";
 import "../styles/ProductCard.scss";
-import wish from "../images/wish.svg";
-import prodCompare from "../images/prodCompare.svg";
-import view from "../images/view.svg";
-import add from "../images/add-cart.svg";
 
+import { useThunk } from "../hook/use-thunk";
 import { toggleWishlist } from "../store/thunks/fetchProduct";
 import { userWishList } from "../store/thunks/fetchUsers";
 import { showToast } from "../components/ToastMessage";
-import { useThunk } from "../hook/use-thunk";
-import { useSelector } from "react-redux";
+
 import { FaHeart } from "react-icons/fa";
 import { AiOutlineHeart } from "react-icons/ai";
+import prodCompare from "../images/prodCompare.svg";
+import add from "../images/add-cart.svg";
+import view from "../images/view.svg";
+import wish from "../images/wish.svg";
 
 const ProductCard = (props) => {
   const { grid, prod } = props;
@@ -103,14 +104,8 @@ const ProductCard = (props) => {
           <h6 className="brand">{prod?.brand}</h6>
           <h5 className="product-title">{prod?.title}</h5>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <ReactStars
-              count={5}
-              value={prod?.totalrating}
-              edit={false}
-              size={24}
-              activeColor="#ffd700"
-            />
-            ({prod?.ratings?.length})
+            <Rating value={prod?.totalrating} precision={0.5} readOnly />(
+            {prod?.ratings?.length})
           </div>
           <p className={`description ${grid === 12 ? "d-block" : "d-none"}`}>
             {prod?.description}
