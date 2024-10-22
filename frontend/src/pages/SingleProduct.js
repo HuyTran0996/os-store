@@ -36,7 +36,6 @@ const SingleProduct = () => {
   const [comment, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [bestProduct, setBestProduct] = useState([]);
-  const [wish, setWish] = useState([]);
   const [img, setImg] = useState(imageNotFound);
 
   const [getAProductById] = useThunk(getAProduct);
@@ -47,6 +46,9 @@ const SingleProduct = () => {
 
   const { dataAllProduct, dataProduct } = useSelector((state) => {
     return state.products;
+  });
+  const { dataUserWishList } = useSelector((state) => {
+    return state.users;
   });
 
   const userInfo = localStorage.getItem("userData");
@@ -59,7 +61,7 @@ const SingleProduct = () => {
       await getAProductById(params.id);
       setBestProduct(await getDataAllProduct(`sort=-sold&page=1`));
       if (parsedUserData && !parsedUserData.note) {
-        setWish(await getUserWishList());
+        await getUserWishList();
       }
     } catch (err) {
       showToast(`${err.message}`, "error");
@@ -109,7 +111,7 @@ const SingleProduct = () => {
       try {
         setIsLoading(true);
         await toggleUserWishlist({ prodId: params.id });
-        setWish(await getUserWishList());
+        await getUserWishList();
       } catch (err) {
         showToast(`${err.message}`, "error");
       } finally {
@@ -118,7 +120,7 @@ const SingleProduct = () => {
     }
   };
 
-  const checkIfWish = wish.find((item) => item._id === params.id);
+  const checkIfWish = dataUserWishList.find((item) => item._id === params.id);
 
   return (
     <div className="singleProductPage">
@@ -235,20 +237,22 @@ const SingleProduct = () => {
               </div>
 
               <div className="buttonGroup">
-                <button className="button" type="submit">
+                <button disabled={isLoading} className="button" type="submit">
                   Add To Cart
                 </button>
-                <button className="button buyNow">Buy It Now</button>
+                <button disabled={isLoading} className="button buyNow">
+                  Buy It Now
+                </button>
               </div>
             </div>
 
             <div className="compareWish">
-              <button>
+              <button disabled={isLoading}>
                 <TbGitCompare className="icon" />
                 Add To Compare
               </button>
 
-              <button onClick={handelUserWishList}>
+              <button disabled={isLoading} onClick={handelUserWishList}>
                 {checkIfWish ? (
                   <>
                     <FaHeart style={{ color: "red" }} className="icon" />{" "}
@@ -309,7 +313,7 @@ const SingleProduct = () => {
               />
 
               <div className="submitButton">
-                <button className="button" type="submit">
+                <button disabled={isLoading} className="button" type="submit">
                   Submit Review
                 </button>
               </div>

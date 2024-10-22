@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginUser } from "../thunks/fetchUsers";
+import { loginUser, userWishList } from "../thunks/fetchUsers";
 
 const initialState = {
   dataOfYou: [],
+  dataUserWishList: [],
 };
 
 const userSlice = createSlice({
@@ -11,6 +12,9 @@ const userSlice = createSlice({
   extraReducers(builder) {
     builder.addCase(loginUser.fulfilled, (state, action) => {
       state.dataOfYou = action.payload;
+    });
+    builder.addCase(userWishList.fulfilled, (state, action) => {
+      state.dataUserWishList = action.payload;
     });
   },
 });
