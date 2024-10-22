@@ -387,8 +387,12 @@ const ProductList = () => {
 
             {/* Product */}
             <Box sx={style.boxProduct}>
-              {dataAllProduct?.products?.map((product) => (
-                <ProductCard grid={grid} product={product} />
+              {dataAllProduct?.products?.map((product, index) => (
+                <ProductCard
+                  key={`product-${index}`}
+                  grid={grid}
+                  product={product}
+                />
               ))}
             </Box>
 
