@@ -43,8 +43,12 @@
     width: 155px;
   }
 }
+.wishlist {
+  width: 250px;
+}
 
 .product-card {
+  position: relative;
   padding: 15px;
   background-color: white;
   border-radius: 10px;

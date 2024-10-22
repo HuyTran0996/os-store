@@ -77,8 +77,8 @@ const SingleProduct = () => {
   }, [dataProduct]);
 
   const props = {
-    zoomWidth: 300,
-    zoomHeight: 300,
+    // zoomWidth: 300,
+    // zoomHeight: 300,
     zoomPosition: "original",
     img: img,
   };
@@ -216,9 +216,10 @@ const SingleProduct = () => {
                   <h3 className="product-heading">Color:</h3>
                   {/* <Color /> */}
                   <div className="wrapper">
-                    {colors?.map((c) => {
+                    {colors?.map((c, index) => {
                       return (
                         <div
+                          key={`color-${index}`}
                           onClick={() => setImg(c.images[0].url)}
                           className="color"
                           style={{

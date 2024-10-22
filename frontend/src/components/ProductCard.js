@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -20,6 +20,7 @@ const ProductCard = (props) => {
   const { grid, prod } = props;
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
+  const [checkIfWish, setCheckIfWish] = useState(false);
   const [toggleUserWishlist] = useThunk(toggleWishlist);
 
   const userInfo = localStorage.getItem("userData");
@@ -49,18 +50,21 @@ const ProductCard = (props) => {
     }
   };
 
-  const checkIfWish = dataUserWishList.find((item) => item._id === prod._id);
+  useEffect(() => {
+    setCheckIfWish(dataUserWishList.find((item) => item._id === prod._id));
+  }, [dataUserWishList]);
 
   return (
     <div
       className={`${
-        location.pathname === "/product" ? `gr-${grid}` : "forCarousel"
+        location.pathname === "/product"
+          ? `gr-${grid}`
+          : location.pathname === "/wishlist"
+          ? "wishlist"
+          : "forCarousel"
       }`}
     >
-      <Link
-        to={`/product/${prod?._id}`}
-        className="product-card position-relative"
-      >
+      <div className="product-card">
         <div className="wishlist-icon">
           <button disabled={isLoading} onClick={handelUserWishList}>
             {checkIfWish ? (
@@ -70,30 +74,6 @@ const ProductCard = (props) => {
             )}
           </button>
         </div>
-
-        <div className="product-image">
-          <img src={prod?.images[0].url} alt="product-image" />
-          <img src={prod?.images[1].url} alt="product-image" />
-        </div>
-
-        <div className="product-details">
-          <h6 className="brand">{prod?.brand}</h6>
-          <h5 className="product-title">{prod?.title}</h5>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Rating value={prod?.totalrating * 1} precision={0.5} readOnly />(
-            {prod?.ratings?.length})
-          </div>
-          <p className={`description ${grid === 12 ? "d-block" : "d-none"}`}>
-            {prod?.description}
-          </p>
-          <p className="price">
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
-            }).format(prod?.price)}
-          </p>
-        </div>
-
         <div className="action-bar">
           <button disabled={isLoading}>
             <img src={prodCompare} alt="compare" />
@@ -105,7 +85,32 @@ const ProductCard = (props) => {
             <img src={add} alt="addCart" />
           </button>
         </div>
-      </Link>
+
+        <Link to={`/product/${prod?._id}`}>
+          <div className="product-image">
+            <img src={prod?.images?.[0]?.url} alt="product-image" />
+            <img src={prod?.images?.[1]?.url} alt="product-image" />
+          </div>
+
+          <div className="product-details">
+            <h6 className="brand">{prod?.brand}</h6>
+            <h5 className="product-title">{prod?.title}</h5>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Rating value={prod?.totalrating * 1} precision={0.5} readOnly />(
+              {prod?.ratings?.length})
+            </div>
+            <p className={`description ${grid === 12 ? "d-block" : "d-none"}`}>
+              {prod?.description}
+            </p>
+            <p className="price">
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(prod?.price)}
+            </p>
+          </div>
+        </Link>
+      </div>
     </div>
   );
 };

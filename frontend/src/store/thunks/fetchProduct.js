@@ -53,6 +53,6 @@ export const toggleWishlist = createAsyncThunk(
     const res = await apiService.put(`/product/wishlist`, {
       prodId,
     });
-    return res.data.product;
+    return res.data.wishlist;
   }
 );

@@ -213,7 +213,7 @@ exports.toggleWishlist = asyncHandler(async (req, res) => {
       [method]: { wishlist: prodId },
     },
     { new: true }
-  );
+  ).populate("wishlist");
 
   res.status(200).json({
     status: "success",
