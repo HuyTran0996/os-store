@@ -125,6 +125,9 @@ const SingleProduct = () => {
   const colors = dataProduct.variant?.filter((v) => {
     return v.tag === "color";
   });
+  const variants = dataProduct.variant?.filter((v) => {
+    return v.tag === "variant";
+  });
   const description = dataProduct.description;
 
   return (
@@ -199,8 +202,20 @@ const SingleProduct = () => {
 
                 {/* variant */}
                 <div className="variants">
-                  <h3 className="product-heading">Size:</h3>
+                  <h3 className="product-heading">Variant:</h3>
+                  <div className="wrapper">
+                    {variants?.map((s, index) => {
+                      return (
+                        <span key={`variant-${index}`} className="size">
+                          {s.variantName}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
 
+                <div className="variants">
+                  <h3 className="product-heading">Size:</h3>
                   <div className="wrapper">
                     {sizes?.map((s, index) => {
                       return (
@@ -214,7 +229,6 @@ const SingleProduct = () => {
 
                 <div className="variants">
                   <h3 className="product-heading">Color:</h3>
-                  {/* <Color /> */}
                   <div className="wrapper">
                     {colors?.map((c, index) => {
                       return (

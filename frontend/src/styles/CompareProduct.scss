@@ -2,38 +2,79 @@
 
 .compareProductPage {
   background-color: $color-f5f5f7;
+  .compare-product-wrapper {
+    padding: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    gap: 20px;
 
-  .compare-product-card {
-    padding: 20px 15px;
-    background-color: white;
-    border-radius: 10px;
-    .cross {
-      top: 15px;
-      right: 15px;
-      width: 25px;
-      padding: 3px;
-      cursor: pointer;
-    }
-
-    .compare-product-detail {
-      .title {
-        font-size: 15px;
-        line-height: 22px;
-        font-weight: 500;
-        color: $color-1c1c1b;
+    .compare-product-card {
+      position: relative;
+      padding: 20px 15px;
+      background-color: white;
+      border-radius: 10px;
+      .cross {
+        position: absolute;
+        top: 15px;
+        right: 8px;
+        width: 25px;
+        padding: 3px;
+        cursor: pointer;
+        transition: 0.3s;
+        &:hover {
+          background-color: orange;
+        }
       }
-      .price {
-        font-size: 15px;
-        line-height: 22px;
-        font-weight: 400;
-      }
 
-      .product-detail {
+      .product-card-image {
+        width: 300px;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        justify-content: center;
+        margin-bottom: 10px;
+        img {
+          width: 90%;
+        }
+      }
+
+      .compare-product-detail {
+        .title {
+          font-size: 15px;
+          line-height: 22px;
+          font-weight: 500;
+          color: $color-1c1c1b;
+        }
+        .price {
+          font-size: 15px;
+          line-height: 22px;
+          font-weight: 400;
+          margin: 16px 0;
+        }
+
+        .product-detail {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 0;
+          border-top: 1px solid rgba(0, 0, 0, 0.1);
+          .wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+          }
+          .color {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid rgba(0, 0, 0, 0.25);
+          }
+        }
+        .variant {
+          display: flex;
+          flex-direction: column;
+          align-items: start;
+        }
       }
     }
   }

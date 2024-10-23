@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { Box, TextField, Button } from "@mui/material";
 import "../styles/Header.scss";
@@ -16,6 +17,9 @@ import logo from "../images/logo.png";
 const Header = () => {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
+  const { dataUserCompare } = useSelector((state) => {
+    return state.users;
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,7 +40,6 @@ const Header = () => {
         <Link to="/">
           <h4>
             <img
-              // src="images/logo.png"
               src={logo}
               alt="logo"
               style={{
@@ -92,6 +95,7 @@ const Header = () => {
               Compare <br />
               Products
             </Box>
+            <Box className="cartCount">{dataUserCompare.length}</Box>
           </Link>
 
           <Link to="/wishlist">

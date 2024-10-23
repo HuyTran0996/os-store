@@ -1,116 +1,164 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { NavLink, Link, useNavigate } from "react-router-dom";
+import { Box, TextField, Button } from "@mui/material";
+import { useThunk } from "../hook/use-thunk";
+
+import { getAProduct } from "../store/thunks/fetchProduct";
+import { updateCompareList } from "../store/thunks/fetchUsers";
+import { Loading } from "../components/Loading/Loading";
 
 import "../styles/CompareProduct.scss";
+import { showToast } from "../components/ToastMessage";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import Color from "../components/Color";
 import Container from "../components/Container";
 
 const CompareProduct = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [productList, setProductList] = useState([]);
+
+  const [updateCompareListUser] = useThunk(updateCompareList);
+  const [getAProductById] = useThunk(getAProduct);
+  const { dataUserCompare } = useSelector((state) => {
+    return state.users;
+  });
+
+  const getData = async (action) => {
+    try {
+      setIsLoading(true);
+      await action;
+
+      const products = await Promise.all(
+        dataUserCompare.map(async (item) => {
+          const response = await getAProductById(item.id);
+          return response;
+        })
+      );
+      setProductList(products);
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, [dataUserCompare]);
+
+  const handleToggleCompare = (id) => {
+    const compareList = JSON.parse(localStorage.getItem("compareList") || "[]");
+    const checkIfAdd = compareList.findIndex((item) => item.id === id);
+    if (checkIfAdd >= 0) {
+      compareList.splice(checkIfAdd, 1);
+    } else {
+      compareList.push({ id: id });
+    }
+
+    updateCompareListUser(compareList);
+
+    localStorage.setItem("compareList", JSON.stringify(compareList));
+  };
+
   return (
     <div className="compareProductPage">
       <Meta title="Compare Products" />
       <BreadCrumb title="Compare Products" />
-      <Container class1="compare-product-wrapper py-5">
-        <div className="row">
-          <div className="col-3">
-            <div className="compare-product-card position-relative">
-              <img
-                src="images/cross.svg"
-                alt="cross"
-                className="position-absolute cross img-fluid"
-              />
-              <div className="product-card-image">
-                <img src="images/watch.jpg" alt="watch" />
-              </div>
+      {isLoading ? (
+        <Loading message="Loading..." />
+      ) : (
+        <Box className="compare-product-wrapper">
+          {productList.map((prod, index) => {
+            const colors = prod.variant.filter((v) => v.tag === "color");
+            const sizes = prod.variant.filter((v) => v.tag === "size");
+            const variants = prod.variant.filter((v) => v.tag === "variant");
 
-              <div className="compare-product-detail">
-                <h5 className="title">
-                  Apple Airpods Pro (2nd Gen) with MagSafe Charging Case
-                </h5>
-                <h6 className="price mb-3 mt-3">$ 100</h6>
+            return (
+              <div key={`product-${index}`} className="compare-product-card">
+                <img
+                  src="images/cross.svg"
+                  alt="cross"
+                  className="cross"
+                  onClick={() => handleToggleCompare(prod._id)}
+                />
+                <div className="product-card-image">
+                  <img src={prod.images[0].url} alt="product" />
+                </div>
 
-                <div>
+                <div className="compare-product-detail">
+                  <h5 className="title">{prod.title}</h5>
+                  <h6 className="price">
+                    {new Intl.NumberFormat("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                    }).format(prod.price)}
+                  </h6>
+
                   <div className="product-detail">
                     <h5>Brand:</h5>
-                    <p>Havels</p>
+                    <p>{prod.brand}</p>
                   </div>
+
                   <div className="product-detail">
                     <h5>Type:</h5>
-                    <p>Watch</p>
+                    <p>{prod.category}</p>
                   </div>
 
                   <div className="product-detail">
                     <h5>Availability:</h5>
-                    <p>In Stock</p>
+                    <p>{prod.quantity}</p>
                   </div>
 
                   <div className="product-detail">
                     <h5>Color:</h5>
-                    <Color />
+                    <div className="wrapper">
+                      {colors?.map((c, index) => {
+                        return (
+                          <div
+                            key={`color-${index}`}
+                            className="color"
+                            style={{
+                              backgroundColor: c.colorCode,
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
                   </div>
 
                   <div className="product-detail">
                     <h5>Size:</h5>
-                    <div className="d-flex gap-10">
-                      <p>S</p>
-                      <p>M</p>
+                    <div className="wrapper">
+                      {sizes?.map((s, index) => {
+                        return (
+                          <span key={`size-${index}`} className="size">
+                            {s.variantName}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="product-detail variant">
+                    <h5>Variant:</h5>
+                    <div className="wrapper">
+                      {variants?.map((s, index) => {
+                        return (
+                          <span key={`size-${index}`} className="size">
+                            {s.variantName}
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="col-3">
-            <div className="compare-product-card position-relative">
-              <img
-                src="images/cross.svg"
-                alt="cross"
-                className="position-absolute cross img-fluid"
-              />
-              <div className="product-card-image">
-                <img src="images/watch.jpg" alt="watch" />
-              </div>
-
-              <div className="compare-product-detail">
-                <h5 className="title">
-                  Apple Airpods Pro (2nd Gen) with MagSafe Charging Case
-                </h5>
-                <h6 className="price mb-3 mt-3">$ 100</h6>
-
-                <div>
-                  <div className="product-detail">
-                    <h5>Brand:</h5>
-                    <p>Havels</p>
-                  </div>
-                  <div className="product-detail">
-                    <h5>Type:</h5>
-                    <p>Watch</p>
-                  </div>
-
-                  <div className="product-detail">
-                    <h5>Availability:</h5>
-                    <p>In Stock</p>
-                  </div>
-
-                  <div className="product-detail">
-                    <h5>Color:</h5>
-                    <Color />
-                  </div>
-
-                  <div className="product-detail">
-                    <h5>Size:</h5>
-                    <div className="d-flex gap-10">
-                      <p>S</p>
-                      <p>M</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Container>
+            );
+          })}
+        </Box>
+      )}
     </div>
   );
 };

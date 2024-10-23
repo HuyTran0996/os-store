@@ -4,6 +4,12 @@ import { apiService } from "../../app/apiService";
 
 const limit = process.env.REACT_APP_LIMIT_PAGINATION;
 
+export const updateCompareList = createAsyncThunk(
+  "users/updateCompareList",
+  async (compareList) => {
+    return compareList;
+  }
+);
 export const userWishList = createAsyncThunk("users/userWishList", async () => {
   const wishlist = await apiService.get("/user/wishlist");
 

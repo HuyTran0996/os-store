@@ -1,10 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginUser, userWishList } from "../thunks/fetchUsers";
+import {
+  loginUser,
+  userWishList,
+  updateCompareList,
+} from "../thunks/fetchUsers";
 import { toggleWishlist } from "../thunks/fetchProduct";
+
+const compareList = JSON.parse(localStorage.getItem("compareList") || "[]");
 
 const initialState = {
   dataOfYou: [],
   dataUserWishList: [],
+  dataUserCompare: [...compareList],
 };
 
 const userSlice = createSlice({
@@ -18,11 +25,10 @@ const userSlice = createSlice({
       state.dataUserWishList = action.payload;
     });
     builder.addCase(toggleWishlist.fulfilled, (state, action) => {
-      // const wish = action.payload.map((w) => {
-      //   return { _id: w };
-      // });
-
       state.dataUserWishList = action.payload;
+    });
+    builder.addCase(updateCompareList.fulfilled, (state, action) => {
+      state.dataUserCompare = action.payload;
     });
   },
 });
