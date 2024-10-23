@@ -99,7 +99,6 @@ const ProductCard = (props) => {
         </div>
         <div className="action-bar">
           <button onClick={handleToggleCompare} disabled={isLoading}>
-            {/* <img src={prodCompare} alt="compare" /> */}
             <IoGitCompareOutline
               style={checkIfCompare >= 0 ? { color: "red" } : ""}
               className="icon"

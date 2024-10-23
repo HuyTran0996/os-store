@@ -13,7 +13,7 @@ import {
   rating,
   toggleWishlist,
 } from "../store/thunks/fetchProduct";
-import { userWishList } from "../store/thunks/fetchUsers";
+import { userWishList, updateCompareList } from "../store/thunks/fetchUsers";
 
 import { showToast } from "../components/ToastMessage";
 import { Loading } from "../components/Loading/Loading";
@@ -37,11 +37,14 @@ const SingleProduct = () => {
   const [bestProduct, setBestProduct] = useState([]);
   const [img, setImg] = useState(imageNotFound);
 
+  const [checkIfCompare, setCheckIfCompare] = useState(false);
+
   const [getAProductById] = useThunk(getAProduct);
   const [getDataAllProduct] = useThunk(getAllProduct);
   const [ratingProduct] = useThunk(rating);
   const [toggleUserWishlist] = useThunk(toggleWishlist);
   const [getUserWishList] = useThunk(userWishList);
+  const [updateCompareListUser] = useThunk(updateCompareList);
 
   const { dataAllProduct, dataProduct } = useSelector((state) => {
     return state.products;
@@ -71,7 +74,10 @@ const SingleProduct = () => {
 
   useEffect(() => {
     getData();
+    const compareList = JSON.parse(localStorage.getItem("compareList") || "[]");
+    setCheckIfCompare(compareList.findIndex((item) => item.id === params.id));
   }, []);
+
   useEffect(() => {
     setImg(dataProduct?.images?.[0].url || imageNotFound);
   }, [dataProduct]);
@@ -107,6 +113,21 @@ const SingleProduct = () => {
         setIsLoading(false);
       }
     }
+  };
+
+  const handleToggleCompare = () => {
+    const compareList = JSON.parse(localStorage.getItem("compareList") || "[]");
+    const checkIfAdd = compareList.findIndex((item) => item.id === params.id);
+    if (checkIfAdd >= 0) {
+      compareList.splice(checkIfAdd, 1);
+    } else {
+      compareList.push({ id: params.id });
+    }
+    setCheckIfCompare(compareList.findIndex((item) => item.id === params.id));
+
+    updateCompareListUser(compareList);
+
+    localStorage.setItem("compareList", JSON.stringify(compareList));
   };
 
   const checkIfWish = dataUserWishList.find((item) => item._id === params.id);
@@ -267,9 +288,15 @@ const SingleProduct = () => {
                 </div>
 
                 <div className="compareWish">
-                  <button disabled={isLoading}>
-                    <TbGitCompare className="icon" />
-                    Add To Compare
+                  <button onClick={handleToggleCompare} disabled={isLoading}>
+                    <TbGitCompare
+                      style={checkIfCompare >= 0 ? { color: "red" } : ""}
+                      className="icon"
+                    />
+
+                    {checkIfCompare >= 0
+                      ? " Added To Compare"
+                      : " Add To Compare"}
                   </button>
 
                   <button disabled={isLoading} onClick={handelUserWishList}>
