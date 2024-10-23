@@ -2,9 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { Box, TextField, Button } from "@mui/material";
+
 import "../styles/Header.scss";
+import { useThunk } from "../hook/use-thunk";
 import { showToast } from "./ToastMessage";
 import MenuList from "./Sidebar/MenuList";
+
+import {
+  logoutUser,
+  userWishList,
+  getUserCart,
+} from "../store/thunks/fetchUsers";
 
 import SearchIcon from "@mui/icons-material/Search";
 import CompareIcon from "@mui/icons-material/Compare";
@@ -16,10 +24,36 @@ import logo from "../images/logo.png";
 
 const Header = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const { dataUserCompare } = useSelector((state) => {
+  const [logOut] = useThunk(logoutUser);
+  const [getUserWishList] = useThunk(userWishList);
+  const [getCart] = useThunk(getUserCart);
+
+  const { dataUserCompare, dataUserCart } = useSelector((state) => {
     return state.users;
   });
+
+  const userInfo = localStorage.getItem("userData");
+  const parsedUserData = JSON.parse(userInfo);
+
+  const getData = async () => {
+    try {
+      setIsLoading(true);
+
+      if (parsedUserData && !parsedUserData.note) {
+        await getUserWishList();
+        await getCart();
+      }
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,6 +63,22 @@ const Header = () => {
       return;
     }
     navigate(`/product?search=${searchValue.trim()}&page=1`);
+  };
+
+  const handleLogOut = async () => {
+    console.log("999");
+    try {
+      setIsLoading(true);
+
+      if (parsedUserData) {
+        await logOut();
+      }
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    } finally {
+      navigate("/login");
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -106,7 +156,7 @@ const Header = () => {
             </Box>
           </Link>
 
-          <Link to="/login">
+          <Link onClick={handleLogOut}>
             <LoginIcon />
             <Box className="smallerLGhide" component="p">
               Log <br /> In
@@ -115,7 +165,7 @@ const Header = () => {
 
           <Link to="/cart">
             <LocalMallIcon />
-            <Box className="cartCount">0</Box>
+            <Box className="cartCount">{dataUserCart.products.length}</Box>
           </Link>
         </Box>
       </Box>

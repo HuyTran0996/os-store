@@ -24,6 +24,7 @@ const ProductCard = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [checkIfWish, setCheckIfWish] = useState(false);
   const [checkIfCompare, setCheckIfCompare] = useState(false);
+  const [checkIfCart, setCheckIfCart] = useState(false);
   const [toggleUserWishlist] = useThunk(toggleWishlist);
   const [updateCompareListUser] = useThunk(updateCompareList);
 

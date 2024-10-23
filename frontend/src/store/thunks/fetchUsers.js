@@ -10,10 +10,16 @@ export const updateCompareList = createAsyncThunk(
     return compareList;
   }
 );
+
 export const userWishList = createAsyncThunk("users/userWishList", async () => {
   const wishlist = await apiService.get("/user/wishlist");
 
   return wishlist.data.wishlist;
+});
+
+export const getUserCart = createAsyncThunk("users/getUserCart", async () => {
+  const cart = await apiService.get("/order/cart");
+  return cart.data.cart;
 });
 
 export const loginUser = createAsyncThunk(
@@ -28,10 +34,10 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-export const logoutAdmin = createAsyncThunk("users/logout", async () => {
-  const admin = await apiService.get("/auth/logout");
-  localStorage.removeItem("adminData");
-  return admin.data.user;
+export const logoutUser = createAsyncThunk("users/logout", async () => {
+  const user = await apiService.get("/auth/logout");
+  localStorage.removeItem("userData");
+  return user.data.user;
 });
 
 export const forgotPassword = createAsyncThunk(
@@ -71,11 +77,3 @@ export const blockUser = createAsyncThunk("users/blockUser", async (userId) => {
   const res = await apiService.put(`/user/blockUser/${userId}`);
   return res.data.data;
 });
-
-export const unblockUser = createAsyncThunk(
-  "users/unblockUser",
-  async (userId) => {
-    const res = await apiService.put(`/user/unblockUser/${userId}`);
-    return res.data.data;
-  }
-);

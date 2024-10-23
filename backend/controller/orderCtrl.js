@@ -80,12 +80,19 @@ exports.getUserCart = asyncHandler(async (req, res) => {
   const cart = await Cart.findOne({ orderby: req.user._id }).populate(
     "products.product"
   );
-  if (!cart) throw new AppError("cart not found", 404);
-
-  res.status(200).json({
-    status: "success",
-    cart,
-  });
+  // if (!cart) throw new AppError("cart not found", 404);
+  if (!cart) {
+    res.status(200).json({
+      status: "success",
+      cart: { products: [] },
+    });
+    return;
+  } else {
+    res.status(200).json({
+      status: "success",
+      cart,
+    });
+  }
 });
 
 exports.emptyCart = asyncHandler(async (req, res) => {

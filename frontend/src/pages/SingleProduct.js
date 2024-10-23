@@ -13,7 +13,7 @@ import {
   rating,
   toggleWishlist,
 } from "../store/thunks/fetchProduct";
-import { userWishList, updateCompareList } from "../store/thunks/fetchUsers";
+import { updateCompareList } from "../store/thunks/fetchUsers";
 
 import { showToast } from "../components/ToastMessage";
 import { Loading } from "../components/Loading/Loading";
@@ -43,10 +43,9 @@ const SingleProduct = () => {
   const [getDataAllProduct] = useThunk(getAllProduct);
   const [ratingProduct] = useThunk(rating);
   const [toggleUserWishlist] = useThunk(toggleWishlist);
-  const [getUserWishList] = useThunk(userWishList);
   const [updateCompareListUser] = useThunk(updateCompareList);
 
-  const { dataAllProduct, dataProduct } = useSelector((state) => {
+  const { dataProduct } = useSelector((state) => {
     return state.products;
   });
   const { dataUserWishList } = useSelector((state) => {
@@ -62,9 +61,6 @@ const SingleProduct = () => {
       await action;
       await getAProductById(params.id);
       setBestProduct(await getDataAllProduct(`sort=-sold&page=1`));
-      if (parsedUserData && !parsedUserData.note) {
-        await getUserWishList();
-      }
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
@@ -106,7 +102,6 @@ const SingleProduct = () => {
       try {
         setIsLoading(true);
         await toggleUserWishlist({ prodId: params.id });
-        await getUserWishList();
       } catch (err) {
         showToast(`${err.message}`, "error");
       } finally {

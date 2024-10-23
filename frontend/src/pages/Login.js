@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useThunk } from "../hook/use-thunk";
-import { loginUser } from "../store/thunks/fetchUsers";
+import {
+  loginUser,
+  userWishList,
+  getUserCart,
+} from "../store/thunks/fetchUsers";
 
 import { Paper, TextField, IconButton, Box } from "@mui/material";
 import { showToast } from "../components/ToastMessage";
@@ -22,6 +26,9 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const [login, isLoading] = useThunk(loginUser);
+  const [getUserWishList] = useThunk(userWishList);
+  const [getCart] = useThunk(getUserCart);
+
   const userInfo = localStorage.getItem("userData");
   const parsedUserData = JSON.parse(userInfo);
 
@@ -41,12 +48,8 @@ const Login = () => {
       const dataToStore = { email: userData.email, name: userData.name };
       const stringifiedUserData = JSON.stringify(dataToStore);
       localStorage.setItem("userData", stringifiedUserData);
-      // if (!localStorage.getItem("userData")) {
-      //   localStorage.setItem("userData", stringifiedUserData);
-      // }
-      // if (localStorage.getItem("userData")) {
-      //   localStorage.setItem("userData", stringifiedUserData);
-      // }
+      await getUserWishList();
+      await getCart();
       setEmail("");
       setPassword("");
       navigate("/");

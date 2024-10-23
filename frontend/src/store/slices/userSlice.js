@@ -3,6 +3,7 @@ import {
   loginUser,
   userWishList,
   updateCompareList,
+  getUserCart,
 } from "../thunks/fetchUsers";
 import { toggleWishlist } from "../thunks/fetchProduct";
 
@@ -12,6 +13,7 @@ const initialState = {
   dataOfYou: [],
   dataUserWishList: [],
   dataUserCompare: [...compareList],
+  dataUserCart: { products: [] },
 };
 
 const userSlice = createSlice({
@@ -29,6 +31,9 @@ const userSlice = createSlice({
     });
     builder.addCase(updateCompareList.fulfilled, (state, action) => {
       state.dataUserCompare = action.payload;
+    });
+    builder.addCase(getUserCart.fulfilled, (state, action) => {
+      state.dataUserCart = action.payload;
     });
   },
 });

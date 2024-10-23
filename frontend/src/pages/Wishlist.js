@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 
 import "../styles/Wishlist.scss";
 import { useThunk } from "../hook/use-thunk";
-import { userWishList } from "../store/thunks/fetchUsers";
 
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
@@ -15,29 +14,9 @@ import ProductCard from "../components/ProductCard";
 const Wishlist = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const [getUserWishList] = useThunk(userWishList);
   const { dataUserWishList } = useSelector((state) => {
     return state.users;
   });
-
-  const userInfo = localStorage.getItem("userData");
-  const parsedUserData = JSON.parse(userInfo);
-
-  const getData = async () => {
-    try {
-      setIsLoading(true);
-      if (parsedUserData && !parsedUserData.note) {
-        await getUserWishList();
-      }
-    } catch (err) {
-      showToast(`${err.message}`, "error");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    getData();
-  }, []);
 
   return (
     <Box className="wishlistPage">

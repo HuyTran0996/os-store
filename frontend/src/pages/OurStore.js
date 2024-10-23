@@ -18,7 +18,6 @@ import {
   getAllProduct,
   smartProductSearch,
 } from "../store/thunks/fetchProduct";
-import { userWishList } from "../store/thunks/fetchUsers";
 
 import "../styles/OurStore.scss";
 import BreadCrumb from "../components/BreadCrumb";
@@ -118,7 +117,6 @@ const OurStore = () => {
   const [getDataAllBrand] = useThunk(getAllBrand);
   const [getDataAllProduct] = useThunk(getAllProduct);
   const [smartProductSearching] = useThunk(smartProductSearch);
-  const [getUserWishList] = useThunk(userWishList);
 
   const { dataAllProductCategory } = useSelector((state) => {
     return state.productCategories;
@@ -130,18 +128,12 @@ const OurStore = () => {
     return state.products;
   });
 
-  const userInfo = localStorage.getItem("userData");
-  const parsedUserData = JSON.parse(userInfo);
-
   // get category and brand for sidebar
   const getData = async () => {
     try {
       setIsLoading(true);
       await getDataAllCategory();
       await getDataAllBrand();
-      if (parsedUserData && !parsedUserData.note) {
-        await getUserWishList();
-      }
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
