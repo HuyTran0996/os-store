@@ -12,6 +12,7 @@ import {
   logoutUser,
   userWishList,
   getUserCart,
+  updateCartList,
 } from "../store/thunks/fetchUsers";
 
 import SearchIcon from "@mui/icons-material/Search";
@@ -29,6 +30,7 @@ const Header = () => {
   const [logOut] = useThunk(logoutUser);
   const [getUserWishList] = useThunk(userWishList);
   const [getCart] = useThunk(getUserCart);
+  const [updateCartListUser] = useThunk(updateCartList);
 
   const { dataUserCompare, dataUserCart } = useSelector((state) => {
     return state.users;
@@ -43,7 +45,8 @@ const Header = () => {
 
       if (parsedUserData && !parsedUserData.note) {
         await getUserWishList();
-        await getCart();
+        const userCart = localStorage.getItem("userCart");
+        updateCartListUser(JSON.parse(userCart));
       }
     } catch (err) {
       showToast(`${err.message}`, "error");
@@ -66,7 +69,6 @@ const Header = () => {
   };
 
   const handleLogOut = async () => {
-    console.log("999");
     try {
       setIsLoading(true);
 
@@ -165,7 +167,7 @@ const Header = () => {
 
           <Link to="/cart">
             <LocalMallIcon />
-            <Box className="cartCount">{dataUserCart.products.length}</Box>
+            <Box className="cartCount">{dataUserCart.length}</Box>
           </Link>
         </Box>
       </Box>

@@ -97,6 +97,7 @@ const OrderDetail = () => {
       },
     },
     {
+      field: "",
       headerName: "Product Brand",
       width: 150,
       renderCell: (params) => {

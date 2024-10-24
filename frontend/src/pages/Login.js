@@ -43,13 +43,14 @@ const Login = () => {
 
     try {
       const userData = await login({ email, password });
+      await getUserWishList();
+      const userCart = await getCart();
       showToast("Successfully Login", "success");
 
       const dataToStore = { email: userData.email, name: userData.name };
-      const stringifiedUserData = JSON.stringify(dataToStore);
-      localStorage.setItem("userData", stringifiedUserData);
-      await getUserWishList();
-      await getCart();
+
+      localStorage.setItem("userData", JSON.stringify(dataToStore));
+      localStorage.setItem("userCart", JSON.stringify(userCart));
       setEmail("");
       setPassword("");
       navigate("/");

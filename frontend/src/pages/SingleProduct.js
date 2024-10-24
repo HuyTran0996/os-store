@@ -13,7 +13,7 @@ import {
   rating,
   toggleWishlist,
 } from "../store/thunks/fetchProduct";
-import { updateCompareList } from "../store/thunks/fetchUsers";
+import { updateCompareList, updateCartList } from "../store/thunks/fetchUsers";
 
 import { showToast } from "../components/ToastMessage";
 import { Loading } from "../components/Loading/Loading";
@@ -33,8 +33,12 @@ const SingleProduct = () => {
   const params = useParams();
   const [star, setStar] = useState(3);
   const [comment, setComment] = useState("");
+  const [price, setPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [checkIfWish, setCheckIfWish] = useState(false);
+  const [checkIfCart, setCheckIfCart] = useState(false);
   const [bestProduct, setBestProduct] = useState([]);
+  const [cart, setCart] = useState([]);
   const [img, setImg] = useState(imageNotFound);
 
   const [checkIfCompare, setCheckIfCompare] = useState(false);
@@ -44,13 +48,17 @@ const SingleProduct = () => {
   const [ratingProduct] = useThunk(rating);
   const [toggleUserWishlist] = useThunk(toggleWishlist);
   const [updateCompareListUser] = useThunk(updateCompareList);
+  const [updateCartListUser] = useThunk(updateCartList);
 
   const { dataProduct } = useSelector((state) => {
     return state.products;
   });
-  const { dataUserWishList } = useSelector((state) => {
-    return state.users;
-  });
+
+  const { dataUserWishList, dataUserCompare, dataUserCart } = useSelector(
+    (state) => {
+      return state.users;
+    }
+  );
 
   const userInfo = localStorage.getItem("userData");
   const parsedUserData = JSON.parse(userInfo);
@@ -70,12 +78,27 @@ const SingleProduct = () => {
 
   useEffect(() => {
     getData();
-    const compareList = JSON.parse(localStorage.getItem("compareList") || "[]");
-    setCheckIfCompare(compareList.findIndex((item) => item.id === params.id));
   }, []);
 
   useEffect(() => {
+    const compareList = JSON.parse(localStorage.getItem("compareList") || "[]");
+    setCheckIfCompare(compareList.findIndex((item) => item.id === params.id));
+  }, [dataUserCompare]);
+
+  useEffect(() => {
+    setCheckIfWish(dataUserWishList.find((item) => item._id === params.id));
+  }, [dataUserWishList]);
+
+  useEffect(() => {
+    setCheckIfCart(
+      dataUserCart.findIndex((item) => item.product?._id === params.id)
+    );
+    setCart([...dataUserCart]);
+  }, [dataUserCart]);
+
+  useEffect(() => {
     setImg(dataProduct?.images?.[0].url || imageNotFound);
+    setPrice(dataProduct.price);
   }, [dataProduct]);
 
   const props = {
@@ -110,6 +133,17 @@ const SingleProduct = () => {
     }
   };
 
+  const handleToggleCart = () => {
+    const checkIfAdd = cart.findIndex((item) => item.product._id === params.id);
+    if (checkIfAdd >= 0) {
+      cart.splice(checkIfAdd, 1);
+    } else {
+      cart.push({ product: { _id: params.id } });
+    }
+    updateCartListUser(cart);
+    localStorage.setItem("userCart", JSON.stringify(cart));
+  };
+
   const handleToggleCompare = () => {
     const compareList = JSON.parse(localStorage.getItem("compareList") || "[]");
     const checkIfAdd = compareList.findIndex((item) => item.id === params.id);
@@ -118,18 +152,14 @@ const SingleProduct = () => {
     } else {
       compareList.push({ id: params.id });
     }
-    setCheckIfCompare(compareList.findIndex((item) => item.id === params.id));
 
     updateCompareListUser(compareList);
 
     localStorage.setItem("compareList", JSON.stringify(compareList));
   };
 
-  const checkIfWish = dataUserWishList.find((item) => item._id === params.id);
-
   const title = dataProduct.title;
   const imgCarousel = dataProduct.images;
-  const price = dataProduct.price;
   const totalRating = dataProduct.totalrating * 1;
   const ratings = dataProduct.ratings || [];
   const brand = dataProduct.brand;
@@ -145,6 +175,11 @@ const SingleProduct = () => {
     return v.tag === "variant";
   });
   const description = dataProduct.description;
+
+  const handleChangeImgAndPrice = (p) => {
+    setImg(p.images[0].url);
+    setPrice(p.price);
+  };
 
   return (
     <div className="singleProductPage">
@@ -220,10 +255,14 @@ const SingleProduct = () => {
                 <div className="variants">
                   <h3 className="product-heading">Variant:</h3>
                   <div className="wrapper">
-                    {variants?.map((s, index) => {
+                    {variants?.map((v, index) => {
                       return (
-                        <span key={`variant-${index}`} className="size">
-                          {s.variantName}
+                        <span
+                          key={`variant-${index}`}
+                          className="size"
+                          onClick={() => handleChangeImgAndPrice(v)}
+                        >
+                          {v.variantName}
                         </span>
                       );
                     })}
@@ -235,7 +274,11 @@ const SingleProduct = () => {
                   <div className="wrapper">
                     {sizes?.map((s, index) => {
                       return (
-                        <span key={`size-${index}`} className="size">
+                        <span
+                          key={`size-${index}`}
+                          className="size"
+                          onClick={() => handleChangeImgAndPrice(s)}
+                        >
                           {s.variantName}
                         </span>
                       );
@@ -250,7 +293,7 @@ const SingleProduct = () => {
                       return (
                         <div
                           key={`color-${index}`}
-                          onClick={() => setImg(c.images[0].url)}
+                          onClick={() => handleChangeImgAndPrice(c)}
                           className="color"
                           style={{
                             backgroundColor: c.colorCode,
@@ -270,12 +313,14 @@ const SingleProduct = () => {
 
                   <div className="buttonGroup">
                     <button
+                      onClick={handleToggleCart}
                       disabled={isLoading}
                       className="button"
                       type="submit"
                     >
-                      Add To Cart
+                      {checkIfCart >= 0 ? "Added To Cart" : "Add To Cart"}
                     </button>
+
                     <button disabled={isLoading} className="button buyNow">
                       Buy It Now
                     </button>

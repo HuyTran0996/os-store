@@ -7,12 +7,15 @@ import "../styles/ProductCard.scss";
 
 import { useThunk } from "../hook/use-thunk";
 import { toggleWishlist } from "../store/thunks/fetchProduct";
-import { updateCompareList } from "../store/thunks/fetchUsers";
+import { updateCompareList, updateCartList } from "../store/thunks/fetchUsers";
 import { showToast } from "../components/ToastMessage";
 
 import { FaHeart } from "react-icons/fa";
 import { AiOutlineHeart } from "react-icons/ai";
 import { IoGitCompareOutline } from "react-icons/io5";
+import { IoBagHandleOutline } from "react-icons/io5";
+import { IoBagHandleSharp } from "react-icons/io5";
+
 import prodCompare from "../images/prodCompare.svg";
 import add from "../images/add-cart.svg";
 import view from "../images/view.svg";
@@ -25,16 +28,21 @@ const ProductCard = (props) => {
   const [checkIfWish, setCheckIfWish] = useState(false);
   const [checkIfCompare, setCheckIfCompare] = useState(false);
   const [checkIfCart, setCheckIfCart] = useState(false);
+  const [cart, setCart] = useState([]);
+
   const [toggleUserWishlist] = useThunk(toggleWishlist);
   const [updateCompareListUser] = useThunk(updateCompareList);
+  const [updateCartListUser] = useThunk(updateCartList);
 
   const userInfo = localStorage.getItem("userData");
   const parsedUserData = JSON.parse(userInfo);
 
   //note: get the wishlist on main page, don't get wishlist here (Unnecessary API Calls for every single card)
-  const { dataUserWishList } = useSelector((state) => {
-    return state.users;
-  });
+  const { dataUserWishList, dataUserCompare, dataUserCart } = useSelector(
+    (state) => {
+      return state.users;
+    }
+  );
 
   const handelUserWishList = async () => {
     if (!parsedUserData) {
@@ -58,10 +66,18 @@ const ProductCard = (props) => {
   useEffect(() => {
     setCheckIfWish(dataUserWishList.find((item) => item._id === prod._id));
   }, [dataUserWishList]);
+
   useEffect(() => {
     const compareList = JSON.parse(localStorage.getItem("compareList") || "[]");
     setCheckIfCompare(compareList.findIndex((item) => item.id === prod._id));
-  }, []);
+  }, [dataUserCompare]);
+
+  useEffect(() => {
+    setCheckIfCart(
+      dataUserCart.findIndex((item) => item.product?._id === prod._id)
+    );
+    setCart([...dataUserCart]);
+  }, [dataUserCart]);
 
   const handleToggleCompare = () => {
     const compareList = JSON.parse(localStorage.getItem("compareList") || "[]");
@@ -76,6 +92,17 @@ const ProductCard = (props) => {
     updateCompareListUser(compareList);
 
     localStorage.setItem("compareList", JSON.stringify(compareList));
+  };
+
+  const handleToggleCart = () => {
+    const checkIfAdd = cart.findIndex((item) => item.product._id === prod._id);
+    if (checkIfAdd >= 0) {
+      cart.splice(checkIfAdd, 1);
+    } else {
+      cart.push({ product: { _id: prod._id } });
+    }
+    updateCartListUser(cart);
+    localStorage.setItem("userCart", JSON.stringify(cart));
   };
 
   return (
@@ -106,8 +133,12 @@ const ProductCard = (props) => {
             />
           </button>
 
-          <button disabled={isLoading}>
-            <img src={add} alt="addCart" />
+          <button onClick={handleToggleCart} disabled={isLoading}>
+            {checkIfCart >= 0 ? (
+              <IoBagHandleSharp style={{ color: "red" }} className="icon" />
+            ) : (
+              <IoBagHandleOutline className="icon" />
+            )}
           </button>
           {/* <button disabled={isLoading}>
             <img src={view} alt="view" />

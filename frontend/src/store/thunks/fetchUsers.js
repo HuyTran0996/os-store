@@ -10,6 +10,12 @@ export const updateCompareList = createAsyncThunk(
     return compareList;
   }
 );
+export const updateCartList = createAsyncThunk(
+  "users/updateCartList",
+  async (cartList) => {
+    return cartList;
+  }
+);
 
 export const userWishList = createAsyncThunk("users/userWishList", async () => {
   const wishlist = await apiService.get("/user/wishlist");
@@ -19,7 +25,7 @@ export const userWishList = createAsyncThunk("users/userWishList", async () => {
 
 export const getUserCart = createAsyncThunk("users/getUserCart", async () => {
   const cart = await apiService.get("/order/cart");
-  return cart.data.cart;
+  return cart.data.cart.products;
 });
 
 export const loginUser = createAsyncThunk(
@@ -37,6 +43,7 @@ export const loginUser = createAsyncThunk(
 export const logoutUser = createAsyncThunk("users/logout", async () => {
   const user = await apiService.get("/auth/logout");
   localStorage.removeItem("userData");
+  localStorage.removeItem("userCart");
   return user.data.user;
 });
 
