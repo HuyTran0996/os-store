@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Box, TextField, Button } from "@mui/material";
 import { useThunk } from "../hook/use-thunk";
 import { getAProduct } from "../store/thunks/fetchProduct";
 import { updateCartList } from "../store/thunks/fetchUsers";
+import { addToCart } from "../store/thunks/fetchOrders";
 import { Loading } from "../components/Loading/Loading";
 import { showToast } from "../components/ToastMessage";
 
@@ -44,6 +45,14 @@ const Product = ({
     setPrice(p.price);
     updateVariantUser(prod._id, p._id);
   };
+
+  useEffect(() => {
+    const initialVariant = prod.variant.find((v) => v._id === variantUser);
+    if (initialVariant) {
+      setPrice(initialVariant.price);
+      setImg(initialVariant.images[0]?.url || imageNotFound);
+    }
+  }, [prod, variantUser]);
 
   return (
     <div key={`product-${prod._id}`} className="compare-product-card">
@@ -92,6 +101,7 @@ const Product = ({
                   className="color"
                   style={{
                     backgroundColor: c.colorCode,
+                    border: variantUser === c._id ? "3px solid aqua" : "",
                   }}
                 />
               );
@@ -108,6 +118,9 @@ const Product = ({
                   key={`size-${index}`}
                   className="size"
                   onClick={() => handleChangeImgAndPrice(s)}
+                  style={{
+                    border: variantUser === s._id ? "3px solid aqua" : "",
+                  }}
                 >
                   {s.variantName}
                 </span>
@@ -125,6 +138,9 @@ const Product = ({
                   key={`size-${index}`}
                   className="size"
                   onClick={() => handleChangeImgAndPrice(v)}
+                  style={{
+                    border: variantUser === v._id ? "3px solid aqua" : "",
+                  }}
                 >
                   {v.variantName}
                 </span>
@@ -151,6 +167,7 @@ const Product = ({
 };
 
 const Cart = () => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [productList, setProductList] = useState([]);
   const [quantityUser, setQuantityUser] = useState({});
@@ -159,6 +176,7 @@ const Cart = () => {
 
   const [getAProductById] = useThunk(getAProduct);
   const [updateCartListUser] = useThunk(updateCartList);
+  const [createCart] = useThunk(addToCart);
 
   const { dataUserCart } = useSelector((state) => state.users);
 
@@ -169,10 +187,12 @@ const Cart = () => {
       const products = await Promise.all(
         dataUserCart.map(async (item) => {
           const response = await getAProductById(item.product._id);
+          const initialVariant =
+            item.variantSelected || response.variant[0]._id;
           return {
             ...response,
-            quantityUser: 1,
-            variantUser: response.variant[0]._id,
+            quantityUser: item.count || 1,
+            variantUser: initialVariant,
           };
         })
       );
@@ -183,6 +203,12 @@ const Cart = () => {
         return acc;
       }, {});
       setQuantityUser(initialQuantities);
+
+      const initialVariants = products.reduce((acc, product) => {
+        acc[product._id] = product.variantUser;
+        return acc;
+      }, {});
+      setVariantUser(initialVariants);
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
@@ -190,6 +216,10 @@ const Cart = () => {
     }
   };
 
+  // useEffect(() => {
+  //   const userCart = localStorage.getItem("userCart");
+  //   // updateCartListUser(JSON.parse(userCart));
+  // }, []);
   useEffect(() => {
     getData();
     setCart([...dataUserCart]);
@@ -214,14 +244,29 @@ const Cart = () => {
     localStorage.setItem("userCart", JSON.stringify(cart));
   };
 
-  const handleCheckOut = () => {
-    const checkoutData = productList.map((product) => ({
-      ...product,
-      quantityUser: quantityUser[product._id] || 1,
+  const handleCheckOut = async () => {
+    const checkoutInfo = productList.map((product) => ({
+      _id: product._id,
+      count: quantityUser[product._id] || 1,
+      variantId: variantUser[product._id],
+    }));
+    const checkoutInfo2 = productList.map((product) => ({
+      product: { _id: product._id },
+      count: quantityUser[product._id] || 1,
+      variantSelected: variantUser[product._id],
     }));
 
-    console.log("Checkout Data:", checkoutData);
-    // Proceed with the checkout process...
+    try {
+      setIsLoading(true);
+      await createCart(checkoutInfo);
+      updateCartListUser(checkoutInfo2);
+      localStorage.setItem("userCart", JSON.stringify(checkoutInfo2));
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    } finally {
+      setIsLoading(false);
+      navigate("/checkout");
+    }
   };
 
   const calculateSubtotal = () =>

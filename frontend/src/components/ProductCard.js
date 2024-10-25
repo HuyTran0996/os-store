@@ -99,7 +99,7 @@ const ProductCard = (props) => {
     if (checkIfAdd >= 0) {
       cart.splice(checkIfAdd, 1);
     } else {
-      cart.push({ product: { _id: prod._id } });
+      cart.push({ product: { _id: prod._id }, count: 1 });
     }
     updateCartListUser(cart);
     localStorage.setItem("userCart", JSON.stringify(cart));

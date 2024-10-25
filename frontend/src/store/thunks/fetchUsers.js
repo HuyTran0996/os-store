@@ -23,6 +23,13 @@ export const userWishList = createAsyncThunk("users/userWishList", async () => {
   return wishlist.data.wishlist;
 });
 
+export const getUserCartForCheckOut = createAsyncThunk(
+  "users/getUserCartForCheckOut",
+  async () => {
+    const cart = await apiService.get("/order/cart");
+    return cart.data.cart;
+  }
+);
 export const getUserCart = createAsyncThunk("users/getUserCart", async () => {
   const cart = await apiService.get("/order/cart");
   return cart.data.cart.products;
