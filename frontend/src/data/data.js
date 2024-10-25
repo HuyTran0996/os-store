@@ -4,6 +4,7 @@ import StoreIcon from "@mui/icons-material/Store";
 import BookIcon from "@mui/icons-material/Book";
 import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
 import PersonIcon from "@mui/icons-material/Person";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import service from "../images/service/service.png";
 import service2 from "../images/service/service-02.png";
@@ -39,8 +40,13 @@ export const NAVIGATION = [
     icon: <PersonIcon />,
     children: [
       {
+        segment: "profile",
+        title: "Profile",
+        icon: <AccountCircleIcon />,
+      },
+      {
         segment: "orders",
-        title: "Orders",
+        title: "My Orders",
         icon: <AssignmentIcon />,
       },
     ],

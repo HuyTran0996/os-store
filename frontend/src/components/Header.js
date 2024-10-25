@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { NavLink, Link, useNavigate } from "react-router-dom";
-import { Box, TextField, Button } from "@mui/material";
+import { Box, TextField, Button, Badge, Menu, MenuItem } from "@mui/material";
 
 import "../styles/Header.scss";
 import { useThunk } from "../hook/use-thunk";
@@ -20,6 +20,8 @@ import CompareIcon from "@mui/icons-material/Compare";
 import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
 import LoginIcon from "@mui/icons-material/Login";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 
 import logo from "../images/logo.png";
 
@@ -27,6 +29,8 @@ const Header = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [anchorEl, setAnchorEl] = useState(null);
+
   const [logOut] = useThunk(logoutUser);
   const [getUserWishList] = useThunk(userWishList);
   const [getCart] = useThunk(getUserCart);
@@ -38,6 +42,14 @@ const Header = () => {
 
   const userInfo = localStorage.getItem("userData");
   const parsedUserData = JSON.parse(userInfo);
+
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const getData = async () => {
     try {
@@ -69,6 +81,7 @@ const Header = () => {
   };
 
   const handleLogOut = async () => {
+    setAnchorEl(null);
     try {
       setIsLoading(true);
 
@@ -142,12 +155,13 @@ const Header = () => {
         {/* header-upper-links */}
         <Box className="upperLink">
           <Link to="/compare-product">
-            <CompareIcon />
+            <Badge badgeContent={dataUserCompare.length || 0} color="secondary">
+              <CompareIcon />
+            </Badge>
             <Box className="smallerLGhide" component="p">
               Compare <br />
               Products
             </Box>
-            <Box className="cartCount">{dataUserCompare.length}</Box>
           </Link>
 
           <Link to="/wishlist">
@@ -157,17 +171,46 @@ const Header = () => {
               Wishlist
             </Box>
           </Link>
-
-          <Link onClick={handleLogOut}>
-            <LoginIcon />
+          <Link>
+            <AccountCircleIcon onClick={handleClick} />
             <Box className="smallerLGhide" component="p">
-              Log <br /> In
+              User <br /> Profile
             </Box>
+            <Menu
+              id="demo-positioned-menu"
+              aria-labelledby="demo-positioned-button"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+            >
+              <MenuItem onClick={handleClose}>
+                <Link to="/profile">
+                  <AccountCircleIcon sx={{ marginRight: "10px" }} /> Profile
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <Link to="/orders">
+                  <AssignmentIcon sx={{ marginRight: "10px" }} /> My orders
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleLogOut}>
+                <LoginIcon sx={{ marginRight: "10px" }} /> Log Out
+              </MenuItem>
+            </Menu>
           </Link>
 
           <Link to="/cart">
-            <LocalMallIcon />
-            <Box className="cartCount">{dataUserCart.length}</Box>
+            <Badge badgeContent={dataUserCart.length || 0} color="success">
+              <LocalMallIcon />
+            </Badge>
           </Link>
         </Box>
       </Box>

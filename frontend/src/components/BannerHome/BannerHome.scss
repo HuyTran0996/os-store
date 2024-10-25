@@ -17,8 +17,8 @@
 
     img {
       width: 100vw;
-
       object-fit: cover;
+
       @include lg {
         height: 100%;
       }
