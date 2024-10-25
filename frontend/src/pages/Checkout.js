@@ -58,6 +58,9 @@ const Checkout = () => {
         // const userCart = localStorage.getItem("userCart");
         const userCart = await getCart();
         setCart(userCart);
+      } else {
+        showToast(`please log in your account`, "error");
+        return;
       }
       showToast(`Applied Coupon`, "success");
     } catch (err) {
@@ -72,6 +75,9 @@ const Checkout = () => {
 
       if (parsedUserData && !parsedUserData.note) {
         await sendOrder(shippingAddress);
+      } else {
+        showToast(`please log in your account`, "error");
+        return;
       }
       showToast(
         `Thank you for choosing us, we'll deliver the products to you within 5 days`,

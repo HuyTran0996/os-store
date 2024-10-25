@@ -171,41 +171,42 @@ const Header = () => {
               Wishlist
             </Box>
           </Link>
-          <Link>
-            <AccountCircleIcon onClick={handleClick} />
+
+          <div onClick={handleClick}>
+            <AccountCircleIcon />
             <Box className="smallerLGhide" component="p">
               User <br /> Profile
             </Box>
-            <Menu
-              id="demo-positioned-menu"
-              aria-labelledby="demo-positioned-button"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-            >
-              <MenuItem onClick={handleClose}>
-                <Link to="/profile">
-                  <AccountCircleIcon sx={{ marginRight: "10px" }} /> Profile
-                </Link>
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <Link to="/orders">
-                  <AssignmentIcon sx={{ marginRight: "10px" }} /> My orders
-                </Link>
-              </MenuItem>
-              <MenuItem onClick={handleLogOut}>
-                <LoginIcon sx={{ marginRight: "10px" }} /> Log Out
-              </MenuItem>
-            </Menu>
-          </Link>
+          </div>
+          <Menu
+            id="demo-positioned-menu"
+            aria-labelledby="demo-positioned-button"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+          >
+            <MenuItem onClick={handleClose}>
+              <Link to="/profile">
+                <AccountCircleIcon sx={{ marginRight: "10px" }} /> Profile
+              </Link>
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <Link to="/orders">
+                <AssignmentIcon sx={{ marginRight: "10px" }} /> My orders
+              </Link>
+            </MenuItem>
+            <MenuItem onClick={handleLogOut}>
+              <LoginIcon sx={{ marginRight: "10px" }} /> Log Out
+            </MenuItem>
+          </Menu>
 
           <Link to="/cart">
             <Badge badgeContent={dataUserCart.length || 0} color="success">

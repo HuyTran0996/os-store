@@ -8,9 +8,11 @@
     margin-bottom: 0;
     transition: 0.3s;
   }
-  a {
+  a,
+  div {
     color: white;
     transition: 0.3s;
+    cursor: pointer;
     &:hover {
       color: orange;
     }
@@ -42,7 +44,8 @@
     display: flex;
     align-items: center;
     gap: 30px;
-    a {
+    a,
+    div {
       position: relative;
       display: flex;
       align-items: center;
