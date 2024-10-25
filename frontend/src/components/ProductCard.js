@@ -16,11 +16,6 @@ import { IoGitCompareOutline } from "react-icons/io5";
 import { IoBagHandleOutline } from "react-icons/io5";
 import { IoBagHandleSharp } from "react-icons/io5";
 
-import prodCompare from "../images/prodCompare.svg";
-import add from "../images/add-cart.svg";
-import view from "../images/view.svg";
-import wish from "../images/wish.svg";
-
 const ProductCard = (props) => {
   const { grid, prod } = props;
   const location = useLocation();
@@ -125,6 +120,7 @@ const ProductCard = (props) => {
             )}
           </button>
         </div>
+
         <div className="action-bar">
           <button onClick={handleToggleCompare} disabled={isLoading}>
             <IoGitCompareOutline
@@ -140,9 +136,6 @@ const ProductCard = (props) => {
               <IoBagHandleOutline className="icon" />
             )}
           </button>
-          {/* <button disabled={isLoading}>
-            <img src={view} alt="view" />
-          </button> */}
         </div>
 
         <Link to={`/product/${prod?._id}`}>

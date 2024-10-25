@@ -172,7 +172,7 @@ const Header = () => {
             </Box>
           </Link>
 
-          <div onClick={handleClick}>
+          <div className="user" onClick={handleClick}>
             <AccountCircleIcon />
             <Box className="smallerLGhide" component="p">
               User <br /> Profile

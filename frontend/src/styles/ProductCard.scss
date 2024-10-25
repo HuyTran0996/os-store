@@ -5,13 +5,18 @@
   width: 100%;
   .product-card {
     display: flex;
-    gap: 20px;
-    .product-image {
-      width: 270px;
-      height: auto;
+    margin-bottom: 20px;
+
+    a {
+      display: flex;
+      gap: 20px;
+      .product-image {
+        width: 270px;
+        height: auto;
+      }
     }
     .action-bar {
-      top: 17%;
+      top: 10%;
     }
   }
 }
@@ -24,6 +29,9 @@
         margin: auto;
         display: block;
       }
+    }
+    .action-bar {
+      top: 7%;
     }
   }
 }

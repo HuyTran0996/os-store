@@ -9,7 +9,7 @@
     transition: 0.3s;
   }
   a,
-  div {
+  .user {
     color: white;
     transition: 0.3s;
     cursor: pointer;
@@ -45,7 +45,7 @@
     align-items: center;
     gap: 30px;
     a,
-    div {
+    .user {
       position: relative;
       display: flex;
       align-items: center;
