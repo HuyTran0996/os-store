@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 
@@ -24,15 +24,13 @@ const responsive = {
   },
 };
 
-const IMG_URL = "https://image.tmdb.org/t/p/original";
-
 const BannerHome = () => {
   const { dataAllBanner } = useSelector((state) => {
     return state.banner;
   });
 
   const data = dataAllBanner?.banners || [];
-  console.log("pôpppo", data);
+
   return (
     <Carousel
       className="carouselBanner"
