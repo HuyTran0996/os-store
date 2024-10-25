@@ -13,6 +13,7 @@ import BlogCard from "../components/BlogCard";
 import SpecialProduct from "../components/SpecialProduct";
 import Container from "../components/Container";
 import CarouselShow from "../components/CarouselShow";
+import BannerHome from "../components/BannerHome/BannerHome";
 import { Loading } from "../components/Loading/Loading";
 import { services } from "../data/data";
 
@@ -80,109 +81,112 @@ const Home = () => {
       {isLoading ? (
         <Loading message="Loading..." />
       ) : (
-        <Box className="homePage">
-          <Box className="banner px">
-            <div className="main-banner">
-              <img src={mainBanner} alt="main-banner" />
-              <div className="main-banner-content">
-                <h4>{banners[0]?.title}</h4>
-                <h5>{banners[0]?.prodName}</h5>
-                <p>{banners[0]?.description}</p>
-                <Link
-                  to={`/product/${banners[0]?.productID}`}
-                  className="button"
-                >
-                  Buy Now
-                </Link>
-              </div>
-            </div>
-
-            <div className="subBanner">
-              {banners.slice(1).map((banner, index) => (
-                <Link
-                  key={`${index}-banner`}
-                  className={`small-banner cl-${index}`}
-                  to={`/product/${banner.productID}`}
-                >
-                  <img src={banner.images[0]?.url} alt="main-banner" />
-                  <div className="small-banner-content">
-                    <h4>{banner.title}</h4>
-                    <h5>{banner.prodName}</h5>
-                    <p>{banner.description}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </Box>
-
-          <Box className="contents">
-            <Box className="services px">
-              {services.map((item, index) => {
-                return (
-                  <div className="item" key={index}>
-                    <img src={item.image} alt="services" />
-                    <div>
-                      <h6>{item.title}</h6>
-                      <p className="mb-0">{item.tagline}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </Box>
-
-            <Box className="bestSeller px">
-              <h3 className="section-heading">Best Sellers</h3>
-              <CarouselShow>
-                {bestProduct.products?.length > 0 &&
-                  bestProduct.products?.map((prod, index) => (
-                    <ProductCard key={`best-${index}`} prod={prod} />
-                  ))}
-              </CarouselShow>
-            </Box>
-
-            <Box className="brands">
-              <Marquee autoFill={true} className="marquee">
-                {brands.map((brand, index) => (
+        <>
+          <BannerHome />
+          <Box className="homePage">
+            <Box className="banner px">
+              <div className="main-banner">
+                <img src={mainBanner} alt="main-banner" />
+                <div className="main-banner-content">
+                  <h4>{banners[0]?.title}</h4>
+                  <h5>{banners[0]?.prodName}</h5>
+                  <p>{banners[0]?.description}</p>
                   <Link
-                    to={`/product?category=${brand.title}`}
-                    key={`brand-${index}`}
-                    className="element"
+                    to={`/product/${banners[0]?.productID}`}
+                    className="button"
                   >
-                    <img src={brand.images[0].url} alt="brand" />
+                    Buy Now
                   </Link>
-                ))}
-              </Marquee>
-            </Box>
+                </div>
+              </div>
 
-            <Box className="newArrivals px">
-              <h3 className="section-heading">New Arrivals</h3>
-              <CarouselShow>
-                {newProduct.products?.length > 0 &&
-                  newProduct.products?.map((prod, index) => (
-                    <ProductCard key={`best-${index}`} prod={prod} />
-                  ))}
-              </CarouselShow>
-            </Box>
-
-            <Box className="categories px">
-              <h3 className="section-heading">Categories</h3>
-              <div className="wrapper">
-                {categories.map((category, index) => (
+              <div className="subBanner">
+                {banners.slice(1).map((banner, index) => (
                   <Link
-                    to={`/product?category=${category.title}`}
-                    key={`category-${index}`}
+                    key={`${index}-banner`}
+                    className={`small-banner cl-${index}`}
+                    to={`/product/${banner.productID}`}
                   >
-                    <div>
-                      <h5 className="title">{category.title}</h5>
-                      <p>view all</p>
+                    <img src={banner.images[0]?.url} alt="main-banner" />
+                    <div className="small-banner-content">
+                      <h4>{banner.title}</h4>
+                      <h5>{banner.prodName}</h5>
+                      <p>{banner.description}</p>
                     </div>
-                    <img src={category.images[0].url} alt="category" />
                   </Link>
                 ))}
               </div>
             </Box>
+
+            <Box className="contents">
+              <Box className="services px">
+                {services.map((item, index) => {
+                  return (
+                    <div className="item" key={index}>
+                      <img src={item.image} alt="services" />
+                      <div>
+                        <h6>{item.title}</h6>
+                        <p className="mb-0">{item.tagline}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </Box>
+
+              <Box className="bestSeller px">
+                <h3 className="section-heading">Best Sellers</h3>
+                <CarouselShow>
+                  {bestProduct.products?.length > 0 &&
+                    bestProduct.products?.map((prod, index) => (
+                      <ProductCard key={`best-${index}`} prod={prod} />
+                    ))}
+                </CarouselShow>
+              </Box>
+
+              <Box className="brands">
+                <Marquee autoFill={true} className="marquee">
+                  {brands.map((brand, index) => (
+                    <Link
+                      to={`/product?category=${brand.title}`}
+                      key={`brand-${index}`}
+                      className="element"
+                    >
+                      <img src={brand.images[0].url} alt="brand" />
+                    </Link>
+                  ))}
+                </Marquee>
+              </Box>
+
+              <Box className="newArrivals px">
+                <h3 className="section-heading">New Arrivals</h3>
+                <CarouselShow>
+                  {newProduct.products?.length > 0 &&
+                    newProduct.products?.map((prod, index) => (
+                      <ProductCard key={`best-${index}`} prod={prod} />
+                    ))}
+                </CarouselShow>
+              </Box>
+
+              <Box className="categories px">
+                <h3 className="section-heading">Categories</h3>
+                <div className="wrapper">
+                  {categories.map((category, index) => (
+                    <Link
+                      to={`/product?category=${category.title}`}
+                      key={`category-${index}`}
+                    >
+                      <div>
+                        <h5 className="title">{category.title}</h5>
+                        <p>view all</p>
+                      </div>
+                      <img src={category.images[0].url} alt="category" />
+                    </Link>
+                  ))}
+                </div>
+              </Box>
+            </Box>
           </Box>
-        </Box>
+        </>
       )}
     </>
   );
