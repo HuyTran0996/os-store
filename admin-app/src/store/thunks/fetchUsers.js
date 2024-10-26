@@ -22,7 +22,7 @@ export const logoutAdmin = createAsyncThunk("users/logout", async () => {
 });
 
 export const forgotPassword = createAsyncThunk(
-  "users/loginAdmin",
+  "users/forgotPassword",
   async ({ email }) => {
     const frontEndLink = `${window.location.origin}/reset-password`;
 
@@ -36,7 +36,7 @@ export const forgotPassword = createAsyncThunk(
 );
 
 export const resetPassword = createAsyncThunk(
-  "users/loginAdmin",
+  "users/resetPassword",
   async ({ password, token }) => {
     const message = await apiService.patch(`/auth/resetPassword/${token}`, {
       password,
