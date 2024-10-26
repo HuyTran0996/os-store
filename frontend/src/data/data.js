@@ -1,9 +1,8 @@
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import AssignmentIcon from "@mui/icons-material/Assignment";
+
 import StoreIcon from "@mui/icons-material/Store";
 import BookIcon from "@mui/icons-material/Book";
 import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
-import PersonIcon from "@mui/icons-material/Person";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import service from "../images/service/service.png";
@@ -35,21 +34,9 @@ export const NAVIGATION = [
     icon: <ConnectWithoutContactIcon />,
   },
   {
-    segment: "customers",
+    segment: "profile",
     title: "User",
-    icon: <PersonIcon />,
-    children: [
-      {
-        segment: "profile",
-        title: "Profile",
-        icon: <AccountCircleIcon />,
-      },
-      {
-        segment: "orders",
-        title: "My Orders",
-        icon: <AssignmentIcon />,
-      },
-    ],
+    icon: <AccountCircleIcon />,
   },
 ];
 ////////menu list end//////////

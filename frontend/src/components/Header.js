@@ -21,7 +21,6 @@ import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
 import LoginIcon from "@mui/icons-material/Login";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import AssignmentIcon from "@mui/icons-material/Assignment";
 
 import logo from "../images/logo.png";
 
@@ -198,11 +197,7 @@ const Header = () => {
                 <AccountCircleIcon sx={{ marginRight: "10px" }} /> Profile
               </Link>
             </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <Link to="/orders">
-                <AssignmentIcon sx={{ marginRight: "10px" }} /> My orders
-              </Link>
-            </MenuItem>
+
             <MenuItem onClick={handleLogOut}>
               <LoginIcon sx={{ marginRight: "10px" }} /> Log Out
             </MenuItem>
