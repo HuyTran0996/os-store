@@ -17,7 +17,8 @@ router.get(
   isAdmin,
   userCtrl.userProductOrderCompare
 );
-router.get("/:id", authMiddleware, userCtrl.getAUser);
+router.get("/:id", authMiddleware, userCtrl.getAUser("admin"));
+router.get("/", authMiddleware, userCtrl.getAUser("self"));
 
 router.put("/editUser", authMiddleware, isAdmin, userCtrl.updatedUser("admin"));
 router.put("/editUserSelf", authMiddleware, userCtrl.updatedUser("self"));
@@ -29,7 +30,7 @@ router.put(
   isAdmin,
   userCtrl.blockUser("admin")
 );
-router.put("/blockUserSelf/:id", authMiddleware, userCtrl.blockUser("self"));
+router.put("/blockUserSelf", authMiddleware, userCtrl.blockUser("self"));
 router.put("/unblockUser/:id", authMiddleware, isAdmin, userCtrl.unblockUser);
 
 router.post(

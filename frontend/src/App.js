@@ -23,6 +23,7 @@ import TermAndConditions from "./pages/TermAndConditions";
 import SingleProduct from "./pages/SingleProduct";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -41,6 +42,8 @@ function App() {
           <Route path="checkout" element={<Checkout />} />
           <Route path="compare-product" element={<CompareProduct />} />
           <Route path="wishlist" element={<Wishlist />} />
+
+          <Route path="profile" element={<Profile />} />
 
           <Route path="login" element={<Login />} />
           <Route path="forgot-password" element={<Forgotpassword />} />

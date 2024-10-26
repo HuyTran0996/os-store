@@ -38,6 +38,9 @@ exports.login = (action) =>
     const findUser = await User.findOne({ email }).select("+password");
 
     if (findUser && (await findUser.isPasswordMatched(password))) {
+      if (findUser.isBlocked) {
+        throw new AppError("Account is no longer available", 401);
+      }
       if (
         action === "admin" &&
         findUser.role !== "admin" &&
@@ -59,10 +62,18 @@ exports.login = (action) =>
       findUser.password = undefined;
       res.cookie("refreshToken", refreshToken, cookieOption);
 
+      let responseData = {
+        email: findUser.email,
+        name: findUser.name,
+        phone: findUser.phone,
+        wishlist: findUser.wishlist,
+      };
+
       res.status(200).json({
         status: "success",
-        token: refreshToken,
-        user: findUser,
+        //note: cookie is working so no need to send token for user
+        // token: refreshToken,
+        user: responseData,
       });
     } else {
       throw new AppError("Incorrect email or password", 401);

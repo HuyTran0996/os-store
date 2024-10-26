@@ -15,24 +15,17 @@ const { generateToken, cookieOption } = require("../config/jwtToken");
 
 exports.updatedUser = (action) =>
   asyncHandler(async (req, res) => {
+    let ID;
+    const { name, phone } = req.body;
+
     if (action === "self") {
       const { _id } = req.user;
-      const { name, phone } = req.body;
 
       if (!name && !phone)
         throw new AppError("Please provide all information", 400);
-
-      const updateUser = await User.findByIdAndUpdate(
-        _id,
-        { name, phone },
-        { new: true }
-      );
-      res.status(200).json({
-        status: "success",
-        updateUser,
-      });
+      ID = _id;
     } else if (action === "admin") {
-      const { id, name, phone } = req.body;
+      const { id } = req.body;
 
       validateMongodbId(id);
       if (!id && !name && !phone)
@@ -43,16 +36,24 @@ exports.updatedUser = (action) =>
       if (req.user.role === "admin" && roleUser.role === "manager")
         throw new AppError("Admins can't change managers.", 403);
 
-      const updateUser = await User.findByIdAndUpdate(
-        id,
-        { name, phone },
-        { new: true }
-      );
-      res.status(200).json({
-        status: "success",
-        updateUser,
-      });
+      ID = id;
     }
+
+    const updateUser = await User.findByIdAndUpdate(
+      ID,
+      { name, phone },
+      { new: true }
+    );
+    let responseData = {
+      email: updateUser.email,
+      name: updateUser.name,
+      phone: updateUser.phone,
+      wishlist: updateUser.wishlist,
+    };
+    res.status(200).json({
+      status: "success",
+      updateUser: responseData,
+    });
   });
 
 exports.changeRole = asyncHandler(async (req, res) => {
@@ -121,16 +122,37 @@ exports.getAllUser = asyncHandler(async (req, res) => {
   });
 });
 
-exports.getAUser = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  validateMongodbId(id);
-  const getUser = await User.findById(id);
-  if (!getUser) throw new AppError("User is not found", 404);
-  res.status(200).json({
-    status: "success",
-    getUser,
+exports.getAUser = (action) =>
+  asyncHandler(async (req, res) => {
+    let ID;
+    if (action === "admin") {
+      const { id } = req.params;
+      validateMongodbId(id);
+      ID = id;
+    }
+    if (action === "self") {
+      ID = req.user._id;
+    }
+    const getUser = await User.findById(ID).populate("wishlist");
+    if (!getUser) throw new AppError("User not found", 404);
+
+    let responseData;
+    if (action === "self") {
+      responseData = {
+        email: getUser.email,
+        name: getUser.name,
+        phone: getUser.phone,
+        wishlist: getUser.wishlist,
+      };
+    } else {
+      responseData = getUser;
+    }
+
+    res.status(200).json({
+      status: "success",
+      getUser: responseData,
+    });
   });
-});
 
 exports.deleteAUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -144,15 +166,20 @@ exports.deleteAUser = asyncHandler(async (req, res) => {
 
 exports.blockUser = (action) =>
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    validateMongodbId(id);
+    let ID;
     if (action === "admin") {
+      const { id } = req.params;
+      validateMongodbId(id);
       const roleUser = await User.findById(id);
       if (req.user.role === "admin" && roleUser.role === "manager")
         throw new AppError("Admins cannot block managers.", 403);
+      ID = id;
+    }
+    if (action === "self") {
+      ID = req.user._id;
     }
     const blockUser = await User.findByIdAndUpdate(
-      id,
+      ID,
       { isBlocked: true },
       { new: true }
     );

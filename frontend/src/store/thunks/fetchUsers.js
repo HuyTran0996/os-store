@@ -30,6 +30,11 @@ export const getUserCartForCheckOut = createAsyncThunk(
     return cart.data.cart;
   }
 );
+export const getUserInfo = createAsyncThunk("users/getUserInfo", async () => {
+  const user = await apiService.get(`/user`);
+  return user.data.getUser;
+});
+
 export const getUserCart = createAsyncThunk("users/getUserCart", async () => {
   const cart = await apiService.get("/order/cart");
   return cart.data.cart.products;
@@ -55,7 +60,7 @@ export const logoutUser = createAsyncThunk("users/logout", async () => {
 });
 
 export const forgotPassword = createAsyncThunk(
-  "users/loginAdmin",
+  "users/forgotPassword",
   async ({ email }) => {
     const frontEndLink = `${window.location.origin}/reset-password`;
 
@@ -69,7 +74,7 @@ export const forgotPassword = createAsyncThunk(
 );
 
 export const resetPassword = createAsyncThunk(
-  "users/loginAdmin",
+  "users/resetPassword",
   async ({ password, token }) => {
     const message = await apiService.patch(`/auth/resetPassword/${token}`, {
       password,
@@ -79,15 +84,17 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
-export const updateNameEmail = createAsyncThunk(
-  "users/updateNameEmail",
-  async ({ id, name, phone }) => {
-    const res = await apiService.put(`/user/editUser`, { id, name, phone });
+export const updateNamePhone = createAsyncThunk(
+  "users/updateNamePhone",
+  async ({ name, phone }) => {
+    const res = await apiService.put(`/user/editUserSelf`, { name, phone });
     return res.data.data;
   }
 );
 
-export const blockUser = createAsyncThunk("users/blockUser", async (userId) => {
-  const res = await apiService.put(`/user/blockUser/${userId}`);
+export const blockUser = createAsyncThunk("users/blockUser", async () => {
+  const res = await apiService.put(`/user/blockUserSelf`);
+  localStorage.removeItem("userData");
+  localStorage.removeItem("userCart");
   return res.data.data;
 });

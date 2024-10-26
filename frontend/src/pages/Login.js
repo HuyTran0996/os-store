@@ -45,9 +45,10 @@ const Login = () => {
       const userData = await login({ email, password });
       await getUserWishList();
       const userCart = await getCart();
+
       showToast("Successfully Login", "success");
 
-      const dataToStore = { email: userData.email, name: userData.name };
+      const dataToStore = { _id: userData._id };
 
       localStorage.setItem("userData", JSON.stringify(dataToStore));
       localStorage.setItem("userCart", JSON.stringify(userCart));
