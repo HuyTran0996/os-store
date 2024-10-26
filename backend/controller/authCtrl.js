@@ -23,7 +23,16 @@ exports.signup = asyncHandler(async (req, res) => {
     const url = `${req.protocol}://${req.get("host")}/me`;
     await new Email(newUser, url).sendWelcome();
 
-    res.status(201).json({ status: "success", newUser: newUser });
+    let responseData = {
+      _id: newUser._id,
+      email: newUser.email,
+      name: newUser.name,
+      phone: newUser.phone,
+      wishlist: newUser.wishlist,
+    };
+    const refreshToken = await generateToken(newUser._id);
+    res.cookie("refreshToken", refreshToken, cookieOption);
+    res.status(201).json({ status: "success", user: responseData });
   } else {
     throw new AppError("User already exists", 409);
   }

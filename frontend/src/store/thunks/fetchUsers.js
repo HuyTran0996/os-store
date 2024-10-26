@@ -40,6 +40,19 @@ export const getUserCart = createAsyncThunk("users/getUserCart", async () => {
   return cart.data.cart.products;
 });
 
+export const signupUser = createAsyncThunk(
+  "users/signupUser",
+  async ({ name, email, phone, password }) => {
+    const admin = await apiService.post("/auth/register", {
+      name,
+      email,
+      phone,
+      password,
+    });
+
+    return admin.data.user;
+  }
+);
 export const loginUser = createAsyncThunk(
   "users/loginUser",
   async ({ email, password }) => {

@@ -24,8 +24,36 @@
 
       .input {
         margin-bottom: 20px;
-        &:nth-of-type(2) {
+
+        &.last-input {
           margin-bottom: 10px;
+        }
+      }
+
+      .PhoneInput {
+        margin-bottom: 20px;
+        height: 56px;
+        .PhoneInputCountry {
+          display: flex;
+          justify-content: center;
+          width: 60px;
+          border: 1px solid #ced4da;
+          border-radius: 5px;
+          height: 56px;
+
+          .PhoneInputCountrySelect {
+          }
+          .PhoneInputCountryIcon {
+            .PhoneInputCountryIconImg {
+              width: 100%;
+            }
+          }
+        }
+        .PhoneInputInput {
+          border: 1px solid #ced4da;
+          border-radius: 5px;
+          height: 100%;
+          padding: 0 10px;
         }
       }
       .function {
