@@ -242,11 +242,14 @@ exports.getOrderByUserId = (action) =>
       .limitFields()
       .paginate();
 
-    const total = new APIFeatures(Order.countDocuments(), req.query).filter();
+    const total = new APIFeatures(
+      Order.find({ orderby: userID }).countDocuments(),
+      req.query
+    ).filter();
 
     const orders = await features.query
       .populate("products.product")
-      .populate("orderby")
+      // .populate("orderby")
       .exec();
     if (!orders) throw new AppError("order not found", 404);
 
@@ -254,8 +257,10 @@ exports.getOrderByUserId = (action) =>
 
     res.status(200).json({
       status: "success",
-      totalOrder: totalOrder.length,
-      orders,
+      data: {
+        total: totalOrder.length,
+        orders,
+      },
     });
   });
 

@@ -11,7 +11,7 @@ export const getAllProduct = createAsyncThunk(
     if (queryString) {
       res = await apiService.get(`/product?${queryString}&limit=${limit}`);
     } else {
-      res = await apiService.get(`/brand?sort=title`);
+      res = await apiService.get(`/product?sort=title`);
     }
     return res.data.data;
   }

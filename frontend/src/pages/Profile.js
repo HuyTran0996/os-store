@@ -1,33 +1,52 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box } from "@mui/material";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Box, Button } from "@mui/material";
 
 import "../styles/Profile.scss";
 import { useThunk } from "../hook/use-thunk";
+
 import {
   getUserInfo,
   updateNamePhone,
   blockUser,
 } from "../store/thunks/fetchUsers";
+import { getAllOrders } from "../store/thunks/fetchOrders";
 
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import { showToast } from "../components/ToastMessage";
 import { Loading } from "../components/Loading/Loading";
+import Paginate from "../components/Pagination";
+import DataGridTable from "../components/DataGridTable";
+
+const style = {
+  boxPagination: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    marginTop: "20px",
+  },
+};
 
 const Profile = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  // const [isUpdating, setIsUpdating] = useState(false);
+  const [isLoadingTable, setIsLoadingTable] = useState(false);
+  const [dataOrder, setDataOrder] = useState([]);
+  const [rows, setRows] = useState([]);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [getUser] = useThunk(getUserInfo);
   const [updateUser] = useThunk(updateNamePhone);
   const [block] = useThunk(blockUser);
+  const [getOrders] = useThunk(getAllOrders);
 
   const userInfo = localStorage.getItem("userData");
   const parsedUserData = JSON.parse(userInfo);
+
+  let [searchParams] = useSearchParams();
+  let page = parseInt(searchParams.get("page")) || 1;
 
   const getData = async (action) => {
     try {
@@ -51,6 +70,120 @@ const Profile = () => {
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    const getProduct = async () => {
+      try {
+        setIsLoadingTable(true);
+        const result = await getOrders(`page=${page}`);
+        setDataOrder(result);
+      } catch (err) {
+        showToast(`${err.message}`, "error");
+      } finally {
+        setIsLoadingTable(false);
+      }
+    };
+    getProduct();
+  }, [page]);
+
+  //convert data to for table//////
+  useEffect(() => {
+    const dataUpdate = dataOrder.orders?.map((order) => {
+      return {
+        ...order,
+        id: order._id,
+        createdAt: new Date(order.createdAt),
+      };
+    });
+    setRows(dataUpdate);
+  }, [dataOrder]);
+
+  const columns = [
+    { field: "orderCode", headerName: "Order Code", width: 220 },
+    {
+      field: "paymentIntent",
+      headerName: "Payment Method",
+      width: 200,
+      renderCell: (params) => {
+        let method = params.row.paymentIntent.method;
+        return <div>{method}</div>;
+      },
+    },
+    {
+      headerName: "Order Value",
+      width: 200,
+      renderCell: (params) => {
+        let amount = params.row.paymentIntent.totalAfterDiscount;
+        return (
+          <div>
+            {new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+            }).format(amount)}
+          </div>
+        );
+      },
+    },
+    {
+      field: "orderStatus",
+      headerName: "Status",
+      width: 200,
+      renderCell: (params) => {
+        let status = params.row.orderStatus;
+
+        let color =
+          status === "Processing"
+            ? "#f9a825" // Bright yellow
+            : status === "Delivered"
+            ? "#4caf50" // Green
+            : status === "Cancelled"
+            ? "#d32f2f" // red
+            : "";
+        return (
+          <Box
+            sx={{
+              color: color,
+              fontSize: "18px",
+              fontWeight: "bold",
+            }}
+          >
+            {status}
+          </Box>
+        );
+      },
+    },
+    {
+      field: "createdAt",
+      headerName: "Created At",
+      type: "date",
+      width: 150,
+      renderCell: (params) => {
+        const date = new Date(params.value);
+        return date.toISOString().split("T")[0].replace(/-/g, "_");
+      },
+    },
+
+    {
+      field: "actions",
+      type: "actions",
+      headerName: "Detail",
+      flex: 1,
+      cellClassName: "actions",
+      getActions: (params) => {
+        return [
+          <Button
+            disabled={isLoadingTable || isLoading}
+            variant="contained"
+            className="button"
+            onClick={() => navigate(`/order/${params.row.orderCode}`)}
+          >
+            View Detail
+          </Button>,
+        ];
+      },
+    },
+  ];
+  //////////////////////
 
   const handleChangeInfo = async () => {
     alert("Confirm your action");
@@ -82,6 +215,7 @@ const Profile = () => {
         <Loading message="Loading..." />
       ) : (
         <div className="profile-wrapper">
+          <h4>My Info:</h4>
           <h5>User Email: {email}</h5>
           <div>
             <h5>User Name:</h5>
@@ -116,6 +250,22 @@ const Profile = () => {
               Remove Account
             </button>
           </div>
+
+          <div className="myOrders">
+            <h4>My Orders:</h4>
+          </div>
+          <DataGridTable
+            rows={rows}
+            columns={columns}
+            isLoading={isLoadingTable}
+            // EditToolbar={EditToolbarOrderList}
+            // filter={filter}
+            // setFilter={setFilter}
+          />
+          {/* Pagination */}
+          <Box sx={style.boxPagination}>
+            <Paginate data={dataOrder} />
+          </Box>
         </div>
       )}
     </Box>
