@@ -29,7 +29,12 @@ router.get(
   "/getOrderById/:orderId",
   authMiddleware,
   isAdmin,
-  orderCtrl.getOrder
+  orderCtrl.getOrder("admin")
+);
+router.get(
+  "/getOrderByIdSelfCheck/:orderId",
+  authMiddleware,
+  orderCtrl.getOrder("self")
 );
 router.get(
   "/getOrderByUser/:id",

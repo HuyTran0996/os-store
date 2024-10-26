@@ -216,19 +216,30 @@ exports.getAllOrders = asyncHandler(async (req, res) => {
   });
 });
 
-exports.getOrder = asyncHandler(async (req, res) => {
-  const { orderId } = req.params;
-  validateMongodbId(orderId);
-  const order = await Order.findById(orderId)
-    .populate("products.product")
-    .populate("orderby");
-  if (!order) throw new AppError("order not found", 404);
+exports.getOrder = (action) =>
+  asyncHandler(async (req, res) => {
+    const { orderId } = req.params;
+    validateMongodbId(orderId);
 
-  res.status(200).json({
-    status: "success",
-    order,
+    const order = await Order.findById(orderId)
+      .populate("products.product")
+      .populate({
+        path: "orderby",
+        select: "_id email name phone role",
+      });
+    if (!order) throw new AppError("order not found", 404);
+
+    if (action === "self") {
+      if (!order.orderby._id.equals(req.user._id)) {
+        throw new AppError("User cannot view orders of other accounts", 404);
+      }
+    }
+
+    res.status(200).json({
+      status: "success",
+      order,
+    });
   });
-});
 
 exports.getOrderByUserId = (action) =>
   asyncHandler(async (req, res) => {
@@ -249,7 +260,10 @@ exports.getOrderByUserId = (action) =>
 
     const orders = await features.query
       .populate("products.product")
-      // .populate("orderby")
+      .populate({
+        path: "orderby",
+        select: "_id email name phone role",
+      })
       .exec();
     if (!orders) throw new AppError("order not found", 404);
 

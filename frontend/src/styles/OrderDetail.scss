@@ -1,0 +1,8 @@
+@import "./stylesStore/variables.scss";
+
+.orderDetailPage {
+  background-color: $color-f5f5f7;
+  .orderDetail-wrapper {
+    padding: 50px;
+  }
+}

@@ -47,9 +47,9 @@ export const addToCart = createAsyncThunk(
 );
 
 export const getOrderById = createAsyncThunk(
-  "orders/getOrderById",
+  "orders/getOrderByIdSelfCheck",
   async (orderId) => {
-    const res = await apiService.get(`/order/getOrderById/${orderId}`);
+    const res = await apiService.get(`/order/getOrderByIdSelfCheck/${orderId}`);
     return res.data.order;
   }
 );

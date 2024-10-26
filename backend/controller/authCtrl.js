@@ -63,6 +63,7 @@ exports.login = (action) =>
       res.cookie("refreshToken", refreshToken, cookieOption);
 
       let responseData = {
+        _id: findUser._id,
         email: findUser.email,
         name: findUser.name,
         phone: findUser.phone,
