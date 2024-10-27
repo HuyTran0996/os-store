@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Box, Button } from "@mui/material";
 
@@ -228,10 +230,11 @@ const Profile = () => {
 
           <div>
             <h5>User Phone:</h5>
-            <input
-              type="text"
+
+            <PhoneInput
+              placeholder="Enter phone number"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={setPhone}
             />
           </div>
           <div className="function">

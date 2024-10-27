@@ -44,8 +44,12 @@
           .PhoneInputCountrySelect {
           }
           .PhoneInputCountryIcon {
+            position: relative;
             .PhoneInputCountryIconImg {
+              position: absolute;
+              left: 5.5px;
               width: 100%;
+              scale: 1.75;
             }
           }
         }
