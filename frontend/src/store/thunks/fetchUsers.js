@@ -97,6 +97,18 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
+export const changePassword = createAsyncThunk(
+  "users/changePassword",
+  async ({ currentPassword, password }) => {
+    const message = await apiService.patch(`/auth/password`, {
+      currentPassword,
+      password,
+    });
+
+    return message.data;
+  }
+);
+
 export const updateNamePhone = createAsyncThunk(
   "users/updateNamePhone",
   async ({ name, phone }) => {

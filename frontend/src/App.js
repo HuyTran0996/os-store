@@ -25,6 +25,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Profile from "./pages/Profile";
 import OrderDetail from "./pages/OrderDetail";
+import ChangePassword from "./pages/ChangePassword";
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
           <Route path="forgot-password" element={<Forgotpassword />} />
           <Route path="signup" element={<Signup />} />
           <Route path="reset-password" element={<Resetpassword />} />
+          <Route path="changePassword" element={<ChangePassword />} />
 
           <Route path="privacy-policy" element={<PrivacyPolicy />} />
           <Route path="refund-policy" element={<RefundPolicy />} />

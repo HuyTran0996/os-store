@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Box, Button } from "@mui/material";
 
 import "../styles/Profile.scss";
@@ -245,6 +245,9 @@ const Profile = () => {
             >
               Update Info
             </button>
+            <Link to="/changePassword" className="button">
+              Change Password
+            </Link>
             <button
               disabled={isLoading}
               className="button"
