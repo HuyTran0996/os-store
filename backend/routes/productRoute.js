@@ -57,6 +57,12 @@ router.delete(
   isAdmin,
   productCtrl.deleteImages("productVariant")
 );
+router.delete(
+  "/delateRating/:prodId",
+  authMiddleware,
+  isAdmin,
+  productCtrl.delateRating
+);
 router.delete("/:id", authMiddleware, isAdmin, productCtrl.deleteProduct);
 
 module.exports = router;

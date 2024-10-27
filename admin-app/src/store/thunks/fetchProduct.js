@@ -98,3 +98,13 @@ export const deleteProductVariant = createAsyncThunk(
     return product.data.product;
   }
 );
+export const deleteRating = createAsyncThunk(
+  "products/deleteRating",
+  async ({ prodId, userID }) => {
+    const product = await apiService.delete(`/product/delateRating/${prodId}`, {
+      data: { userID },
+    });
+
+    return product.data.product;
+  }
+);

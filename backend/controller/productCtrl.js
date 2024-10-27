@@ -259,6 +259,40 @@ exports.rating = asyncHandler(async (req, res) => {
   });
 });
 
+exports.delateRating = asyncHandler(async (req, res) => {
+  const { prodId } = req.params;
+  const { userID } = req.body;
+  console.log("req.body", req.body);
+  console.log("req.params", req.params);
+
+  if (!userID || !prodId) throw new AppError("Missing required files", 400);
+
+  validateMongodbId(prodId);
+
+  const product = await Product.findById(prodId).populate(
+    "ratings.postedby",
+    "email name phone _id"
+  );
+
+  if (!product) throw new AppError("Product not found", 404);
+
+  const ratingIndex = product.ratings.findIndex((rating) =>
+    rating.postedby._id.equals(userID)
+  );
+  if (ratingIndex === -1) {
+    throw new AppError("Rating not found", 404);
+  }
+  product.ratings.splice(ratingIndex, 1);
+
+  await product.save();
+
+  res.status(200).json({
+    status: "success",
+    message: "Rating has been added/updated",
+    product,
+  });
+});
+
 exports.deleteImages = (action) =>
   asyncHandler(async (req, res) => {
     const { productId, publicId, variantName } = req.body;

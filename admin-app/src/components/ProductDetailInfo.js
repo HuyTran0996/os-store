@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Typography,
   Box,
@@ -7,15 +8,50 @@ import {
   Select,
   MenuItem,
   InputAdornment,
+  Rating,
+  Button,
 } from "@mui/material";
+import { useSelector } from "react-redux";
+import { useThunk } from "../hook/use-thunk";
 
+import { deleteRating } from "../store/thunks/fetchProduct";
+import { showToast } from "./ToastMessage";
 const ProductDetailInfo = ({
   state,
   handleChange,
   style,
-  dataAllProductCategory,
-  dataAllBrand,
+  // dataAllProductCategory,
+  // dataAllBrand,
 }) => {
+  const navigate = useNavigate();
+  const [ratings, setRating] = useState([]);
+  const { dataAllBrand } = useSelector((state) => {
+    return state.brands;
+  });
+  const { dataAllProductCategory } = useSelector((state) => {
+    return state.productCategories;
+  });
+  const { dataProduct } = useSelector((state) => {
+    return state.products;
+  });
+  const [removeRating, isLoading] = useThunk(deleteRating);
+
+  useEffect(() => {
+    setRating(dataProduct.ratings || []);
+  }, [dataProduct]);
+
+  const handleDeleteRating = async (id) => {
+    try {
+      const product = await removeRating({
+        prodId: dataProduct._id,
+        userID: id,
+      });
+
+      setRating(product.ratings || []);
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    }
+  };
   return (
     <Box
       sx={{
@@ -177,6 +213,68 @@ const ProductDetailInfo = ({
                 </MenuItem>
               ))}
             </Select>
+          </Box>
+        </Box>
+      </Paper>
+
+      {/* Review*/}
+      <Paper
+        elevation={10}
+        sx={{
+          marginTop: "10px",
+          padding: "20px",
+        }}
+      >
+        <Typography variant="h5">Customer Reviews</Typography>
+
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box>
+            {ratings.map((rating, index) => (
+              <div
+                key={`review-${index}`}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+
+                  marginBottom: "20px",
+                  padding: "10px 0",
+                }}
+              >
+                <div className="nameAndStar">
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "15px",
+                    }}
+                  >
+                    <h3
+                      className="name"
+                      onClick={() =>
+                        navigate(
+                          `/customers?search=${rating.postedby.email}&page=1`
+                        )
+                      }
+                      style={{ cursor: "pointer" }}
+                    >
+                      {rating.postedby.name} ({rating.postedby.email})
+                    </h3>
+
+                    <Button
+                      disabled={isLoading}
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleDeleteRating(rating.postedby._id)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+
+                  <Rating value={rating.star} precision={0.5} readOnly />
+                  <p className="comment">{rating.comment}</p>
+                </div>
+              </div>
+            ))}
           </Box>
         </Box>
       </Paper>

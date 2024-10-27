@@ -22,8 +22,6 @@ import Meta from "../components/Meta";
 import ProductCard from "../components/ProductCard";
 import CarouselShow from "../components/CarouselShow";
 
-import Container from "../components/Container";
-
 import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart } from "react-icons/ai";
 import { FaHeart } from "react-icons/fa";
@@ -305,11 +303,11 @@ const SingleProduct = () => {
                 </div>
 
                 <div className="function">
-                  <div className="quantity">
+                  {/* <div className="quantity">
                     <h3 className="product-heading">Quantity:</h3>
 
                     <input type="number" min={1} max={10} defaultValue={1} />
-                  </div>
+                  </div> */}
 
                   <div className="buttonGroup">
                     <button

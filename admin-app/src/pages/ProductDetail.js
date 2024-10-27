@@ -271,6 +271,8 @@ const ProductDetail = () => {
     }
   };
 
+  console.log("poppo", dataProduct);
+
   return (
     <ContainerLayout>
       {isLoading ? <Loading message="Processing" /> : ""}
@@ -336,8 +338,8 @@ const ProductDetail = () => {
               state={state}
               handleChange={handleChange}
               style={style}
-              dataAllProductCategory={dataAllProductCategory}
-              dataAllBrand={dataAllBrand}
+              // dataAllProductCategory={dataAllProductCategory}
+              // dataAllBrand={dataAllBrand}
             />
 
             {/* IMAGE */}
