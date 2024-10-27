@@ -14,7 +14,8 @@ import logo from "../images/logo.png";
 import "../styles/Login.scss";
 
 const Resetpassword = () => {
-  const navigate = useNavigate();
+  //note: for now, this page is used for both admin and user sites, so no navigate to /login page
+  // const navigate = useNavigate();
   const params = useParams();
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
@@ -33,7 +34,7 @@ const Resetpassword = () => {
     try {
       const data = await reset({ password, token });
       showToast(`${data.message}`, "success");
-      navigate("/login");
+      // navigate("/login");
     } catch (err) {
       showToast(`${err.message}`, "error", 3000);
     }
@@ -92,9 +93,9 @@ const Resetpassword = () => {
                 },
               }}
             />
-
-            <Link to="/login">Back To Login Page?</Link>
-
+            {/* note: for now, this page is used for both admin and user sites, so
+            no navigate to /login page */}
+            {/* <Link to="/login">Back To Login Page?</Link> */}
             <Button
               className="submit"
               type="submit"

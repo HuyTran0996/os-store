@@ -33,8 +33,8 @@ const Forgotpassword = () => {
             <img src={logo} alt="logo" />
             <h2>Forgot Your Password?</h2>
             <p>
-              Submit your registered email, <br /> we will send you an email to
-              guide you reset your password.
+              Submit your registered email, <br /> we'll send an email to guide
+              you reset your password.
             </p>
           </Grid>
 

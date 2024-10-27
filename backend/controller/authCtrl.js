@@ -151,6 +151,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
   //   "host"
   // )}/api/auth/resetPassword/${resetToken}`;
 
+  //note: after deploy, the frontEndLink should be replaced by the link of the admin site
   const resetURL = `${frontEndLink}/${resetToken}`;
   await new Email(user, resetURL).sendPasswordReset();
 

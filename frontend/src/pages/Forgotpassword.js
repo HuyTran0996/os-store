@@ -1,44 +1,76 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useThunk } from "../hook/use-thunk";
 
-import "../styles/Login.scss";
+import { forgotPassword } from "../store/thunks/fetchUsers";
+
+import { Paper, TextField, Box } from "@mui/material";
+import { showToast } from "../components/ToastMessage";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
-import Container from "../components/Container";
-import CustomInput from "../components/CustomInput";
 
-const Forgotpassword = () => {
+import logo from "../images/logo.png";
+
+import "../styles/Login.scss";
+
+const Login = () => {
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+
+  const [sendEmail, isLoading] = useThunk(forgotPassword);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const data = await sendEmail({ email });
+      showToast(`${data.message}`, "success", 3000);
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    }
+  };
+
   return (
-    <div className="loginPage">
+    <>
       <Meta title="Forgot Password" />
       <BreadCrumb title="Forgot Password" />
 
-      <Container class1="login-wrapper py-5">
-        <div className="row">
-          <div className="col-12">
-            <div className="auth-card">
-              <h3 className="text-center mb-3">Reset Your Password</h3>
-              <p className="text-center mt-2 mb-3">
-                We will send you an email to reset your password
-              </p>
-              <form action="" className="d-flex flex-column gap-15">
-                <CustomInput type="email" name="email" placeholder="Email..." />
+      <Box size={12} className="loginPage">
+        <Paper elevation={10} className="paper">
+          <Box align="center">
+            <img src={logo} alt="logo" />
+            <h2>Forgot Your Password?</h2>
+            <p>
+              Submit your registered email, <br /> we'll send an email to guide
+              you reset your password.
+            </p>
+          </Box>
 
-                <div>
-                  <div className="mt-3 d-flex justify-content-center flex-column gap-15 align-items-center">
-                    <button className="button border-0" type="submit">
-                      Submit
-                    </button>
-                    <Link to="/login">Cancel</Link>
-                  </div>
-                </div>
-              </form>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              className="input last-input"
+              placeholder="Email..."
+              type="email"
+              fullWidth
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <Link to="/login">Back To Login Page?</Link>
+
+            <div className="function">
+              <button className="button" type="submit" disabled={isLoading}>
+                {isLoading ? "Sending..." : "Submit"}
+              </button>
             </div>
-          </div>
-        </div>
-      </Container>
-    </div>
+          </form>
+        </Paper>
+      </Box>
+    </>
   );
 };
 
-export default Forgotpassword;
+export default Login;
