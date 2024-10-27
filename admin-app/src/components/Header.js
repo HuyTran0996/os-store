@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -10,6 +10,8 @@ import Menu from "@mui/material/Menu";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 import AccountCircle from "@mui/icons-material/AccountCircle";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LoginIcon from "@mui/icons-material/Login";
 import MenuList from "./Sidebar/MenuList";
 import logo from "../images/logo.png";
 import { MaterialUISwitch } from "../data/data";
@@ -63,8 +65,14 @@ export default function Header({ themeMode, toggleTheme, setLogOut }) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      <MenuItem onClick={handleMenuClose}>
+        <Link to="/profile" style={{ display: "flex", alignItems: "center" }}>
+          <AccountCircleIcon sx={{ marginRight: "10px" }} /> Profile
+        </Link>
+      </MenuItem>
+      <MenuItem onClick={handleLogout}>
+        <LoginIcon sx={{ marginRight: "10px" }} /> Log Out
+      </MenuItem>
     </Menu>
   );
 

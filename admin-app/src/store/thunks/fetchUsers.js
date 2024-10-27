@@ -60,6 +60,20 @@ export const getAllUser = createAsyncThunk("users/getAllUser", async (page) => {
   );
   return res.data.data;
 });
+
+export const getYourInfo = createAsyncThunk("users/getYourInfo", async () => {
+  const user = await apiService.get(`/user`);
+  return user.data.getUser;
+});
+
+export const updateYourNamePhone = createAsyncThunk(
+  "users/updateNamePhone",
+  async ({ name, phone }) => {
+    const res = await apiService.put(`/user/editUserSelf`, { name, phone });
+    return res.data.data;
+  }
+);
+
 export const updateNameEmail = createAsyncThunk(
   "users/updateNameEmail",
   async ({ id, name, phone }) => {
@@ -71,6 +85,16 @@ export const changeRole = createAsyncThunk(
   "users/changeRole",
   async ({ userId, role }) => {
     const res = await apiService.put(`/user/changeRole`, { userId, role });
+    return res.data.data;
+  }
+);
+
+export const blockYourself = createAsyncThunk(
+  "users/blockYourself",
+  async () => {
+    const res = await apiService.put(`/user/blockUserSelf`);
+    localStorage.removeItem("adminData");
+    localStorage.removeItem("userCart");
     return res.data.data;
   }
 );

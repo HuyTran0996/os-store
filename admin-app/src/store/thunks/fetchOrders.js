@@ -13,6 +13,21 @@ export const getMonthlyOrders = createAsyncThunk(
   }
 );
 
+export const getAllOrdersOfYou = createAsyncThunk(
+  "orders/getAllOrdersOfYou",
+  async (queryString) => {
+    let res;
+    if (queryString) {
+      res = await apiService.get(
+        `/order/getOrder?${queryString}&limit=${limit}`
+      );
+    } else {
+      res = await apiService.get(`/order/getOrder`);
+    }
+    return res.data.data;
+  }
+);
+
 export const getAllOrders = createAsyncThunk(
   "orders/getAllOrders",
   async (queryString) => {
@@ -23,6 +38,7 @@ export const getAllOrders = createAsyncThunk(
     return res.data.data;
   }
 );
+
 export const getOrderById = createAsyncThunk(
   "orders/getOrderById",
   async (orderId) => {

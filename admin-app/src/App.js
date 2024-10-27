@@ -19,6 +19,7 @@ import OrderList from "./pages/OrderList";
 import OrderDetail from "./pages/OrderDetail";
 import CouponList from "./pages/CouponList";
 import BannerList from "./pages/BannerList";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path="order/:id" element={<OrderDetail />} />
           <Route path="couponList" element={<CouponList />} />
           <Route path="banner" element={<BannerList />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>
     </BrowserRouter>
