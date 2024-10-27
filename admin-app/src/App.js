@@ -20,6 +20,7 @@ import OrderDetail from "./pages/OrderDetail";
 import CouponList from "./pages/CouponList";
 import BannerList from "./pages/BannerList";
 import Profile from "./pages/Profile";
+import ChangePassword from "./pages/ChangePassword";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password/:token" element={<Resetpassword />} />
         <Route path="/forgot-password" element={<Forgotpassword />} />
+        <Route path="/changePassword" element={<ChangePassword />} />
 
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Dashboard />} />
