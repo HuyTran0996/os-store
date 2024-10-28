@@ -5,9 +5,30 @@ const validateMongoDbId = require("../utils/validateMongodbId");
 const AppError = require("../utils/appError");
 const APIFeatures = require("../utils/apiFeatures");
 
+exports.getAllEnquiry = asyncHandler(async (req, res) => {
+  const features = new APIFeatures(Enquiry.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  const total = new APIFeatures(Enquiry.countDocuments(), req.query).filter();
+
+  const enquiries = await features.query;
+  const totalEnquiries = await total.query;
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      total: totalEnquiries.length,
+      enquiries,
+    },
+  });
+});
+
 exports.createEnquiry = asyncHandler(async (req, res) => {
-  const { name, email, mobile, comment } = req.body;
-  if (!name || !email || !mobile || !comment)
+  const { name, email, phone, message } = req.body;
+  if (!name || !email || !phone || !message)
     throw new AppError("Please provide all information", 400);
 
   const newEnquiry = await Enquiry.create(req.body);
@@ -48,30 +69,11 @@ exports.getEnquiry = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
 
-  const getaEnquiry = await Enquiry.findById(id);
-  if (!getaEnquiry) throw new AppError("Enquiry not found", 404);
+  const getEnquiry = await Enquiry.findById(id);
+  if (!getEnquiry) throw new AppError("Enquiry not found", 404);
 
   res.status(200).json({
     status: "success",
-    getaEnquiry,
-  });
-});
-
-exports.getallEnquiry = asyncHandler(async (req, res) => {
-  const features = new APIFeatures(Enquiry.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-
-  const total = new APIFeatures(Enquiry.countDocuments(), req.query).filter();
-
-  const enquiries = await features.query;
-  const totalEnquiries = await total.query;
-
-  res.status(200).json({
-    status: "success",
-    totalEnquiry: totalEnquiries.length,
-    enquiries,
+    getEnquiry,
   });
 });

@@ -4,19 +4,19 @@ import { apiService } from "../../app/apiService";
 
 const limit = process.env.REACT_APP_LIMIT_PAGINATION;
 
-export const getAllCoupons = createAsyncThunk(
-  "coupons/getAllCoupons",
+export const getAllEnquiries = createAsyncThunk(
+  "enquiries/getAllCoupons",
   async (queryString) => {
-    const res = await apiService.get(`/coupon?${queryString}&limit=${limit}`);
+    const res = await apiService.get(`/enquiry?${queryString}&limit=${limit}`);
 
     return res.data.data;
   }
 );
 
 export const updateCoupon = createAsyncThunk(
-  "coupons/updateCoupon",
+  "enquiries/updateCoupon",
   async ({ couponId, name, expiry, discount }) => {
-    const res = await apiService.put(`/coupon/${couponId}`, {
+    const res = await apiService.put(`/enquiry/${couponId}`, {
       name,
       expiry,
       discount,
@@ -25,9 +25,9 @@ export const updateCoupon = createAsyncThunk(
   }
 );
 export const createCoupon = createAsyncThunk(
-  "coupons/createCoupon",
+  "enquiries/createCoupon",
   async ({ name, expiry, discount }) => {
-    const res = await apiService.post(`/coupon`, {
+    const res = await apiService.post(`/enquiry`, {
       name,
       expiry,
       discount,
@@ -35,11 +35,11 @@ export const createCoupon = createAsyncThunk(
     return res.data;
   }
 );
-export const smartCouponSearch = createAsyncThunk(
-  "coupons/smartCouponSearch",
+export const smartEnquirySearch = createAsyncThunk(
+  "enquiries/smartEnquirySearch",
   async ({ page, searchField }) => {
     const res = await apiService.post(
-      `/coupon/smartCouponSearch?page=${page}&limit=${limit}`,
+      `/enquiry/smartEnquirySearch?page=${page}&limit=${limit}`,
       {
         searchField,
       }
@@ -49,24 +49,24 @@ export const smartCouponSearch = createAsyncThunk(
 );
 
 export const blockCoupon = createAsyncThunk(
-  "coupons/blockCoupon",
+  "enquiries/blockCoupon",
   async (couponId) => {
-    const res = await apiService.put(`/coupon/blockCoupon/${couponId}`);
+    const res = await apiService.put(`/enquiry/blockCoupon/${couponId}`);
     return res.data.data;
   }
 );
 
 export const unblockCoupon = createAsyncThunk(
-  "coupons/unblockCoupon",
+  "enquiries/unblockCoupon",
   async (couponId) => {
-    const res = await apiService.put(`/coupon/unblockCoupon/${couponId}`);
+    const res = await apiService.put(`/enquiry/unblockCoupon/${couponId}`);
     return res.data.data;
   }
 );
 export const deleteCoupon = createAsyncThunk(
-  "coupons/deleteCoupon",
+  "enquiries/deleteCoupon",
   async (couponId) => {
-    const res = await apiService.delete(`/coupon/${couponId}`);
+    const res = await apiService.delete(`/enquiry/${couponId}`);
     return res.data.data;
   }
 );

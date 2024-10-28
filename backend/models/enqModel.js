@@ -10,18 +10,18 @@ const enqSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    mobile: {
+    phone: {
       type: String,
       required: true,
     },
-    comment: {
+    message: {
       type: String,
       required: true,
     },
     status: {
       type: String,
       default: "Submitted",
-      enum: ["Submitted", "Contacted", "In Progress", "Resolved"],
+      enum: ["Submitted", "Contacted", "Processing", "Resolved"],
     },
   },
   { timestamps: true }

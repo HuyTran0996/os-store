@@ -8,6 +8,7 @@ const Brand = require("../models/brandModel");
 const ProdCategory = require("../models/prodcategoryModel");
 const Coupon = require("../models/couponModel");
 const Banner = require("../models/bannerModel");
+const Enquiry = require("../models/enqModel");
 const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const validateMongodbId = require("../utils/validateMongodbId");
@@ -407,6 +408,26 @@ exports.smartUserSearch = (action) =>
         createdAt: 1,
         score: { $meta: "searchScore" },
       };
+    }
+
+    if (action === "enquiries") {
+      model = Enquiry;
+      field = "enquiries";
+      searchArea = ["name", "email", "phone", "message"];
+
+      filedToShow = {
+        _id: 1,
+        name: 1,
+        email: 1,
+        phone: 1,
+        message: 1,
+        createdAt: 1,
+        score: { $meta: "searchScore" },
+      };
+
+      if (filter) {
+        additionalMatch = { orderStatus: filter };
+      }
     }
 
     const transformedMatch = [

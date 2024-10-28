@@ -21,6 +21,7 @@ import CouponList from "./pages/CouponList";
 import BannerList from "./pages/BannerList";
 import Profile from "./pages/Profile";
 import ChangePassword from "./pages/ChangePassword";
+import EnquiryList from "./pages/EnquiryList";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
           <Route path="couponList" element={<CouponList />} />
           <Route path="banner" element={<BannerList />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="enquiries" element={<EnquiryList />} />
         </Route>
       </Routes>
     </BrowserRouter>

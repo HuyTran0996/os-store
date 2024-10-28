@@ -7,6 +7,7 @@ import { brandReducer } from "./slices/brandSlice";
 import { productCategoryReducer } from "./slices/productCategorySlice";
 import { couponReducer } from "./slices/couponSlice";
 import { bannerReducer } from "./slices/bannerSlice";
+import { enquiryReducer } from "./slices/enquirySlice";
 
 export const store = configureStore({
   reducer: {
@@ -17,5 +18,6 @@ export const store = configureStore({
     productCategories: productCategoryReducer,
     coupons: couponReducer,
     banner: bannerReducer,
+    enquiries: enquiryReducer,
   },
 });
