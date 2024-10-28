@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import { Box } from "@mui/material";
+import { useThunk } from "../hook/use-thunk";
+import { createEnquiry } from "../store/thunks/fetchEnquiry";
 
 import "../styles/Contact.scss";
 import BreadCrumb from "../components/BreadCrumb";
@@ -23,13 +25,19 @@ const Contact = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const [create, isLoading] = useThunk(createEnquiry);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    showToast(
-      "The feature is currently under construction. Please return at a later time.",
-      "info",
-      5000
-    );
+    try {
+      await create({ name, email, phone, message });
+      showToast(
+        `Your message has been sent, we'll contact you soon`,
+        "success"
+      );
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    }
   };
 
   return (
@@ -85,8 +93,8 @@ const Contact = () => {
                 onChange={(e) => setMessage(e.target.value)}
               ></textarea>
 
-              <button type="submit" className="button">
-                Submit
+              <button type="submit" className="button" disabled={isLoading}>
+                {isLoading ? "Sending..." : "Submit"}
               </button>
             </form>
           </div>

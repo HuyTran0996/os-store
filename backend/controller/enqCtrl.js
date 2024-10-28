@@ -69,11 +69,11 @@ exports.getEnquiry = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
 
-  const getEnquiry = await Enquiry.findById(id);
-  if (!getEnquiry) throw new AppError("Enquiry not found", 404);
+  const enquiry = await Enquiry.findById(id);
+  if (!enquiry) throw new AppError("Enquiry not found", 404);
 
   res.status(200).json({
     status: "success",
-    getEnquiry,
+    enquiry,
   });
 });

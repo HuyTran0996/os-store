@@ -13,17 +13,23 @@ export const getAllEnquiries = createAsyncThunk(
   }
 );
 
-export const updateCoupon = createAsyncThunk(
-  "enquiries/updateCoupon",
-  async ({ couponId, name, expiry, discount }) => {
-    const res = await apiService.put(`/enquiry/${couponId}`, {
-      name,
-      expiry,
-      discount,
-    });
-    return res.data.updateOrderStatus;
+export const getEnquiryById = createAsyncThunk(
+  "enquiries/getEnquiryById",
+  async (orderId) => {
+    const res = await apiService.get(`/enquiry/${orderId}`);
+    return res.data.enquiry;
   }
 );
+export const updateEnquiry = createAsyncThunk(
+  "enquiries/updateEnquiry",
+  async ({ id, status }) => {
+    const res = await apiService.put(`/enquiry/${id}`, {
+      status,
+    });
+    return res.data.updatedEnquiry;
+  }
+);
+
 export const createCoupon = createAsyncThunk(
   "enquiries/createCoupon",
   async ({ name, expiry, discount }) => {
@@ -48,25 +54,10 @@ export const smartEnquirySearch = createAsyncThunk(
   }
 );
 
-export const blockCoupon = createAsyncThunk(
-  "enquiries/blockCoupon",
-  async (couponId) => {
-    const res = await apiService.put(`/enquiry/blockCoupon/${couponId}`);
-    return res.data.data;
-  }
-);
-
-export const unblockCoupon = createAsyncThunk(
-  "enquiries/unblockCoupon",
-  async (couponId) => {
-    const res = await apiService.put(`/enquiry/unblockCoupon/${couponId}`);
-    return res.data.data;
-  }
-);
-export const deleteCoupon = createAsyncThunk(
-  "enquiries/deleteCoupon",
-  async (couponId) => {
-    const res = await apiService.delete(`/enquiry/${couponId}`);
+export const deleteEnquiry = createAsyncThunk(
+  "enquiries/deleteEnquiry",
+  async (id) => {
+    const res = await apiService.delete(`/enquiry/${id}`);
     return res.data.data;
   }
 );

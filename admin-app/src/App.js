@@ -22,6 +22,7 @@ import BannerList from "./pages/BannerList";
 import Profile from "./pages/Profile";
 import ChangePassword from "./pages/ChangePassword";
 import EnquiryList from "./pages/EnquiryList";
+import EnquiryDetail from "./pages/EnquiryDetail";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           <Route path="banner" element={<BannerList />} />
           <Route path="profile" element={<Profile />} />
           <Route path="enquiries" element={<EnquiryList />} />
+          <Route path="enquiries/:id" element={<EnquiryDetail />} />
         </Route>
       </Routes>
     </BrowserRouter>
