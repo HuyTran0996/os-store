@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Box, Paper, Rating } from "@mui/material";
+import { Box, Paper, Rating, useMediaQuery } from "@mui/material";
 import "../styles/ProductCard.scss";
 
 const ProductCard = (props) => {
   const { grid, product } = props;
-
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
   return (
     <Link to={`/productList/${product._id}`} className={`gr-${grid}`}>
       <Paper className="product-card">
@@ -18,7 +18,12 @@ const ProductCard = (props) => {
           <h6 className="brand">{product.brand}</h6>
           <h5 className="product-title">{product.title}</h5>
 
-          <Rating value={product.totalrating * 1} precision={0.5} readOnly />
+          <Rating
+            value={product.totalrating * 1}
+            precision={0.5}
+            readOnly
+            size={isSmallScreen ? "small" : "medium"}
+          />
           <p
             className="description"
             style={{ display: grid === 12 ? "block" : "none" }}

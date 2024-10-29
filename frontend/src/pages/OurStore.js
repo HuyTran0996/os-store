@@ -91,6 +91,7 @@ const style = {
     margin: "20px 0",
     width: "100%",
     position: "relative",
+    gap: "5px",
   },
 
   boxPagination: {

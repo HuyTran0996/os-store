@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-import { Rating } from "@mui/material";
+import { Rating, useMediaQuery } from "@mui/material";
 import "../styles/ProductCard.scss";
 
 import { useThunk } from "../hook/use-thunk";
@@ -38,6 +38,8 @@ const ProductCard = (props) => {
       return state.users;
     }
   );
+
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   const handelUserWishList = async () => {
     if (!parsedUserData) {
@@ -148,8 +150,13 @@ const ProductCard = (props) => {
             <h6 className="brand">{prod?.brand}</h6>
             <h5 className="product-title">{prod?.title}</h5>
             <div style={{ display: "flex", alignItems: "center" }}>
-              <Rating value={prod?.totalrating * 1} precision={0.5} readOnly />(
-              {prod?.ratings?.length})
+              <Rating
+                value={prod?.totalrating * 1}
+                precision={0.5}
+                readOnly
+                size={isSmallScreen ? "small" : "medium"}
+              />
+              ({prod?.ratings?.length})
             </div>
             <p className={`description ${grid === 12 ? "d-block" : "d-none"}`}>
               {prod?.description}
