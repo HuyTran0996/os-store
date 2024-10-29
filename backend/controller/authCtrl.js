@@ -137,7 +137,7 @@ exports.updatePassword = asyncHandler(async (req, res) => {
 });
 
 exports.forgotPassword = asyncHandler(async (req, res) => {
-  const { frontEndLink, email } = req.body;
+  const { email } = req.body;
 
   const user = await User.findOne({ email });
 
@@ -152,7 +152,8 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
   // )}/api/auth/resetPassword/${resetToken}`;
 
   //note: after deploy, the frontEndLink should be replaced by the link of the admin site
-  const resetURL = `${frontEndLink}/${resetToken}`;
+  const frontEndLink = process.env.ADMIN_URL;
+  const resetURL = `${frontEndLink}/reset-password/${resetToken}`;
   await new Email(user, resetURL).sendPasswordReset();
 
   res.status(200).json({
