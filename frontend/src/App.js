@@ -26,6 +26,7 @@ import Checkout from "./pages/Checkout";
 import Profile from "./pages/Profile";
 import OrderDetail from "./pages/OrderDetail";
 import ChangePassword from "./pages/ChangePassword";
+import Faq from "./pages/Faq";
 
 function App() {
   return (
@@ -36,6 +37,11 @@ function App() {
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="refund-policy" element={<RefundPolicy />} />
+          <Route path="shipping-policy" element={<ShippingPolicy />} />
+          <Route path="term-conditions" element={<TermAndConditions />} />
+          <Route path="faq" element={<Faq />} />
 
           <Route path="product" element={<OurStore />} />
           <Route path="product/:id" element={<SingleProduct />} />
@@ -53,11 +59,6 @@ function App() {
           <Route path="signup" element={<Signup />} />
           <Route path="reset-password" element={<Resetpassword />} />
           <Route path="changePassword" element={<ChangePassword />} />
-
-          <Route path="privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="refund-policy" element={<RefundPolicy />} />
-          <Route path="shipping-policy" element={<ShippingPolicy />} />
-          <Route path="term-conditions" element={<TermAndConditions />} />
 
           {/* Note: Up coming */}
           <Route path="blogs" element={<Blog />} />

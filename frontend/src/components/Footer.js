@@ -7,20 +7,20 @@ import "../styles/Footer.scss";
 import { BsLinkedin, BsGithub, BsYoutube, BsInstagram } from "react-icons/bs";
 
 const Footer = () => {
+  const phone = process.env.REACT_APP_PHONE;
+  const email = process.env.REACT_APP_EMAIL;
+  const address = process.env.REACT_APP_ADDRESS;
+
   return (
     <Box className="footer">
       <Box className="footerUpper">
         <div className="contact">
           <h4 className="title">Contact Us</h4>
           <div>
-            <address>
-              No. 1234 Maple Street,
-              <br />
-              Apartment 5B <br /> Springfield, IL 62702 <br /> PinCode:75000
-            </address>
-            <a href="tel:+84 123456789">+84 123 456 789</a>
+            <address>{address}</address>
+            <a href={`tel:${phone}`}>{phone}</a>
             <br />
-            <a href="mailto:test@gmail.com">test@gmail.com</a>
+            <a href={`mailto:${email}`}>{email}</a>
 
             <div className="social">
               <a
@@ -69,9 +69,9 @@ const Footer = () => {
         <div className="account">
           <h4 className="title">Account</h4>
           <div className="link">
-            <Link>About Us</Link>
-            <Link>Faq</Link>
-            <Link>Contact</Link>
+            <Link to="/about">About Us</Link>
+            <Link to="/faq">Faq</Link>
+            <Link to="/contact">Contact</Link>
           </div>
         </div>
       </Box>

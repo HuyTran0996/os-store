@@ -1,22 +1,30 @@
 import React from "react";
-
-import "../styles/TermAndConditions.scss";
+import { Box } from "@mui/material";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
-import Container from "../components/Container";
+import "../styles/TermAndConditions.scss";
+import { termsAndConditions } from "../data/data";
 
 const TermAndConditions = () => {
   return (
     <div className="termAndConditionsPage">
       <Meta title="Term And Conditions" />
       <BreadCrumb title="Term And Conditions" />
-      <Container class1="policy-wrapper py-5">
-        <div className="row">
-          <div className="col-12">
-            <div className="policy"></div>
+      <Box sx={{ padding: "50px" }} className="about-wrapper">
+        {termsAndConditions.map((p, index) => (
+          <div key={index}>
+            <h5>{p.title}</h5>
+            <p>{p.message ? p.message : ""}</p>
+            <ul>
+              {p.list
+                ? p.list.map((lis, index) => (
+                    <li key={`list-${index}`}>{lis}</li>
+                  ))
+                : ""}
+            </ul>
           </div>
-        </div>
-      </Container>
+        ))}
+      </Box>
     </div>
   );
 };
