@@ -60,8 +60,8 @@ function App() {
           <Route path="term-conditions" element={<TermAndConditions />} />
 
           {/* Note: Up coming */}
-          {/* <Route path="blogs" element={<Blog />} /> */}
-          {/* <Route path="blog/:id" element={<SingleBlog />} /> */}
+          <Route path="blogs" element={<Blog />} />
+          <Route path="blog/:id" element={<SingleBlog />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,50 +1,28 @@
 import React from "react";
-
+import { Box } from "@mui/material";
 import "../styles/Blog.scss";
+
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import BlogCard from "../components/BlogCard";
-import Container from "../components/Container";
+
+import underConstruction from "../images/underConstruction.png";
 
 const Blog = () => {
   return (
     <div className="blogPage">
       <Meta title="Blog" />
       <BreadCrumb title="Blog" />
-      <Container class1="blog-wrapper py-5">
-        <div className="row">
-          <div className="col-3">
-            <div className="filter-card mb-3">
-              <h3 className="filter-title">Find By Categories</h3>
-              <div>
-                <ul className="ps-0">
-                  <li>Watch</li>
-                  <li>TV</li>
-                  <li>Camera</li>
-                  <li>Laptop</li>
-                </ul>
-              </div>
-            </div>
-          </div>
 
-          <div className="col-9">
-            <div className="row">
-              <div className="col-6 mb-3">
-                <BlogCard />
-              </div>
-              <div className="col-6 mb-3">
-                <BlogCard />
-              </div>
-              <div className="col-6 mb-3">
-                <BlogCard />
-              </div>
-              <div className="col-6 mb-3">
-                <BlogCard />
-              </div>
-            </div>
-          </div>
-        </div>
-      </Container>
+      <Box
+        sx={{ display: "flex", justifyContent: "center", padding: "0 50px" }}
+      >
+        <img
+          style={{ width: "100%", objectFit: "contain" }}
+          src={underConstruction}
+          alt="under-construction"
+        />
+      </Box>
     </div>
   );
 };
