@@ -309,7 +309,7 @@ exports.getMonthlyOrders = asyncHandler(async (req, res) => {
         //get all detail of order=> use $ROOT
         // orders: { $push: "$$ROOT" },
         // orders: { $push: "$paymentIntent" },
-        totalIncomes: { $sum: "$paymentIntent.amount" },
+        totalIncomes: { $sum: "$paymentIntent.totalAfterDiscount" },
         totalOrders: { $sum: 1 },
       },
     },
