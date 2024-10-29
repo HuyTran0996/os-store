@@ -2,16 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Marquee from "react-fast-marquee";
 import { Link } from "react-router-dom";
-import { Box, TextField, Button } from "@mui/material";
+import { Box } from "@mui/material";
 
 import "../styles/Home.scss";
 import { showToast } from "../components/ToastMessage";
 import Meta from "../components/Meta";
 import ProductCard from "../components/ProductCard";
-import ContainerLayout from "../components/ContainerLayout";
-import BlogCard from "../components/BlogCard";
-import SpecialProduct from "../components/SpecialProduct";
-import Container from "../components/Container";
 import CarouselShow from "../components/CarouselShow";
 import BannerHome from "../components/BannerHome/BannerHome";
 import { Loading } from "../components/Loading/Loading";
@@ -30,6 +26,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [bestProduct, setBestProduct] = useState([]);
   const [newProduct, setNewProduct] = useState([]);
+  const [topRated, setTopRated] = useState([]);
   /////////// thunk////////////
   const [getDataAllBanner] = useThunk(getAllBanner);
   const [getDataAllCategory] = useThunk(getAllCategory);
@@ -59,6 +56,7 @@ const Home = () => {
       await getDataAllBrand();
       setBestProduct(await getDataAllProduct(`sort=-sold&page=1`));
       setNewProduct(await getDataAllProduct(`sort=-createdAt&page=1`));
+      setTopRated(await getDataAllProduct(`sort=-totalrating&page=1`));
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
@@ -183,6 +181,16 @@ const Home = () => {
                     </Link>
                   ))}
                 </div>
+              </Box>
+
+              <Box className="newArrivals px">
+                <h3 className="section-heading">Top Rated</h3>
+                <CarouselShow>
+                  {topRated.products?.length > 0 &&
+                    topRated.products?.map((prod, index) => (
+                      <ProductCard key={`best-${index}`} prod={prod} />
+                    ))}
+                </CarouselShow>
               </Box>
             </Box>
           </Box>
