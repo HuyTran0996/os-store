@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Box, TextField, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import { useThunk } from "../hook/use-thunk";
 import { getAProduct } from "../store/thunks/fetchProduct";
 import { updateCartList } from "../store/thunks/fetchUsers";
@@ -11,8 +11,6 @@ import { showToast } from "../components/ToastMessage";
 
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
-import Container from "../components/Container";
-import { AiFillDelete } from "react-icons/ai";
 
 import "../styles/Cart.scss";
 import imageNotFound from "../images/imageNotFound.png";
@@ -135,7 +133,7 @@ const Product = ({
             {variants?.map((v, index) => {
               return (
                 <span
-                  key={`size-${index}`}
+                  key={`variant-${index}`}
                   className="size"
                   onClick={() => handleChangeImgAndPrice(v)}
                   style={{
@@ -216,10 +214,6 @@ const Cart = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const userCart = localStorage.getItem("userCart");
-  //   // updateCartListUser(JSON.parse(userCart));
-  // }, []);
   useEffect(() => {
     getData();
     setCart([...dataUserCart]);

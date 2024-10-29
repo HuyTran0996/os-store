@@ -1,13 +1,10 @@
 import React from "react";
 import { Box } from "@mui/material";
-import { Link } from "react-router-dom";
 
 import "../styles/SingleBlogPage.scss";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
-import Container from "../components/Container";
 
-import { HiOutlineArrowLeft } from "react-icons/hi";
 import underConstruction from "../images/underConstruction.png";
 
 const SingleBlog = () => {

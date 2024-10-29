@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+
 import { Link } from "react-router-dom";
 import { useThunk } from "../hook/use-thunk";
 
@@ -15,8 +15,6 @@ import logo from "../images/logo.png";
 import "../styles/Login.scss";
 
 const Login = () => {
-  const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
 
   const [sendEmail, isLoading] = useThunk(forgotPassword);

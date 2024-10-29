@@ -11,7 +11,6 @@ import MenuList from "./Sidebar/MenuList";
 import {
   logoutUser,
   userWishList,
-  getUserCart,
   updateCartList,
 } from "../store/thunks/fetchUsers";
 
@@ -32,7 +31,7 @@ const Header = () => {
 
   const [logOut] = useThunk(logoutUser);
   const [getUserWishList] = useThunk(userWishList);
-  const [getCart] = useThunk(getUserCart);
+
   const [updateCartListUser] = useThunk(updateCartList);
 
   const { dataUserCompare, dataUserCart } = useSelector((state) => {

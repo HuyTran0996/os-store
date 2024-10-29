@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Box, Button, Typography, Select, MenuItem } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import "../styles/OrderDetail.scss";
 import { useThunk } from "../hook/use-thunk";

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Box, TextField, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import { useThunk } from "../hook/use-thunk";
 import { getUserCartForCheckOut } from "../store/thunks/fetchUsers";
 import { applyCoupon, cashOrder } from "../store/thunks/fetchOrders";
 
 import "../styles/Checkout.scss";
 import { BiArrowBack } from "react-icons/bi";
-import Container from "../components/Container";
+
 import { showToast } from "../components/ToastMessage";
 import { Loading } from "../components/Loading/Loading";
 
@@ -24,10 +24,6 @@ const Checkout = () => {
   const [getCart] = useThunk(getUserCartForCheckOut);
   const [applyCouponCart] = useThunk(applyCoupon);
   const [sendOrder] = useThunk(cashOrder);
-
-  const { dataUserCart } = useSelector((state) => {
-    return state.users;
-  });
 
   const userInfo = localStorage.getItem("userData");
   const parsedUserData = JSON.parse(userInfo);
@@ -55,7 +51,6 @@ const Checkout = () => {
       setIsApplying(true);
       await applyCouponCart(coupon);
       if (parsedUserData && !parsedUserData.note) {
-        // const userCart = localStorage.getItem("userCart");
         const userCart = await getCart();
         setCart(userCart);
       } else {

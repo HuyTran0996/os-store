@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-import { Box, TextField, Button, Rating } from "@mui/material";
+import { useParams } from "react-router-dom";
+import { Box, Rating } from "@mui/material";
 import ReactImageZoom from "react-image-zoom";
 import { useSelector } from "react-redux";
 
@@ -40,6 +40,7 @@ const SingleProduct = () => {
   const [img, setImg] = useState(imageNotFound);
 
   const [checkIfCompare, setCheckIfCompare] = useState(false);
+  const [variantUser, setVariantUser] = useState("");
 
   const [getAProductById] = useThunk(getAProduct);
   const [getDataAllProduct] = useThunk(getAllProduct);
@@ -175,6 +176,7 @@ const SingleProduct = () => {
   const description = dataProduct.description;
 
   const handleChangeImgAndPrice = (p) => {
+    setVariantUser(p._id);
     setImg(p.images[0].url);
     setPrice(p.price);
   };
@@ -259,6 +261,10 @@ const SingleProduct = () => {
                           key={`variant-${index}`}
                           className="size"
                           onClick={() => handleChangeImgAndPrice(v)}
+                          style={{
+                            border:
+                              variantUser === v._id ? "3px solid aqua" : "",
+                          }}
                         >
                           {v.variantName}
                         </span>
@@ -276,6 +282,10 @@ const SingleProduct = () => {
                           key={`size-${index}`}
                           className="size"
                           onClick={() => handleChangeImgAndPrice(s)}
+                          style={{
+                            border:
+                              variantUser === s._id ? "3px solid aqua" : "",
+                          }}
                         >
                           {s.variantName}
                         </span>
@@ -295,6 +305,8 @@ const SingleProduct = () => {
                           className="color"
                           style={{
                             backgroundColor: c.colorCode,
+                            border:
+                              variantUser === c._id ? "3px solid aqua" : "",
                           }}
                         />
                       );

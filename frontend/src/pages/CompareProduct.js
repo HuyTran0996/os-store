@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { NavLink, Link, useNavigate } from "react-router-dom";
-import { Box, TextField, Button } from "@mui/material";
+
+import { Box } from "@mui/material";
 import { useThunk } from "../hook/use-thunk";
 
 import { getAProduct } from "../store/thunks/fetchProduct";
@@ -12,8 +12,6 @@ import "../styles/CompareProduct.scss";
 import { showToast } from "../components/ToastMessage";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
-import Color from "../components/Color";
-import Container from "../components/Container";
 
 const CompareProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
