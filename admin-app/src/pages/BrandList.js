@@ -21,7 +21,7 @@ import {
 import { getAllCategory } from "../store/thunks/fetchProductCategories";
 
 import DataGridTable from "../components/DataGridTable";
-import Paginate from "../components/Pagination";
+
 import { showToast } from "../components/ToastMessage";
 import ContainerLayout from "../components/ContainerLayout";
 import imageNotFound from "../images/imageNotFound.png";

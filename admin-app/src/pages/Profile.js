@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
-import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import {
-  TextField,
-  Typography,
-  Box,
-  Select,
-  MenuItem,
-  Button,
-} from "@mui/material";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+import { TextField, Typography, Box, Button } from "@mui/material";
 
 import { useThunk } from "../hook/use-thunk";
 import {
