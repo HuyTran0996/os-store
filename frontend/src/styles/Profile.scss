@@ -33,6 +33,8 @@
     }
     .myOrders {
       animation: slideTop 0.5s ease forwards;
+      position: relative;
+      width: 100%;
     }
   }
 }
