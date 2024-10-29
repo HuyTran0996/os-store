@@ -216,33 +216,34 @@ export const NAVIGATION = [
       },
     ],
   },
-  {
-    segment: "blogs",
-    title: "Blogs",
-    icon: <CreateIcon />,
-    children: [
-      {
-        segment: "blog",
-        icon: <AddCircleIcon />,
-        title: "Add Blog",
-      },
-      {
-        segment: "blog-list",
-        icon: <SubjectIcon />,
-        title: "Blog List",
-      },
-      {
-        segment: "blog-category",
-        icon: <AddCircleIcon />,
-        title: "Add Blog Category",
-      },
-      {
-        segment: "blog-category-list",
-        icon: <SubjectIcon />,
-        title: "Blog Category List",
-      },
-    ],
-  },
+  //note: up coming
+  // {
+  //   segment: "blogs",
+  //   title: "Blogs",
+  //   icon: <CreateIcon />,
+  //   children: [
+  //     {
+  //       segment: "blog",
+  //       icon: <AddCircleIcon />,
+  //       title: "Add Blog",
+  //     },
+  //     {
+  //       segment: "blog-list",
+  //       icon: <SubjectIcon />,
+  //       title: "Blog List",
+  //     },
+  //     {
+  //       segment: "blog-category",
+  //       icon: <AddCircleIcon />,
+  //       title: "Add Blog Category",
+  //     },
+  //     {
+  //       segment: "blog-category-list",
+  //       icon: <SubjectIcon />,
+  //       title: "Blog Category List",
+  //     },
+  //   ],
+  // },
   {
     segment: "enquiries",
     title: "Enquiries",
