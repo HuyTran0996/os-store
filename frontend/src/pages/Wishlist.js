@@ -26,7 +26,15 @@ const Wishlist = () => {
       ) : (
         <div className="wishlist-wrapper">
           {dataUserWishList.map((prod, index) => {
-            return <ProductCard key={`product-${index}`} prod={prod} />;
+            return (
+              <div
+                className="wish"
+                key={`product-${index}`}
+                style={{ "--i": `${index + 1}` }}
+              >
+                <ProductCard key={`product-${index}`} prod={prod} />
+              </div>
+            );
           })}
         </div>
       )}

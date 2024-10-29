@@ -222,7 +222,10 @@ const OurStore = () => {
         ) : (
           <Box sx={style.bigBox}>
             {/* Filter sidebar */}
-            <Box sx={{ display: { xs: "none", sm: "none", md: "block" } }}>
+            <Box
+              className="filter"
+              sx={{ display: { xs: "none", sm: "none", md: "block" } }}
+            >
               <ProductListFilter
                 dataAllProductCategory={dataAllProductCategory}
                 dataAllBrand={dataAllBrand}
@@ -234,7 +237,7 @@ const OurStore = () => {
             </Box>
 
             {/* Main */}
-            <Box sx={{ width: "100%", position: "relative" }}>
+            <Box className="main" sx={{ width: "100%", position: "relative" }}>
               {/* Sort and Grid bar */}
               <Paper elevation={5} sx={style.paper}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>

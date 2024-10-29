@@ -100,7 +100,7 @@ const Header = () => {
       <Box className="headerUpper">
         {/* logo */}
         <MenuList />
-        <Link to="/">
+        <Link to="/" className="logo">
           <h4>
             <img
               src={logo}
@@ -123,7 +123,11 @@ const Header = () => {
         </Link>
 
         {/* search box */}
-        <form onSubmit={handleSubmit} style={{ width: "42%" }}>
+        <form
+          className="nav-link"
+          style={{ "--i": 5, width: "42%" }}
+          onSubmit={handleSubmit}
+        >
           <Box className="search smallScreenHide">
             <TextField
               placeholder="Search Product..."
@@ -152,7 +156,7 @@ const Header = () => {
 
         {/* header-upper-links */}
         <Box className="upperLink">
-          <Link to="/compare-product">
+          <Link to="/compare-product" className="nav-link" style={{ "--i": 1 }}>
             <Badge badgeContent={dataUserCompare.length || 0} color="secondary">
               <CompareIcon />
             </Badge>
@@ -162,7 +166,7 @@ const Header = () => {
             </Box>
           </Link>
 
-          <Link to="/wishlist">
+          <Link to="/wishlist" className="nav-link" style={{ "--i": 2 }}>
             <VolunteerActivismIcon />
             <Box className="smallerLGhide" component="p">
               Favorite <br />
@@ -170,12 +174,17 @@ const Header = () => {
             </Box>
           </Link>
 
-          <div className="user" onClick={handleClick}>
+          <div
+            className="user nav-link"
+            style={{ "--i": 3 }}
+            onClick={handleClick}
+          >
             <AccountCircleIcon />
             <Box className="smallerLGhide" component="p">
               User <br /> Profile
             </Box>
           </div>
+
           <Menu
             id="demo-positioned-menu"
             aria-labelledby="demo-positioned-button"
@@ -202,7 +211,7 @@ const Header = () => {
             </MenuItem>
           </Menu>
 
-          <Link to="/cart">
+          <Link to="/cart" className="nav-link" style={{ "--i": 4 }}>
             <Badge badgeContent={dataUserCart.length || 0} color="success">
               <LocalMallIcon />
             </Badge>
@@ -243,10 +252,18 @@ const Header = () => {
 
       {/* header bottom */}
       <Box className="headerBottom smallScreenHide">
-        <NavLink to="/">Home</NavLink>
-        <NavLink to="/product">Our Store</NavLink>
-        <NavLink to="/blogs">Blogs</NavLink>
-        <NavLink to="/contact">Contact</NavLink>
+        <NavLink to="/" className="nav-link" style={{ "--i": 6 }}>
+          Home
+        </NavLink>
+        <NavLink to="/product" className="nav-link" style={{ "--i": 7 }}>
+          Our Store
+        </NavLink>
+        <NavLink to="/blogs" className="nav-link" style={{ "--i": 8 }}>
+          Blogs
+        </NavLink>
+        <NavLink to="/contact" className="nav-link" style={{ "--i": 9 }}>
+          Contact
+        </NavLink>
       </Box>
     </Box>
   );

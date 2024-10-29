@@ -1,5 +1,6 @@
 @import "./stylesStore/variables.scss";
 @import "./stylesStore/breakpoints.scss";
+@import "./stylesStore/keyframes.scss";
 
 .header {
   background-color: $color-131921;
@@ -10,11 +11,11 @@
   }
   a,
   .user {
-    color: white;
+    color: white !important;
     transition: 0.3s;
     cursor: pointer;
     &:hover {
-      color: orange;
+      color: orange !important;
     }
   }
 
@@ -24,11 +25,33 @@
     justify-content: space-between;
     padding: 20px 50px;
     border-bottom: 1px solid $color-3b4149;
+    .logo {
+      opacity: 0;
+      animation: slideRight 1s ease forwards;
+      span {
+        font-size: 26px;
+        color: transparent;
+        -webkit-text-stroke: 0.5px orange;
+        background-image: linear-gradient(orange, orange);
+        background-repeat: no-repeat;
+        -webkit-background-clip: text;
+        background-position: -500px 0;
+        opacity: 0;
+        animation: slideBottom 1s ease forwards, animeText 3.5s linear infinite;
+        animation-delay: 0.3s;
+      }
+    }
+
     h4 {
       display: flex;
       align-items: center;
       margin: 0;
     }
+  }
+  .nav-link {
+    opacity: 0;
+    animation: slideTop 0.5s ease forwards;
+    animation-delay: calc(0.2s * var(--i));
   }
 
   .search {
@@ -57,21 +80,6 @@
         font-size: 25px;
       }
     }
-
-    .cartCount {
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      background: aquamarine;
-      color: black;
-      padding: 0 3px;
-      border-radius: 5px;
-      font-size: 16px;
-      font-weight: 600;
-      @include md {
-        font-size: 12px;
-      }
-    }
   }
 
   .headerBottom {
@@ -81,6 +89,7 @@
     align-items: center;
     gap: 30px;
     background-color: $color-232f3e;
+    color: white;
   }
 
   .smallScreenShow {

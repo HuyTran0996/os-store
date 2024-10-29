@@ -217,61 +217,59 @@ const Profile = () => {
         <Loading message="Loading..." />
       ) : (
         <div className="profile-wrapper">
-          <h4>My Info:</h4>
-          <h5>User Email: {email}</h5>
-          <div>
-            <h5>User Name:</h5>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
+          <div className="info">
+            <h4>My Info:</h4>
+            <h5>User Email: {email}</h5>
+            <div>
+              <h5>User Name:</h5>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div>
+              <h5>User Phone:</h5>
 
-          <div>
-            <h5>User Phone:</h5>
-
-            <PhoneInput
-              placeholder="Enter phone number"
-              value={phone}
-              onChange={setPhone}
-            />
-          </div>
-          <div className="function">
-            <button
-              disabled={isLoading}
-              className="button"
-              onClick={handleChangeInfo}
-            >
-              Update Info
-            </button>
-            <Link to="/changePassword" className="button">
-              Change Password
-            </Link>
-            <button
-              disabled={isLoading}
-              className="button"
-              onClick={handleBlockUser}
-            >
-              Remove Account
-            </button>
+              <PhoneInput
+                placeholder="Enter phone number"
+                value={phone}
+                onChange={setPhone}
+              />
+            </div>
+            <div className="function">
+              <button
+                disabled={isLoading}
+                className="button"
+                onClick={handleChangeInfo}
+              >
+                Update Info
+              </button>
+              <Link to="/changePassword" className="button">
+                Change Password
+              </Link>
+              <button
+                disabled={isLoading}
+                className="button"
+                onClick={handleBlockUser}
+              >
+                Remove Account
+              </button>
+            </div>
           </div>
 
           <div className="myOrders">
             <h4>My Orders:</h4>
+            <DataGridTable
+              rows={rows}
+              columns={columns}
+              isLoading={isLoadingTable}
+            />
+            {/* Pagination */}
+            <Box sx={style.boxPagination}>
+              <Paginate data={dataOrder} />
+            </Box>
           </div>
-          <DataGridTable
-            rows={rows}
-            columns={columns}
-            isLoading={isLoadingTable}
-            // EditToolbar={EditToolbarOrderList}
-            // filter={filter}
-            // setFilter={setFilter}
-          />
-          {/* Pagination */}
-          <Box sx={style.boxPagination}>
-            <Paginate data={dataOrder} />
-          </Box>
         </div>
       )}
     </Box>

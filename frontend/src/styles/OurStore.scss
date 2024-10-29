@@ -1,5 +1,12 @@
 @import "./stylesStore/variables.scss";
+@import "./stylesStore/keyframes.scss";
 
 .ourStorePage {
   background-color: $color-f5f5f7;
+  .main {
+    animation: slideTop 1s ease forwards;
+  }
+  .filter {
+    animation: slideRight 1s ease forwards;
+  }
 }

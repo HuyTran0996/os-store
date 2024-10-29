@@ -74,7 +74,11 @@ const CompareProduct = () => {
             const variants = prod.variant.filter((v) => v.tag === "variant");
 
             return (
-              <div key={`product-${index}`} className="compare-product-card">
+              <div
+                key={`product-${index}`}
+                className="compare-product-card"
+                style={{ "--i": `${index + 1}` }}
+              >
                 <img
                   src="images/cross.svg"
                   alt="cross"
