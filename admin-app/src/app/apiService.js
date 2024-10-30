@@ -9,7 +9,7 @@ const apiService = axios.create({
 
 apiService.interceptors.request.use(
   (req) => {
-    console.log("Start request", req);
+    // console.log("Start request", req);
     return req;
   },
   (err) => {
@@ -20,11 +20,11 @@ apiService.interceptors.request.use(
 
 apiService.interceptors.response.use(
   (res) => {
-    console.log("Response", res);
+    // console.log("Response", res);
     return res;
   },
   (err) => {
-    console.log("Response Error", err);
+    // console.log("Response Error", err);
     if (err.response?.data?.message === "Please log in to get access") {
       localStorage.setItem(
         "adminData",
