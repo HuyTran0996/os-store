@@ -279,7 +279,7 @@ const CouponList = () => {
     <ContainerLayout>
       <Box sx={{ margin: "20px" }}>
         <Typography variant="h3" sx={{ marginBottom: "20px" }}>
-          Customers
+          Coupons
         </Typography>
 
         <DataGridTable
