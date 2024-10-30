@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Box, Rating } from "@mui/material";
 import ReactImageZoom from "react-image-zoom";
 import { useSelector } from "react-redux";
@@ -14,6 +14,7 @@ import {
   toggleWishlist,
 } from "../store/thunks/fetchProduct";
 import { updateCompareList, updateCartList } from "../store/thunks/fetchUsers";
+import { addToCart } from "../store/thunks/fetchOrders";
 
 import { showToast } from "../components/ToastMessage";
 import { Loading } from "../components/Loading/Loading";
@@ -28,10 +29,12 @@ import { FaHeart } from "react-icons/fa";
 import imageNotFound from "../images/imageNotFound.png";
 
 const SingleProduct = () => {
+  const navigate = useNavigate();
   const params = useParams();
   const [star, setStar] = useState(3);
   const [comment, setComment] = useState("");
   const [price, setPrice] = useState(0);
+  const [quantityUser, setQuantityUser] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingSmall, setIsLoadingSmall] = useState(false);
   const [checkIfWish, setCheckIfWish] = useState(false);
@@ -49,6 +52,7 @@ const SingleProduct = () => {
   const [toggleUserWishlist] = useThunk(toggleWishlist);
   const [updateCompareListUser] = useThunk(updateCompareList);
   const [updateCartListUser] = useThunk(updateCartList);
+  const [createCart] = useThunk(addToCart);
 
   const { dataProduct } = useSelector((state) => {
     return state.products;
@@ -101,6 +105,7 @@ const SingleProduct = () => {
   useEffect(() => {
     setImg(dataProduct?.images?.[0].url || imageNotFound);
     setPrice(dataProduct.price);
+    setVariantUser(dataProduct.variant?.[0]._id);
   }, [dataProduct]);
 
   const props = {
@@ -143,7 +148,7 @@ const SingleProduct = () => {
     if (checkIfAdd >= 0) {
       cart.splice(checkIfAdd, 1);
     } else {
-      cart.push({ product: { _id: params.id }, count: 1 });
+      cart.push({ product: { _id: params.id }, count: quantityUser || 1 });
     }
     updateCartListUser(cart);
     localStorage.setItem("userCart", JSON.stringify(cart));
@@ -185,6 +190,25 @@ const SingleProduct = () => {
     setVariantUser(p._id);
     setImg(p.images[0].url);
     setPrice(p.price);
+  };
+
+  const handleBuyNow = async () => {
+    try {
+      setIsLoadingSmall(true);
+      const checkoutInfo = [
+        {
+          _id: dataProduct._id,
+          count: quantityUser || 1,
+          variantId: variantUser,
+        },
+      ];
+      await createCart(checkoutInfo);
+      navigate("/checkout");
+    } catch (err) {
+      showToast(`${err.message}`, "error");
+    } finally {
+      setIsLoadingSmall(false);
+    }
   };
 
   return (
@@ -322,11 +346,18 @@ const SingleProduct = () => {
                 </div>
 
                 <div className="function">
-                  {/* <div className="quantity">
+                  <div className="quantity">
                     <h3 className="product-heading">Quantity:</h3>
 
-                    <input type="number" min={1} max={10} defaultValue={1} />
-                  </div> */}
+                    <input
+                      type="number"
+                      min={1}
+                      max={10}
+                      defaultValue={1}
+                      value={quantityUser}
+                      onChange={(e) => setQuantityUser(e.target.value)}
+                    />
+                  </div>
 
                   <div className="buttonGroup">
                     <button
@@ -341,6 +372,7 @@ const SingleProduct = () => {
                     <button
                       disabled={isLoading || isLoadingSmall}
                       className="button buyNow"
+                      onClick={handleBuyNow}
                     >
                       Buy It Now
                     </button>
