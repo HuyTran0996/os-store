@@ -33,6 +33,7 @@ const SingleProduct = () => {
   const [comment, setComment] = useState("");
   const [price, setPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingSmall, setIsLoadingSmall] = useState(false);
   const [checkIfWish, setCheckIfWish] = useState(false);
   const [checkIfCart, setCheckIfCart] = useState(false);
   const [bestProduct, setBestProduct] = useState([]);
@@ -62,22 +63,24 @@ const SingleProduct = () => {
   const userInfo = localStorage.getItem("userData");
   const parsedUserData = JSON.parse(userInfo);
 
-  const getData = async (action) => {
+  const getData = async (action, whichLoading) => {
     try {
-      setIsLoading(true);
+      whichLoading(true);
+      // setIsLoading(true);
       await action;
       await getAProductById(params.id);
       setBestProduct(await getDataAllProduct(`sort=-sold&page=1`));
     } catch (err) {
       showToast(`${err.message}`, "error");
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
+      whichLoading(false);
     }
   };
 
   useEffect(() => {
-    getData();
-  }, []);
+    getData("", setIsLoading);
+  }, [params.id]);
 
   useEffect(() => {
     const compareList = JSON.parse(localStorage.getItem("compareList") || "[]");
@@ -110,7 +113,10 @@ const SingleProduct = () => {
   const sendComment = (e) => {
     e.preventDefault();
 
-    getData(ratingProduct({ star, prodId: params.id, comment }));
+    getData(
+      ratingProduct({ star, prodId: params.id, comment }),
+      setIsLoadingSmall
+    );
   };
 
   const handelUserWishList = async () => {
@@ -122,12 +128,12 @@ const SingleProduct = () => {
     }
     if (parsedUserData && !parsedUserData.note) {
       try {
-        setIsLoading(true);
+        setIsLoadingSmall(true);
         await toggleUserWishlist({ prodId: params.id });
       } catch (err) {
         showToast(`${err.message}`, "error");
       } finally {
-        setIsLoading(false);
+        setIsLoadingSmall(false);
       }
     }
   };
@@ -189,6 +195,7 @@ const SingleProduct = () => {
         <Loading message="Loading..." />
       ) : (
         <>
+          {isLoadingSmall && <Loading message="Loading..." />}
           <Box className="main-product-wrapper">
             <div className="images">
               <div className="imageZoom">
@@ -324,21 +331,27 @@ const SingleProduct = () => {
                   <div className="buttonGroup">
                     <button
                       onClick={handleToggleCart}
-                      disabled={isLoading}
+                      disabled={isLoading || isLoadingSmall}
                       className="button"
                       type="submit"
                     >
                       {checkIfCart >= 0 ? "Added To Cart" : "Add To Cart"}
                     </button>
 
-                    <button disabled={isLoading} className="button buyNow">
+                    <button
+                      disabled={isLoading || isLoadingSmall}
+                      className="button buyNow"
+                    >
                       Buy It Now
                     </button>
                   </div>
                 </div>
 
                 <div className="compareWish">
-                  <button onClick={handleToggleCompare} disabled={isLoading}>
+                  <button
+                    onClick={handleToggleCompare}
+                    disabled={isLoading || isLoadingSmall}
+                  >
                     <TbGitCompare
                       style={checkIfCompare >= 0 ? { color: "red" } : ""}
                       className="icon"
@@ -349,7 +362,10 @@ const SingleProduct = () => {
                       : " Add To Compare"}
                   </button>
 
-                  <button disabled={isLoading} onClick={handelUserWishList}>
+                  <button
+                    disabled={isLoading || isLoadingSmall}
+                    onClick={handelUserWishList}
+                  >
                     {checkIfWish ? (
                       <>
                         <FaHeart style={{ color: "red" }} className="icon" />{" "}
@@ -411,7 +427,7 @@ const SingleProduct = () => {
 
                   <div className="submitButton">
                     <button
-                      disabled={isLoading}
+                      disabled={isLoading || isLoadingSmall}
                       className="button"
                       type="submit"
                     >
