@@ -50,10 +50,26 @@ module.exports = class Email {
     await this.send("welcome", "Welcome to the The App Family!");
   }
 
+  // async sendPasswordReset() {
+  //   await this.send(
+  //     "passwordReset",
+  //     "Your password reset token (valid for only 10 minutes)"
+  //   );
+  // }
+
   async sendPasswordReset() {
-    await this.send(
-      "passwordReset",
-      "Your password reset token (valid for only 10 minutes)"
-    );
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.send(
+          "passwordReset",
+          "Your password reset token (valid for only 10 minutes)"
+        );
+        resolve("Password reset email sent successfully.");
+      } catch (error) {
+        reject(
+          new Error(`Failed to send password reset email: ${error.message}`)
+        );
+      }
+    });
   }
 };
