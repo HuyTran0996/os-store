@@ -4,9 +4,7 @@ const nodemailer = require("nodemailer");
 const pug = require("pug");
 const htmlToText = require("html-to-text");
 
-const welcome = require("../views/email/welcome.pug");
-const passwordReset = require("../views/email/passwordReset.pug");
-const welcome = require("../views/email/welcome.pug");
+const path = require("path");
 
 module.exports = class Email {
   constructor(user, url) {
@@ -35,7 +33,9 @@ module.exports = class Email {
     //   url: this.url,
     //   subject,
     // });
-    const html = pug.renderFile(template, {
+
+    const templatePath = path.join(__dirname, "..", "views", "email", template);
+    const html = pug.renderFile(templatePath, {
       firstName: this.firstName,
       url: this.url,
       subject,
@@ -55,7 +55,8 @@ module.exports = class Email {
   }
 
   async sendWelcome() {
-    await this.send(welcome, "Welcome to the The App Family!");
+    // await this.send(welcome, "Welcome to the The App Family!");
+    await this.send("welcome.pug", "Welcome to the OS Store Family!");
   }
 
   // async sendPasswordReset() {
@@ -69,7 +70,7 @@ module.exports = class Email {
     return new Promise(async (resolve, reject) => {
       try {
         await this.send(
-          passwordReset,
+          "passwordReset.pug",
           "Your password reset token (valid for only 10 minutes)"
         );
         resolve("Password reset email sent successfully.");
