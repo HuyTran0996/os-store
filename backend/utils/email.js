@@ -28,12 +28,6 @@ module.exports = class Email {
   // Send the actual email
   async send(template, subject) {
     // 1) Render HTML based on a pug template
-    // const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
-    //   firstName: this.firstName,
-    //   url: this.url,
-    //   subject,
-    // });
-
     const templatePath = path.join(__dirname, "..", "views", "email", template);
     const html = pug.renderFile(templatePath, {
       firstName: this.firstName,
@@ -55,16 +49,17 @@ module.exports = class Email {
   }
 
   async sendWelcome() {
-    // await this.send(welcome, "Welcome to the The App Family!");
     await this.send("welcome.pug", "Welcome to the OS Store Family!");
-  }
 
-  // async sendPasswordReset() {
-  //   await this.send(
-  //     "passwordReset",
-  //     "Your password reset token (valid for only 10 minutes)"
-  //   );
-  // }
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.send("welcome.pug", "Welcome to the OS Store Family!");
+        resolve("Signup successfully.");
+      } catch (error) {
+        reject(new Error(`Failed to send signup email: ${error.message}`));
+      }
+    });
+  }
 
   async sendPasswordReset() {
     return new Promise(async (resolve, reject) => {
