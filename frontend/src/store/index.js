@@ -16,4 +16,5 @@ export const store = configureStore({
     users: userReducer,
     orders: orderReducer,
   },
+  devTools: process.env.REACT_APP_NODE_ENV !== "production", // Enable DevTools only in development
 });
