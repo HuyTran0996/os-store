@@ -20,4 +20,5 @@ export const store = configureStore({
     banner: bannerReducer,
     enquiries: enquiryReducer,
   },
+  devTools: process.env.REACT_APP_NODE_ENV !== "production", // Enable DevTools only in development
 });
