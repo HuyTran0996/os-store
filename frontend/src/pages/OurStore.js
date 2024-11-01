@@ -108,7 +108,7 @@ const OurStore = () => {
   const [grid, setGrid] = useState(6);
   const [filterString, setFilterString] = useState("");
   const [filter, setFilter] = useState(initialState);
-  const [sort, setSort] = useState("created");
+  const [sort, setSort] = useState("-createdAt");
 
   let [searchParams] = useSearchParams();
   let page = parseInt(searchParams.get("page")) || 1;
@@ -213,15 +213,15 @@ const OurStore = () => {
         sx={style.select}
         value={sort}
         onChange={(e) => setSort(e.target.value)}
-        defaultValue="created"
+        defaultValue="createdAt"
       >
         <MenuItem value="-sold">Best selling</MenuItem>
         <MenuItem value="title">Alphabetically, A-Z</MenuItem>
         <MenuItem value="-title">Alphabetically, Z-A</MenuItem>
         <MenuItem value="price">Price, low to high</MenuItem>
         <MenuItem value="-price">Price, high to low</MenuItem>
-        <MenuItem value="-created">Date, old to new</MenuItem>
-        <MenuItem value="created">Date, new to old</MenuItem>
+        <MenuItem value="createdAt">Date, old to new</MenuItem>
+        <MenuItem value="-createdAt">Date, new to old</MenuItem>
       </Select>
     </Box>
   );
