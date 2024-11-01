@@ -49,7 +49,7 @@ exports.createBrand = asyncHandler(async (req, res) => {
   if (tag) tagArray = JSON.parse(tag);
 
   for (const file of files) {
-    const info = await resizeImg(file);
+    const info = await resizeImg(file, "banner");
     imgUrl.push(info);
   }
   const newBrand = await Brand.create({
@@ -81,7 +81,7 @@ exports.updateBrand = asyncHandler(async (req, res) => {
 
   if (files.length > 0) {
     for (const file of files) {
-      const info = await resizeImg(file);
+      const info = await resizeImg(file, "banner");
       imgUrl.push(info);
     }
     object = { title: title, images: imgUrl, tag: [...tagArray] };
