@@ -205,7 +205,7 @@ const ProductList = () => {
         sx={style.select}
         value={sort}
         onChange={(e) => setSort(e.target.value)}
-        defaultValue="created"
+        defaultValue="-createdAt"
       >
         <MenuItem value="-sold">Best selling</MenuItem>
         <MenuItem value="title">Alphabetically, A-Z</MenuItem>
