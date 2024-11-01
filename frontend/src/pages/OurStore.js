@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
@@ -179,16 +179,25 @@ const OurStore = () => {
   }, [filterString, sort, page, search, brand, category]);
 
   // Set grid size based on screen width
+  const previousWidth = useRef(window.innerWidth);
   useEffect(() => {
+    //note:mobile browser's behavior is different from laptop, so only run the function if width change
     const handleResize = () => {
-      if (window.matchMedia("(max-width: 600px)").matches) {
-        setGrid(6); // show 2 items
-      } else if (window.matchMedia("(max-width: 900px)").matches) {
-        setGrid(6); // show 2 items
-      } else if (window.matchMedia("(max-width: 1200px)").matches) {
-        setGrid(4); // show 3 items
-      } else if (window.matchMedia("(max-width: 1536px)").matches) {
-        setGrid(3); // show 4 items
+      const currentWidth = window.innerWidth;
+
+      // Only update the grid if the width has changed
+      if (currentWidth !== previousWidth.current) {
+        if (window.matchMedia("(max-width: 600px)").matches) {
+          setGrid(6); // show 2 items
+        } else if (window.matchMedia("(max-width: 900px)").matches) {
+          setGrid(6); // show 2 items
+        } else if (window.matchMedia("(max-width: 1200px)").matches) {
+          setGrid(4); // show 3 items
+        } else if (window.matchMedia("(max-width: 1536px)").matches) {
+          setGrid(3); // show 4 items
+        }
+
+        previousWidth.current = currentWidth; // Update reference with the new width
       }
     };
 
