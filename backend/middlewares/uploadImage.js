@@ -21,7 +21,10 @@ const multerFilter = (req, file, cb) => {
 
   if (
     file.mimetype.startsWith("image") &&
-    (fileExt === ".png" || fileExt === ".jpeg" || fileExt === ".jpg")
+    (fileExt === ".png" ||
+      fileExt === ".jpeg" ||
+      fileExt === ".jpg" ||
+      fileExt === ".webp")
   ) {
     cb(null, true);
   } else {
@@ -56,19 +59,24 @@ const resizeImg = async (file, action) => {
     if (action === "banner") {
       resizedImageBuffer = await sharp(fileBuffer)
         .resize(1280, 720) //note: image smaller than this is bad at large screen
-        .toFormat("jpeg")
+        // .toFormat("jpeg")
+        .toFormat("webp")
         .jpeg({ quality: 90 })
         .toBuffer();
     } else {
       resizedImageBuffer = await sharp(fileBuffer)
         .resize(720, 720) //note: image smaller than this is bad at large screen
-        .toFormat("jpeg")
+        // .toFormat("jpeg")
+        .toFormat("webp")
         .jpeg({ quality: 90 })
         .toBuffer();
     }
 
     // Convert the buffer to a base64 encoded string for Cloudinary
-    const base64Image = `data:image/jpeg;base64,${resizedImageBuffer.toString(
+    // const base64Image = `data:image/jpeg;base64,${resizedImageBuffer.toString(
+    //   "base64"
+    // )}`;
+    const base64Image = `data:image/webp;base64,${resizedImageBuffer.toString(
       "base64"
     )}`;
 
