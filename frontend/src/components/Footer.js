@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Box } from "@mui/material";
-import "../styles/Header.scss";
 
 import "../styles/Footer.scss";
 import { BsLinkedin, BsGithub, BsYoutube, BsInstagram } from "react-icons/bs";

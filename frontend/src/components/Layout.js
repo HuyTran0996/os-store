@@ -5,11 +5,18 @@ import Footer from "./Footer";
 
 const Layout = () => {
   return (
-    <>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        minHeight: "100vh",
+      }}
+    >
       <Header />
       <Outlet />
       <Footer />
-    </>
+    </div>
   );
 };
 
