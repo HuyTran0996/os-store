@@ -284,65 +284,77 @@ const SingleProduct = () => {
 
                 {/* variant */}
                 <div className="variants">
-                  <h3 className="product-heading">Variant:</h3>
-                  <div className="wrapper">
-                    {variants?.map((v, index) => {
-                      return (
-                        <span
-                          key={`variant-${index}`}
-                          className="size"
-                          onClick={() => handleChangeImgAndPrice(v)}
-                          style={{
-                            border:
-                              variantUser === v._id ? "3px solid aqua" : "",
-                          }}
-                        >
-                          {v.variantName}
-                        </span>
-                      );
-                    })}
-                  </div>
+                  {variants?.length > 0 && (
+                    <>
+                      <h3 className="product-heading">Variant:</h3>
+                      <div className="wrapper">
+                        {variants?.map((v, index) => {
+                          return (
+                            <span
+                              key={`variant-${index}`}
+                              className="size"
+                              onClick={() => handleChangeImgAndPrice(v)}
+                              style={{
+                                border:
+                                  variantUser === v._id ? "3px solid aqua" : "",
+                              }}
+                            >
+                              {v.variantName}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <div className="variants">
-                  <h3 className="product-heading">Size:</h3>
-                  <div className="wrapper">
-                    {sizes?.map((s, index) => {
-                      return (
-                        <span
-                          key={`size-${index}`}
-                          className="size"
-                          onClick={() => handleChangeImgAndPrice(s)}
-                          style={{
-                            border:
-                              variantUser === s._id ? "3px solid aqua" : "",
-                          }}
-                        >
-                          {s.variantName}
-                        </span>
-                      );
-                    })}
-                  </div>
+                  {sizes?.length > 0 && (
+                    <>
+                      <h3 className="product-heading">Size:</h3>
+                      <div className="wrapper">
+                        {sizes?.map((s, index) => {
+                          return (
+                            <span
+                              key={`size-${index}`}
+                              className="size"
+                              onClick={() => handleChangeImgAndPrice(s)}
+                              style={{
+                                border:
+                                  variantUser === s._id ? "3px solid aqua" : "",
+                              }}
+                            >
+                              {s.variantName}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <div className="variants">
-                  <h3 className="product-heading">Color:</h3>
-                  <div className="wrapper">
-                    {colors?.map((c, index) => {
-                      return (
-                        <div
-                          key={`color-${index}`}
-                          onClick={() => handleChangeImgAndPrice(c)}
-                          className="color"
-                          style={{
-                            backgroundColor: c.colorCode,
-                            border:
-                              variantUser === c._id ? "3px solid aqua" : "",
-                          }}
-                        />
-                      );
-                    })}
-                  </div>
+                  {colors?.length > 0 && (
+                    <>
+                      <h3 className="product-heading">Color:</h3>
+                      <div className="wrapper">
+                        {colors?.map((c, index) => {
+                          return (
+                            <div
+                              key={`color-${index}`}
+                              onClick={() => handleChangeImgAndPrice(c)}
+                              className="color"
+                              style={{
+                                backgroundColor: c.colorCode,
+                                border:
+                                  variantUser === c._id ? "3px solid aqua" : "",
+                              }}
+                            />
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <div className="function">
