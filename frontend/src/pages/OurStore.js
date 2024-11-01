@@ -113,6 +113,8 @@ const OurStore = () => {
   let [searchParams] = useSearchParams();
   let page = parseInt(searchParams.get("page")) || 1;
   let search = String(searchParams.get("search"));
+  const brand = searchParams.get("brand");
+  const category = searchParams.get("category");
 
   const [getDataAllCategory] = useThunk(getAllCategory);
   const [getDataAllBrand] = useThunk(getAllBrand);
@@ -151,19 +153,30 @@ const OurStore = () => {
       try {
         setIsLoading(true);
 
-        if (search.trim() === "" || search === "null") {
-          await getDataAllProduct(`${filterString}&sort=${sort}&page=${page}`);
-        } else {
-          smartProductSearching({ sort, page, searchField: search.trim() });
+        let query = `${filterString}&sort=${sort}&page=${page}`;
+
+        if (brand) {
+          query = `brand=${brand}&${query}`;
+        } else if (category) {
+          query = `category=${category}&${query}`;
+        } else if (search.trim() !== "" && search !== "null") {
+          return smartProductSearching({
+            sort,
+            page,
+            searchField: search.trim(),
+          });
         }
+
+        await getDataAllProduct(query);
       } catch (err) {
         showToast(`${err.message}`, "error");
       } finally {
         setIsLoading(false);
       }
     };
+
     getProduct();
-  }, [filterString, sort, page, search]);
+  }, [filterString, sort, page, search, brand, category]);
 
   // Set grid size based on screen width
   useEffect(() => {

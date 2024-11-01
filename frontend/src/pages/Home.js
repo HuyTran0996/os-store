@@ -145,7 +145,7 @@ const Home = () => {
                 <Marquee autoFill={true} className="marquee">
                   {brands.map((brand, index) => (
                     <Link
-                      to={`/product?category=${brand.title}`}
+                      to={`/product?brand=${brand.title}`}
                       key={`brand-${index}`}
                       className="element"
                     >
